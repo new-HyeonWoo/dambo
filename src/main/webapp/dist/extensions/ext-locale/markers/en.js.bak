@@ -1,0 +1,81 @@
+var svgEditorExtensionLocale_markers_en = (function () {
+  'use strict';
+
+  var en = {
+    name: 'Markers',
+    langList: [{
+      id: 'nomarker',
+      title: '화살표없음'
+    }, {
+      id: 'leftarrow',
+      title: 'Left Arrow'
+    }, {
+      id: 'rightarrow',
+      title: 'Right Arrow'
+    }, {
+      id: 'textmarker',
+      title: 'Text Marker'
+    }, {
+      id: 'forwardslash',
+      title: 'Forward Slash'
+    }, {
+      id: 'reverseslash',
+      title: 'Reverse Slash'
+    }, {
+      id: 'verticalslash',
+      title: 'Vertical Slash'
+    }, {
+      id: 'box',
+      title: 'Box'
+    }, {
+      id: 'star',
+      title: 'Star'
+    }, {
+      id: 'xmark',
+      title: 'X'
+    }, {
+      id: 'triangle',
+      title: 'Triangle'
+    }, {
+      id: 'mcircle',
+      title: 'Circle'
+    }, {
+      id: 'leftarrow_o',
+      title: 'Open Left Arrow'
+    }, {
+      id: 'rightarrow_o',
+      title: 'Open Right Arrow'
+    }, {
+      id: 'box_o',
+      title: 'Open Box'
+    }, {
+      id: 'star_o',
+      title: 'Open Star'
+    }, {
+      id: 'triangle_o',
+      title: 'Open Triangle'
+    }, {
+      id: 'mcircle_o',
+      title: 'Open Circle'
+    }],
+    contextTools: [{
+      title: 'Start marker',
+      label: '시작화살표'
+    }, {
+      title: '시작화살표 유형선택'
+    }, {
+      title: 'Middle marker',
+      label: '중간화살표'
+    }, {
+      title: '중간화살표 유형선택'
+    }, {
+      title: 'End marker',
+      label: '끝화살표'
+    }, {
+      title: '끝화살표 유형선택'
+    }]
+  };
+
+  return en;
+
+}());

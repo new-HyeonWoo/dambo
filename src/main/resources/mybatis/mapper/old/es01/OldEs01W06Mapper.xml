@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.old.es01.repository.OldEs01W06Mapper">
+
+	<select id="selectCollateralList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT   smallname, yyyy, seq, sec_code, jum_code, esti_date, geo_code,
+		         sangho, market_div, market_name, l_size, l_size_py, b_size,
+		         b_size_py, curr_amt, plmin_bid_amt, pl_bid_amt, c_cl_amt, l_cl_amt,
+		         b_cl_amt, cln_tot_amt, c_pl_amt, l_pl_amt, pl_tot_amt, sec_name,
+		         proc_div, proc_name, es_div,
+		            smallname
+		         || '_'
+		         || sangho
+		         || '_'
+		         || NVL (market_name, '자체')
+		         || '_'
+		         || sec_name
+		         || '_'
+		         || esti_date AS file_name,
+		         appr_datetime AS appr_date, cnt, NAME,
+		         LIQUOR_TYPE,
+		         LIQUOR_TYPE_NM
+		    FROM (SELECT REPLACE (b.smallname, '지점', '') smallname, a.yyyy, a.seq,
+		                 sec_code, jum_code, esti_date, geo_code, sangho, market_div,
+		                 market_name, l_size, l_size_py, b_size, b_size_py, curr_amt,
+		                 plmin_bid_amt, pl_bid_amt, c_cl_amt, l_cl_amt, b_cl_amt,
+		                 c_cl_amt + l_cl_amt + b_cl_amt cln_tot_amt, c_pl_amt,
+		                 l_pl_amt, b_pl_amt,
+		                 c_pl_amt + l_pl_amt + b_pl_amt pl_tot_amt,
+		                 (SELECT cd_desc
+		                    FROM es00
+		                   WHERE cd_div = '100' AND cd_code = a.sec_code) sec_name,
+		                 proc_div,
+		                 (SELECT cd_desc
+		                    FROM es00
+		                   WHERE cd_div = '172' AND cd_code = a.proc_div) proc_name,
+		                 DECODE (SUBSTR (a.seq, 5, 2), '00', '初', '再') es_div,
+		                 appr_datetime, NAME,
+		                 nvl(cnt,0) as cnt,
+					     A.LIQUOR_TYPE,
+					     (SELECT CD_DESC FROM ES00 WHERE CD_DIV = '600' AND CD_CODE = A.LIQUOR_TYPE) AS LIQUOR_TYPE_NM
+		            FROM es10 a,
+		                 v_ia03 b,
+		                 (SELECT yyyy, seq, jum_gu, appr_seq, appr_sabun,
+		                         appr_datetime, last_yn, NAME
+		                    FROM es03 a, v_ia01 b
+		                   WHERE a.appr_sabun = b.sabun
+		                     AND jum_gu = '2'
+		                     AND appr_seq = (SELECT MAX (appr_seq)
+		                                       FROM es03
+		                                      WHERE yyyy = a.yyyy AND seq = a.seq)
+		                 ) c,
+		                 (
+		                  SELECT YYYY, SEQ, SUM(CNT) AS CNT
+		                    FROM (SELECT YYYY, SEQ, COUNT(*) AS CNT FROM ES03 GROUP BY YYYY, SEQ
+		                          UNION ALL
+		                          SELECT YYYY, SEQ, COUNT(*) AS CNT FROM ES05 GROUP BY YYYY, SEQ
+		                         ) 
+		                   GROUP BY YYYY, SEQ
+		                 ) D                                      
+		           WHERE a.jum_code = b.buseo
+		             AND a.yyyy = c.yyyy(+)
+		             AND a.seq = c.seq(+)
+		             AND a.yyyy = d.yyyy(+)
+		             AND a.seq = d.seq(+)
+		             AND jum_code IN  (SELECT BUSEO FROM V_IA03 WHERE (BUSEO LIKE #{jumCode} OR PRE_BUSEO LIKE #{jumCode}))
+		             AND sec_code LIKE #{searchSecCode}
+		             AND esti_date BETWEEN #{startDt} AND #{endDt}
+		             )
+		ORDER BY jum_code, esti_date, sec_code, geo_code, market_name
+	</select>
+	
+	<select id="selectCollateralListDetail" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT  YYYY, SEQ, ATTR_02, BUSEO_NAME, NAME||'('||NVL(LEADER_NAME, JIKGUB_NAME)||')' AS NAME,  
+		        NVL(LEADER_NAME, JIKGUB_NAME)  LEADER_NAME, ATTR_02||'_'||ATTR_03 AS ATTR_03, APPR_DATETIME
+		FROM (SELECT  YYYY, SEQ, APPR_DATETIME, APPR_SABUN, PROC_DIV
+		      FROM ES03
+		      WHERE YYYY = #{targetYyyy}
+		      AND   SEQ = #{targetSeq}
+		      UNION
+		      SELECT  YYYY, SEQ, APPR_DATETIME, APPR_SABUN, PROC_DIV
+		      FROM ES05
+		      WHERE YYYY = #{targetYyyy}
+		      AND   SEQ = #{targetSeq}) A, ES00 B, V_IA01_LEADER C
+		WHERE A.APPR_SABUN = C.SABUN
+		AND   A.PROC_DIV = B.CD_CODE
+		AND  B.CD_DIV = '172'
+		ORDER BY  A.APPR_DATETIME
+	</select>
+	
+	<select id="selectCollateralListDrillDow" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT *
+		FROM (SELECT YYYY, SEQ
+		      , SUBSTR(APPR_DATETIME,1,8) AS "business_request_payment_date"
+		      , TO_CHAR(TO_DATE(SUBSTR(APPR_DATETIME,1,8),'YYYYMMDD') + 3,'YYYYMMDD') AS "business_part_receipt_closing"
+		      , TO_CHAR(TO_DATE(SUBSTR(APPR_DATETIME,1,8),'YYYYMMDD') + 10,'YYYYMMDD') AS "business_part_emotional_closing"
+		      FROM ES05
+		      WHERE YYYY = #{targetYyyy}
+		      AND   SEQ = #{targetSeq}
+		      AND   PROC_DIV = '59') A,
+		      (SELECT YYYY, SEQ
+		      , SUBSTR(APPR_DATETIME,1,8) AS "manager_part_payment_date"
+		      , TO_CHAR(TO_DATE(SUBSTR(APPR_DATETIME,1,8),'YYYYMMDD') + 7,'YYYYMMDD') AS "managing_part_receipt_closing"
+		      , TO_CHAR(TO_DATE(SUBSTR(APPR_DATETIME,1,8),'YYYYMMDD') + 14,'YYYYMMDD') AS "managing_part_emotional_closing"
+		      FROM ES03
+		      WHERE YYYY = #{targetYyyy}
+		      AND   SEQ = #{targetSeq}
+		      AND   PROC_DIV = '19') B
+		WHERE A.YYYY = B.YYYY(+)
+		AND   A.SEQ = B.SEQ(+)
+	</select>
+	
+</mapper>

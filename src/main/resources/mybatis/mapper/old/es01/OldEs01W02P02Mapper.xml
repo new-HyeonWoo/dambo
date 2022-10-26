@@ -1,0 +1,860 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.old.es01.repository.OldEs01W02P02Mapper">
+
+<select id="selectEs01_w02_p02DIV301List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CD_CODE, CD_DESC, 
+       TO_NUMBER(ATTR_02) AS NUM_YEAR
+		  FROM ES00
+		 WHERE ATTR_00 = 'DIV301' 
+		   AND CD_CODE BETWEEN '34000' AND '35999'
+		   AND USE_YN  = 'Y'
+	</select>
+	<select id="selectEs01_w02_p02DIV185List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CD_CODE,
+		       CD_DESC,
+		       TO_NUMBER(NVL(ATTR_08,0)) AS IDX
+		  FROM ES00
+		 WHERE ATTR_00 = 'DIV185'
+		   AND USE_YN  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV173List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CD_CODE,
+	       CD_DESC,
+	       TO_NUMBER(ATTR_08) AS IDX
+		  FROM ES00
+		 WHERE ATTR_00 = 'DIV173'
+		   AND USE_YN  = 'Y'
+	</select>
+	<select id="selectEs01_w02_p02DIV111List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CD_CODE, CD_DESC, TO_NUMBER(ATTR_08) AS IDX
+		  FROM ES00 A
+		 WHERE ATTR_00 = 'DIV111'
+		   AND USE_YN = 'Y'
+	</select>
+	<select id="selectEs01_w02_p02DIV107List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CD_CODE,
+		       '전체 '|| CD_CODE ||'층 중 ' AS CD_DESC,
+		       '전체 '|| CD_CODE ||'층' AS CD_DESC_가격사례
+		  FROM (
+		        SELECT DISTINCT ATTR_02 AS CD_CODE
+		          FROM ES00
+		         WHERE ATTR_00 = 'DIV107'
+		           AND USE_YN  = 'Y'
+		         ORDER BY LPAD(ATTR_02, 2, '0')
+		       )
+
+	</select>
+	<select id="selectEs01_w02_p02DIV107FloorList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CD_CODE,
+       NVL(TRIM(SUBSTRB(CD_DESC,12,5)), ATTR_02)  CD_DESC,
+       DECODE(CD_CODE, '000000', CD_DESC, '전체 '|| ATTR_02||'층중 지상 '|| TRIM(SUBSTRB(CD_DESC,12,5))||'에 위치') AS CD_DESC1,
+      <!--- 등급에 따른 지수 Find -->
+       (SELECT TO_NUMBER(ATTR_08)
+          FROM ES00
+         WHERE ATTR_00 = 'DIV108'
+           AND CD_CODE = A.ATTR_01
+           AND USE_YN = 'Y'
+       ) AS IDX
+	  FROM ES00 A
+	 WHERE ATTR_00 = 'DIV107'
+	   <!-- AND ATTR_02 = [총층수]  -->
+	   AND USE_YN  = 'Y'
+	</select>
+	<select id="selectEs01_w02_p02DIV154List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CD_CODE,
+		       CD_DESC,
+		       TO_NUMBER(ATTR_08) AS IDX,
+		       ATTR_08 AS IDX_c
+		  FROM ES00
+		 WHERE ATTR_00 = 'DIV154'
+		   AND ATTR_01 = 'Y'
+		   AND USE_YN  = 'Y'
+	</select>
+	<select id="selectEs01_w02_p02157List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT cd_code, cd_desc
+		  FROM es00
+		 WHERE cd_div = '157' AND use_yn = 'Y'
+	</select>
+	
+	<select id="selectEs01_w02_p02DIV177List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CD_CODE,
+		       CD_DESC||': '||ATTR_08 AS CD_DESC,
+		       CD_DESC AS CD_DESC1,
+		       TO_NUMBER(ATTR_08) AS IDX
+		  FROM ES00
+		 WHERE ATTR_00 = 'DIV177'
+		   AND ATTR_01 = '0'
+		   AND USE_YN  = 'Y'
+	</select>
+	<select id="selectEs01_w02_p02Via03List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT '%' buseo, '전체' buseo_name
+		  FROM DUAL
+		UNION ALL
+		SELECT buseo, smallname buseo_name
+		  FROM v_ia03
+		 WHERE uses = '0' AND SEARCH_COMBO_USE = 'Y' AND buseo <![CDATA[ <>  ]]> '9000'
+		ORDER BY BUSEO
+	</select>
+	<select id="selectEs01_w02_p02Es2011ist" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT YYYY                  <!--            AS  년도                         ,       --> 
+       ,SEQ                           <!--    AS  일련번호                     ,        -->
+       ,JUSO1                         <!--    AS  부동산표시_주소1             , -->       
+       ,JUSO2                         <!--    AS  부동산표시_주소2             ,    -->    
+       ,LOT_NUM                       <!--    AS  지번                         ,        -->
+       ,CB_NAME                       <!--    AS  집합건물의명칭               ,        -->
+       ,DONG                          <!--    AS  동수                         ,        -->
+       ,HO                            <!--    AS  호수                         ,        -->
+       ,LCATEGORY                     <!--    AS  지목                         ,    -->
+       ,LG_OWNER_YN                   <!--    AS  대지권소유권보유여부         ,   -->     
+       ,LG_OWNER                      <!--    AS  대지권소유권                 ,    -->
+       ,LG_SIZE                       <!--    AS  대지권의목적                 ,-->
+       ,POSS_A_AREA                   <!--    AS  가임대보증금적용지역         , -->   
+       ,CB_STRUC                      <!--    AS  집합건물_구조                ,    -->
+       ,CB_ROOF                       <!--    AS  집합건물_지붕                ,    -->
+       ,CB_UPFLOOR                    <!--    AS  집합건물_지상                ,       --> 
+       ,CB_DNFLOOR                    <!--    AS  집합건물_지하                ,        -->
+       ,CB_FLOOR                      <!--    AS  집합건물_해당층              ,        -->
+       ,CB_YYYY                        <!--   AS  집합건물_건축년도            ,        -->
+       ,ELAP_YEAR                     <!--    AS  집합건물_경과년도            ,        -->
+       ,NUM_HOUSEHOLD                 <!--    AS  집합건물_세대수              ,        -->
+       ,NUM_YEAR                      <!--    AS  집합건물_내용년수            ,        -->
+       ,CB_EXM_SIZE                   <!--    AS  집합건물_전유면적_M2         ,    -->    
+       ,CB_EXM_SIZE_PY                <!--    AS  집합건물_전유면적_평         ,        -->
+       ,CB_PUB_SIZE                   <!--    AS  집합건물_공유면적_M2         ,     -->   
+       ,CB_PUB_SIZE_PY                 <!--   AS  집합건물_공유면적_평         ,        -->
+       ,CB_TOT_SIZE                    <!--   AS  집합건물_면적합계_M2         ,     -->   
+       ,CB_TOT_SIZE_PY                  <!--  AS  집합건물_면적합계_평         ,        -->
+       ,OF_GU                           <!--  AS  오피스텔_용도                ,    -->
+       ,OF_HEATER_YN                    <!--  AS  오피스텔_바닥난방            ,    -->
+       ,TO_CHAR(TO_NUMBER(SUBSTRB(OF_FLOOR,1,3))) OF_FLOOR_SUB<!-- AS  오피스텔_상가_총층수    -->             
+       ,OF_FLOOR                        <!--  AS  오피스텔_상가_층수           ,        -->
+       ,OF_FLOOR_IDX                    <!--  AS  오피스텔_상가_층별지수       ,        -->
+       ,OF_PLACE                        <!--  AS  오피스텔_상가_위치           ,    -->
+       ,OF_PLACE_IDX                    <!--  AS  오피스텔_상가_위치지수       ,    -->    
+       ,OF_JANGA_RATE                   <!--  AS  오피스텔_상가_잔가율         ,  -->  
+       ,OF_ROAD_CODE                    <!--  AS  오피스텔_상가_도로조건       ,   -->     
+       ,OF_ROAD_IDX                     <!--  AS  오피스텔_상가_도로조건지수   ,   -->     
+       ,OF_ACCESS_CODE                  <!--  AS  오피스텔_상가_접근조건       ,  -->  
+       ,OF_ACCESS_IDX                   <!--  AS  오피스텔_상가_접근조건지수   ,  -->  
+       ,OF_ETC                           <!-- AS  오피스텔_상가_기타조건       ,   -->     
+       ,OF_ETC_IDX                       <!-- AS  오피스텔_상가_기타조건지수   ,  -->  
+       ,REGI_AMT                        <!--  AS  실거래가격_총액              , -->
+       ,REGI_DAN                        <!--  AS  실거래가격_단가_M2           , -->
+       ,REGI_DAN_PY                     <!--  AS  실거래가격_단가_평           ,-->
+       ,BASE_AMT                        <!--  AS  기준시가_총액                ,    -->
+       ,BASE_DAN                        <!--  AS  기준시가_단가_M2             , -->    
+       ,BASE_DAN_PY                     <!--  AS  기준시가_단가_평             ,    -->
+       ,SEC_REGI_SIZE                   <!--  AS  담보제공비율_등기부상전용면적,    -->
+       ,SEC_NUME                        <!--  AS  담보제공비율_분자            ,    -->
+       ,SEC_DENO                        <!--  AS  담보제공비율_분모            ,    -->
+       ,SEC_RATE                         <!-- AS  담보제공비율_비율            ,    -->
+       ,SEC_OFFER_SIZE                   <!-- AS  담보제공비율_담보제공면적    ,    -->
+       ,SEC_DESC                         <!-- AS  담보제공비율_사유                -->
+	  FROM ES2011
+	 WHERE YYYY = #{yyyy}
+	   AND SEQ  = #{seq} 
+                                             
+	</select>
+	<select id="selectEs01_w02_p02Es2301ist" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT YYYY           <!--   AS 년도                      ,  -->                        
+		       ,SEQ              <!--   AS 일련번호                  ,          -->                    
+		       ,P_BID_RATE        <!--  AS 당해지역낙찰가율          ,    -->                          
+		       ,K_BID_RATE        <!--  AS 유사부동산낙찰가율        , -->                             
+		       ,B_BID_RATE        <!--  AS 기준낙찰가율              , -->     
+		       ,APPL_RATE         <!--  AS 적용할낙찰가율            , -->     
+		       ,RIGHTS_CODE       <!--  AS 점유자의권리형태          ,  -->       
+		       ,RIGHTS_RATE       <!--  AS 점유자의권리형태_적용률   ,  -->                            
+		       ,INCREASE_AMT     <!--   AS 평가가격                  ,  -->                            
+		       ,PL_MIN_BID_AMT    <!--  AS 제1차예상최저입찰가       ,  -->            
+		       ,PL_BID_AMT        <!--  AS 예상낙찰가                ,  -->                            
+		       ,APT_SCALE         <!--  AS 아파트_규모               , -->     
+		       ,APT_SCALE_RATE    <!--  AS 아파트_규모_적용률        ,  -->                  
+		       ,APT_EXM_SIZE      <!--  AS 아파트_면적               , -->     
+		       ,APT_EXM_RATE      <!--  AS 아파트_면적_적용률        ,  -->                  
+		       ,APT_FLOOR_CODE    <!--  AS 아파트_위치               , -->     
+		       ,APT_FLOOR_RATE    <!--  AS 아파트_위치_적용률        ,  -->          
+		       ,APT_ELAP_CODE    <!--   AS 아파트_경과년도           , -->     
+		       ,APT_ELAP_RATE     <!--  AS 아파트_경과년도_적용률    ,   -->                   
+		       ,MUL_ADJ_ROAD      <!--  AS 다세대연립_폭             , -->     
+		       ,MUL_ADJ_RATE     <!--   AS 다세대연립_폭_적용률      ,    -->               
+		       ,MUL_EXM_SIZE     <!--   AS 다세대연립_면적           , -->     
+		       ,MUL_EXM_RATE      <!--  AS 다세대연립_면적_적용률    ,  -->                 
+		       ,MUL_FLOOR_CODE    <!--  AS 다세대연립_위치           , -->     
+		       ,MUL_FLOOR_RATE    <!--  AS 다세대연립_위치_적용률    ,   -->        
+		       ,MUL_ELAP_CODE     <!--  AS 다세대연립_경과년도       , -->     
+		       ,MUL_ELAP_RATE     <!--  AS 다세대연립_경과년도_적용률,   -->                  
+		       ,OFF_EXM_SIZE      <!--  AS 오피스텔_면적             , -->     
+		       ,OFF_EXM_RATE      <!--  AS 오피스텔_면적_적용률      ,  -->                  
+		       ,OFF_CONV_LOCATED  <!--  AS 오피스텔_입지조건         ,   -->          
+		       ,OFF_CONV_RATE     <!--  AS 오피스텔_입지조건_적용률  ,  -->                            
+		       ,OFF_FLOOR_CODE    <!--  AS 오피스텔_위치             , -->     
+		       ,OFF_FLOOR_RATE    <!--  AS 오피스텔_위치_적용률      ,  -->          
+		       ,OFF_ELAP_CODE     <!--  AS 오피스텔_경과년도         , -->     
+		       ,OFF_ELAP_RATE     <!--  AS 오피스텔_경과년도_적용률  , -->                     
+		       ,BUS_APPRO_CODE    <!--  AS 상업용_접근성             ,   -->     
+		       ,BUS_APPRO_RATE   <!--   AS 상업용_접근성_적용률      ,   -->                     
+		       ,BUS_FLOOR_LOC     <!--  AS 상업용_층별위치           ,   -->     
+		       ,BUS_FLOOR_RATE   <!--   AS 상업용_층별위치_적용률    ,  -->                      
+		       ,BUS_COMM_DEV     <!--   AS 상업용_발달정도           ,  -->     
+		       ,BUS_COMM_RATE    <!--   AS 상업용_발달정도_적용률    ,  -->                      
+		       ,BUS_ELAP_CODE    <!--   AS 상업용_경과년도           , -->     
+		       ,BUS_ELAP_RATE    <!--   AS 상업용_경과년도_적용률         -->                 
+		  FROM ES2301
+			 WHERE YYYY = #{yyyy}
+			   AND SEQ  = #{seq} 
+                                             
+	</select>
+	<select id="selectEs01_w02_p02Es2182ist" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT YYYY              <!-- AS 년도                        ,-->   
+		       ,SEQ               <!-- AS 일련번호                    ,-->   
+		       ,CHECK_YN_1        <!-- AS 지하층_선택여부             ,-->   
+		       ,ONLY_SIZE_1       <!-- AS 지하층_전용면적             ,-->   
+		       ,CURR_MIN_AMT_1    <!-- AS 지하층_시세조사_최저가      ,-->   
+		       ,CURR_MAX_AMT_1    <!-- AS 지하층_시세조사_최고가      ,-->   
+		       ,CURR_AVG_AMT_1    <!-- AS 지하층_시세조사_평균가격    ,-->   
+		       ,CURR_SIZE_DAN_1   <!-- AS 지하층_시세조사_전용면적단가,-->   
+		       ,LEASE_AMT_1       <!-- AS 지하층_전세수준_전세가      ,-->   
+		       ,LEASE_RATE_1      <!-- AS 지하층_전세수준_비율        ,-->   
+		       ,CHECK_YN_2        <!-- AS 기준층_선택여부             ,-->   
+		       ,ONLY_SIZE_2       <!-- AS 기준층_전용면적             ,-->   
+		       ,CURR_MIN_AMT_2    <!-- AS 기준층_시세조사_최저가      ,-->   
+		       ,CURR_MAX_AMT_2    <!-- AS 기준층_시세조사_최고가      ,-->   
+		       ,CURR_AVG_AMT_2    <!-- AS 기준층_시세조사_평균가격    ,-->   
+		       ,CURR_SIZE_DAN_2   <!-- AS 기준층_시세조사_전용면적단가,-->   
+		       ,LEASE_AMT_2       <!-- AS 기준층_전세수준_전세가      ,-->   
+		       ,LEASE_RATE_2      <!-- AS 기준층_전세수준_비율        ,-->   
+		       ,CHECK_YN_3        <!-- AS 최고층_선택여부             ,-->   
+		       ,ONLY_SIZE_3       <!-- AS 최고층_전용면적             ,-->   
+		       ,CURR_MIN_AMT_3    <!-- AS 최고층_시세조사_최저가      ,-->   
+		       ,CURR_MAX_AMT_3    <!-- AS 최고층_시세조사_최고가      ,-->   
+		       ,CURR_AVG_AMT_3    <!-- AS 최고층_시세조사_평균가격    ,-->   
+		       ,CURR_SIZE_DAN_3   <!-- AS 최고층_시세조사_전용면적단가,-->   
+		       ,LEASE_AMT_3       <!-- AS 최고층_전세수준_전세가      ,-->   
+		       ,LEASE_RATE_3      <!-- AS 최고층_전세수준_비율-->   
+		  FROM ES2182
+		 WHERE YYYY = #{yyyy}
+			   AND SEQ  = #{seq} 
+	</select>
+	<select id="selectEs01_w02_p02Es2112ist" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT YYYY                             <!--   AS 년도        ,--> 
+		       ,SEQ                              <!--   AS 일련번호    ,--> 
+		       ,LN_SEQ                            <!--  AS 사례번호   ,--> 
+		       , (SELECT ATTR_01 FROM ES00 WHERE ATTR_00 ='DIV999' AND CD_CODE = LN_SEQ) AS LN_SEQ_NM
+		       ,AU_NO                             <!--  AS 경매사건번호,--> 
+		       ,JUSO                               <!-- AS 소재지      ,--> 
+		       ,''                         as JUSOPop        <!-- AS 주소팝업    , --> 
+		       ,FLOOR_CODE                         <!-- AS 층수_코드   ,--> 
+		       ,FLOOR_RATE                         <!-- AS 층수_비준율 ,--> 
+		       ,ONLY_SIZE                           <!--AS 전용면적    ,--> 
+		       ,B_YEAR                              <!--AS 건축년도    ,--> 
+		       ,ELAP_YEAR                           <!--AS 경과년도    ,--> 
+		       ,CB_STRUC                            <!--AS 구조        ,--> 
+		       ,NUM_YEAR                            <!--AS 내용년수    ,--> 
+		       ,LAW_AMT                             <!--AS 법원감정가  ,--> 
+		       ,CURR_SIZE_DAN                       <!--AS 전용면적단가,--> 
+		       ,BID_AMT                             <!--AS 낙찰가격    ,--> 
+		       ,BID_RATE                            <!--AS 낙찰가율--> 
+		  FROM ES2112                                             
+		 WHERE YYYY = #{yyyy}
+			   AND SEQ  = #{seq} 
+	</select>
+	<select id="selectEs01_w02_p02Es2122ist" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT YYYY            
+		       ,SEQ             
+		       ,EXAMPLE_GU       													
+		       ,DECODE(EXAMPLE_GU, '1', '가격사례', '2', '경매사례') AS EXAMPLE_GU_NM 		
+		       ,LN_SEQ        														
+		       ,(SELECT DECODE(EXAMPLE_GU, '1', CD_CODE, '2', ATTR_01)
+                       FROM ES00
+                      WHERE ATTR_00 = 'DIV999'
+                        AND CD_CODE = LN_SEQ) AS EXAMPLE_GU_CD	
+               ,(SELECT JUSO
+		          FROM (SELECT 1 AS GUBUN, YYYY, SEQ, LN_SEQ, JUSO FROM ES2142 UNION ALL
+		                SELECT 2 AS GUBUN, YYYY, SEQ, LN_SEQ, JUSO FROM ES2112
+		               ) B
+		         WHERE B.YYYY = A.YYYY
+		           AND B.SEQ  = A.SEQ
+		           AND B.LN_SEQ = A.LN_SEQ
+		           AND B.GUBUN  = A.EXAMPLE_GU) AS JUSO 
+		       ,JUSO_C     
+		       ,ONLY_SIZE       
+		       ,CURR_SIZE_DAN   
+		       ,PRICE_DATE_M    
+		       ,PRICE_RATE_M    
+		       ,PRICE_DATE_S    
+		       ,PRICE_RATE_S    
+		       ,PRICE_RATE_C    
+		       ,MIN_AMT         
+		       ,MAX_AMT         
+		       ,FLOOR_M_CODE    
+		       ,FLOOR_M_RATE    
+		       ,FLOOR_S_CODE    
+		       ,FLOOR_S_RATE    
+		       ,FLOOR_C         
+		       ,OF_JANGA_RATE_M 
+		       ,OF_JANGA_RATE_S 
+		       ,OF_JANGA_RATE_C 
+		       ,FACTOR_TOT      
+		       ,APAS_DAN        
+		       ,APPL_DAN        
+		       ,HWANSAN_AMT     
+		  FROM ES2122   A                                    
+		 WHERE YYYY = #{yyyy}
+			   AND SEQ  = #{seq} 
+	</select>
+	<select id="selectEs01_w02_p02Es2122Totalist" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT EXAMPLE_GU      <!--  AS 사례구분   , -->
+		       ,DECODE(EXAMPLE_GU, '1', '가격사례', '2', '경매사례') AS EXAMPLE_GU_NM <!--  사례구분명, -->
+		       ,LN_SEQ             <!-- 사례번호              , -->
+		       ,(SELECT DECODE(EXAMPLE_GU, '1', CD_CODE, '2', ATTR_01)
+                       FROM ES00
+                      WHERE ATTR_00 = 'DIV999'
+                        AND CD_CODE = LN_SEQ) AS EXAMPLE_GU_CD<!--  사례번호명,  -->
+		       ,(SELECT JUSO
+		          FROM (SELECT 1 AS GUBUN, YYYY, SEQ, LN_SEQ, JUSO FROM ES2142 UNION ALL
+		                SELECT 2 AS GUBUN, YYYY, SEQ, LN_SEQ, JUSO FROM ES2112
+		               ) B
+		         WHERE B.YYYY = A.YYYY
+		           AND B.SEQ  = A.SEQ
+		           AND B.LN_SEQ = A.LN_SEQ
+		           AND B.GUBUN  = A.EXAMPLE_GU) AS JUSO <!-- 소재지,-->
+		       ,JUSO_C         <!--  AS 소재지_비교치       ,-->
+		       ,ONLY_SIZE       <!-- AS 전용면적            ,-->
+		       ,CURR_SIZE_DAN   <!-- AS 전용면적단가        ,-->
+		       ,PRICE_DATE_S    <!-- AS 시점_사례_일자      ,-->
+		       ,PRICE_RATE_C    <!-- AS 시점_비교치         ,-->
+		       ,MIN_AMT         <!-- AS 최저금액            ,-->
+		       ,MAX_AMT         <!-- AS 최고금액            ,-->
+		       ,FLOOR_M_CODE    <!-- AS 층별비교_본건       ,-->
+		       ,FLOOR_M_RATE    <!-- AS 층별비교_본건_적용율,-->
+		       ,FLOOR_S_CODE   <!--  AS 층별비교_사례       ,-->
+		       ,FLOOR_S_RATE   <!--  AS 층별비교_사례_적용율,-->
+		       ,FLOOR_C        <!--  AS 층별비교_비교치     ,-->
+		       ,OF_JANGA_RATE_M <!-- AS 잔가율비교_본건     ,-->
+		       ,OF_JANGA_RATE_S <!-- AS 잔가율비교_사례     ,-->
+		       ,OF_JANGA_RATE_C <!-- AS 잔가율비교_비교치   ,-->
+		       ,FACTOR_TOT      <!-- AS 요인합계            ,-->
+		       ,APAS_DAN        <!-- AS 산정단가            ,-->
+		       ,APPL_DAN        <!-- AS 적용단가            ,-->
+		       ,HWANSAN_AMT     <!-- AS 환산금액 -->
+		  FROM ES2122 A                                         
+		 WHERE YYYY = #{yyyy}
+			   AND SEQ  = #{seq} 
+	</select>
+	<select id="selectEs01_w02_p02Es2102List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT YYYY             <!--  AS 년도              , -->
+		       ,SEQ              <!-- AS 일련번호          , -->
+		       ,MA_MIN_AMT       <!-- AS 본건_최저가격     , -->
+		       ,MA_MIN_SIZE_DAN  <!-- AS 본건_최저가격_단가, -->
+		       ,MA_MAX_AMT       <!-- AS 본건_최고가격     , -->
+		       ,MA_MAX_SIZE_DAN  <!-- AS 본건_최고가격_단가, -->
+		       ,MA_RATE          <!-- AS 본건_비율         , -->
+		       ,PR_MIN_AMT       <!-- AS 가격_최저가격     , -->
+		       ,PR_MIN_SIZE_DAN  <!-- AS 가격_최저가격_단가, -->
+		       ,PR_MAX_AMT       <!-- AS 가격_최고가격     , -->
+		       ,PR_MAX_SIZE_DAN  <!-- AS 가격_최고가격_단가, -->
+		       ,PR_RATE          <!-- AS 가격_비율         , -->
+		       ,AU_MIN_AMT       <!-- AS 경매_최저가격     , -->
+		       ,AU_MIN_SIZE_DAN  <!-- AS 경매_최저가격_단가, -->
+		       ,AU_MAX_AMT       <!-- AS 경매_최고가격     , -->
+		       ,AU_MAX_SIZE_DAN  <!-- AS 경매_최고가격_단가, -->
+		       ,AU_RATE          <!-- AS 경매_비율         , -->
+		       ,APPL_AMT         <!-- AS 결정가격          , -->
+		       ,APPL_SIZE_DAN    <!-- AS 결정가격_단가     , -->
+		       ,INT_REP_SIZE     <!-- AS 인테리어_면적     , -->
+		       ,INT_REP_SIZE_PY  <!-- AS 인테리어_면적_평  , -->
+		       ,INT_REP_DAN_CODE  <!--AS 인테리어_단가_코드, -->
+		       ,INT_REP_DAN      <!-- AS 인테리어_단가     ,-->
+		       ,INT_REP_AMT      <!-- AS 인테리어_금액     ,-->
+		       ,INC_AMT          <!-- AS 평가가격          ,-->
+		       ,INC_SIZE_DAN     <!-- AS 평가가격_단가     ,-->
+		       ,FNL_INC_AMT      <!-- AS 최종평가가격-->
+		  FROM ES2102                                       
+			 WHERE YYYY = #{yyyy}
+			   AND SEQ  = #{seq} 
+	</select>
+	<select id="selectEs01_w02_p02Es2142List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT YYYY 
+		       ,SEQ  
+		       ,LN_SEQ                                
+		       ,JUSO                                    
+		       ,LOT_NUM                                   
+		       ,DISTANCE                         
+		       ,HOUSE_CNT                               
+		       ,B_YEAR                                
+		       ,ELAP_YEAR                             
+		       ,CB_STRUC                                  
+		       ,NUM_YEAR                            
+		       ,CHECK_YN_1                     
+		       ,ONLY_SIZE_1                    
+		       ,CURR_MIN_AMT_1          
+		       ,CURR_MAX_AMT_1         
+		       ,CURR_AVG_AMT_1        
+		       ,CURR_SIZE_DAN_1   
+		       ,LEASE_AMT_1            
+		       ,LEASE_RATE_1             
+		       ,CHECK_YN_2           
+		       ,ONLY_SIZE_2              
+		       ,CURR_MIN_AMT_2        
+		       ,CURR_MAX_AMT_2      
+		       ,CURR_AVG_AMT_2    
+		       ,CURR_SIZE_DAN_2   
+		       ,LEASE_AMT_2       
+		       ,LEASE_RATE_2         
+		       ,CHECK_YN_3            
+		       ,ONLY_SIZE_3         
+		       ,CURR_MIN_AMT_3       
+		       ,CURR_MAX_AMT_3      
+		       ,CURR_AVG_AMT_3     
+		       ,CURR_SIZE_DAN_3   
+		       ,LEASE_AMT_3          
+		       ,LEASE_RATE_3      
+		  FROM ES2142                                     
+			 WHERE YYYY = #{yyyy}
+			   AND SEQ  = #{seq} 
+	</select>
+	<update id="es01_w02_es2182_save" >
+		<![CDATA[
+		 MERGE
+				INTO
+				        ES2182 A
+				USING
+				        (
+				                SELECT
+				                        #{yyyy}   AS YYYY,
+				                        #{seq}  AS SEQ
+				                FROM
+				                        DUAL) B
+				ON
+				        (
+				                A.YYYY = B.YYYY
+				        AND     A.SEQ  = B.SEQ)
+				WHEN MATCHED
+				        THEN
+				UPDATE
+				SET
+				        CHECK_YN_1      = #{checkYn1} ,
+				        ONLY_SIZE_1     = #{onlySize1} ,
+				        CURR_MIN_AMT_1  = #{currMinAmt1},
+				        CURR_MAX_AMT_1  = #{currMaxAmt1},
+				        CURR_AVG_AMT_1  = #{currAvgAmt1},
+				        CURR_SIZE_DAN_1 = #{currSizeDan1},
+				        LEASE_AMT_1     = #{leaseAmt1},
+				        LEASE_RATE_1    = #{leaseRate1},
+				        CHECK_YN_2      = #{checkYn2} ,
+				        ONLY_SIZE_2     = #{onlySize2} ,
+				        CURR_MIN_AMT_2  = #{currMinAmt2},
+				        CURR_MAX_AMT_2  = #{currMaxAmt2},
+				        CURR_AVG_AMT_2  = #{currAvgAmt2},
+				        CURR_SIZE_DAN_2 = #{currSizeDan2},
+				        LEASE_AMT_2     = #{leaseAmt2},
+				        LEASE_RATE_2    = #{leaseRate2},
+				        CHECK_YN_3      = #{checkYn3},
+				        ONLY_SIZE_3     = #{onlySize3},
+				        CURR_MIN_AMT_3  = #{currMinAmt3},
+				        CURR_MAX_AMT_3  = #{currMaxAmt3},
+				        CURR_AVG_AMT_3  = #{currAvgAmt3},
+				        CURR_SIZE_DAN_3 = #{currSizeDan3},
+				        LEASE_AMT_3     =  #{leaseAmt3},
+				        LEASE_RATE_3    = #{leaseRate3} 
+				WHEN NOT MATCHED
+				        THEN
+				INSERT
+				        (
+				                YYYY           ,
+				                SEQ            ,
+				                CHECK_YN_1     ,
+				                ONLY_SIZE_1    ,
+				                CURR_MIN_AMT_1 ,
+				                CURR_MAX_AMT_1 ,
+				                CURR_AVG_AMT_1 ,
+				                CURR_SIZE_DAN_1,
+				                LEASE_AMT_1    ,
+				                LEASE_RATE_1   ,
+				                CHECK_YN_2     ,
+				                ONLY_SIZE_2    ,
+				                CURR_MIN_AMT_2 ,
+				                CURR_MAX_AMT_2 ,
+				                CURR_AVG_AMT_2 ,
+				                CURR_SIZE_DAN_2,
+				                LEASE_AMT_2    ,
+				                LEASE_RATE_2   ,
+				                CHECK_YN_3     ,
+				                ONLY_SIZE_3    ,
+				                CURR_MIN_AMT_3 ,
+				                CURR_MAX_AMT_3 ,
+				                CURR_AVG_AMT_3 ,
+				                CURR_SIZE_DAN_3,
+				                LEASE_AMT_3    ,
+				                LEASE_RATE_3
+				        )
+				        VALUES
+				        (
+				                #{yyyy},
+				                #{seq},
+				                #{checkYn1},
+				                #{onlySize1},
+				                #{currMinAmt1},
+				                #{currMaxAmt1},
+				                #{currAvgAmt1},
+				                #{currSizeDan1},
+				                #{leaseAmt1},
+				                #{leaseRate1},
+				                #{checkYn2} ,
+				                #{onlySize2} ,
+				                #{currMinAmt2} ,
+				                #{currMaxAmt2} ,
+				                #{currAvgAmt2} ,
+				                #{currSizeDan2},
+				                #{leaseAmt2} ,
+				                #{leaseRate2} ,
+				                #{checkYn3} ,
+				                #{onlySize3} ,
+				                #{currMinAmt3} ,
+				                #{currMaxAmt3} ,
+				                #{currAvgAmt3} ,
+				                #{currSizeDan3},
+				                #{leaseAmt3} ,
+				                #{leaseRate3}
+				        )
+		
+		]]>
+	</update>
+	
+	<update id="es01_w02_es2102_save" >
+		<![CDATA[
+		 MERGE
+			INTO
+			        ES2102 A
+			USING
+			        (
+			                SELECT
+			                        #{yyyy}   AS YYYY,
+				                    #{seq}  AS SEQ
+			                FROM
+			                        DUAL) B
+			ON
+			        (
+			                A.YYYY = B.YYYY
+			        AND     A.SEQ  = B.SEQ)
+			WHEN MATCHED
+			        THEN
+			UPDATE
+			SET
+			        MA_MIN_AMT      = #{maMinAmt},
+			        MA_MIN_SIZE_DAN = #{maMinSizeDan},
+			        MA_MAX_AMT      = #{maMaxAmt},
+			        MA_MAX_SIZE_DAN = #{maMaxSizeDan},
+			        MA_RATE         = #{maRate},
+			        PR_MIN_AMT      = #{prMinAmt},
+			        PR_MIN_SIZE_DAN = #{prMinSizeDan},
+			        PR_MAX_AMT      = #{prMaxAmt},
+			        PR_MAX_SIZE_DAN = #{prMaxSizeDan},
+			        PR_RATE         = #{prRate},
+			        AU_MIN_AMT      = #{auMinAmt},
+			        AU_MIN_SIZE_DAN = #{auMinSizeDan},
+			        AU_MAX_AMT      = #{auMaxAmt},
+			        AU_MAX_SIZE_DAN = #{auMaxSizeDan},
+			        AU_RATE         = #{auRate},
+			        APPL_AMT        = #{applAmt},
+			        APPL_SIZE_DAN   = #{applSizeDan},
+			        INT_REP_SIZE    = #{intRepSize},
+			        INT_REP_SIZE_PY = #{intRepSizePy},
+			        INT_REP_DAN_CODE= #{interiorCosts},
+			        INT_REP_DAN     = #{intRepDan},
+			        INT_REP_AMT     = #{intRepAmt},
+			        INC_AMT         = #{incAmt},
+			        INC_SIZE_DAN    = #{applSizeDan},
+			        FNL_INC_AMT     = #{fnlIncAmt}
+			WHEN NOT MATCHED
+			        THEN
+			INSERT
+			        (
+			                YYYY            ,
+			                SEQ             ,
+			                MA_MIN_AMT      ,
+			                MA_MIN_SIZE_DAN ,
+			                MA_MAX_AMT      ,
+			                MA_MAX_SIZE_DAN ,
+			                MA_RATE         ,
+			                PR_MIN_AMT      ,
+			                PR_MIN_SIZE_DAN ,
+			                PR_MAX_AMT      ,
+			                PR_MAX_SIZE_DAN ,
+			                PR_RATE         ,
+			                AU_MIN_AMT      ,
+			                AU_MIN_SIZE_DAN ,
+			                AU_MAX_AMT      ,
+			                AU_MAX_SIZE_DAN ,
+			                AU_RATE         ,
+			                APPL_AMT        ,
+			                APPL_SIZE_DAN   ,
+			                INT_REP_SIZE    ,
+			                INT_REP_SIZE_PY ,
+			                INT_REP_DAN_CODE,
+			                INT_REP_DAN     ,
+			                INT_REP_AMT     ,
+			                INC_AMT         ,
+			                INC_SIZE_DAN    ,
+			                FNL_INC_AMT
+			        )
+			        VALUES
+			        (
+			                #{yyyy},
+			                #{seq},
+			                #{maMinAmt},
+			                #{maMinSizeDan},
+			                #{maMaxAmt},
+			                #{maMaxSizeDan},
+			                #{maRate},
+			                #{prMinAmt},
+			                #{prMinSizeDan},
+			                #{prMaxAmt},
+			                #{prMaxSizeDan},
+			                #{prRate},
+			                #{auMinAmt},
+			                #{auMinSizeDan},
+			                #{auMaxAmt},
+			                #{auMaxSizeDan},
+			                #{auRate},
+			                #{applAmt},
+			                #{applSizeDan},
+			                #{intRepSize},
+			                #{intRepSizePy},
+			                #{interiorCosts},
+			                #{intRepDan},
+			                #{intRepAmt},
+			                #{incAmt},
+			                #{applSizeDan},
+			                #{fnlIncAmt}
+			        )
+		]]>
+	</update>
+	
+	<select id="selectEs2142DelCheck" resultType="Int">
+				SELECT COUNT(1) FROM ES2142
+					WHERE YYYY = #{yyyy} AND SEQ= #{seq} 
+	</select>
+	<select id="selectEs2122DelCheck" resultType="Int">
+				SELECT COUNT(1) FROM ES2122
+					WHERE YYYY = #{yyyy} AND SEQ= #{seq} 
+	</select>
+	
+	<select id="selectEs2112DelCheck" resultType="Int">
+				SELECT COUNT(1) FROM ES2112
+					WHERE YYYY =#{yyyy} AND SEQ=#{seq} 
+	</select>
+	
+	<delete id="deleteEs2142Del" >
+		<![CDATA[
+			DELETE  FROM ES2142
+			WHERE YYYY =#{yyyy} AND SEQ=#{seq} 
+		]]>
+	</delete>
+	
+	<delete id="deleteEs2112Del" >
+		<![CDATA[
+			DELETE  FROM ES2112
+			WHERE YYYY =#{yyyy} AND SEQ=#{seq} 
+		]]>
+	</delete>
+	<delete id="deleteEs2122Del" >
+		<![CDATA[
+			DELETE  FROM ES2122
+			WHERE YYYY =#{yyyy} AND SEQ=#{seq} 
+		]]>
+	</delete>
+	
+	<insert id="es01_w02_2142_insert" >
+		<![CDATA[
+		INSERT INTO
+        ES2142
+        (
+                YYYY            ,
+                SEQ             ,
+                LN_SEQ          ,
+                JUSO            ,
+                LOT_NUM         ,
+                DISTANCE        ,
+                HOUSE_CNT       ,
+                B_YEAR          ,
+                ELAP_YEAR       ,
+                CB_STRUC        ,
+                NUM_YEAR        ,
+                CHECK_YN_1      ,
+                ONLY_SIZE_1     ,
+                CURR_MIN_AMT_1  ,
+                CURR_MAX_AMT_1  ,
+                CURR_AVG_AMT_1  ,
+                CURR_SIZE_DAN_1 ,
+                LEASE_AMT_1     ,
+                LEASE_RATE_1    ,
+                CHECK_YN_2      ,
+                ONLY_SIZE_2     ,
+                CURR_MIN_AMT_2  ,
+                CURR_MAX_AMT_2  ,
+                CURR_AVG_AMT_2  ,
+                CURR_SIZE_DAN_2 ,
+                LEASE_AMT_2     ,
+                LEASE_RATE_2    ,
+                CHECK_YN_3      ,
+                ONLY_SIZE_3     ,
+                CURR_MIN_AMT_3  ,
+                CURR_MAX_AMT_3  ,
+                CURR_AVG_AMT_3  ,
+                CURR_SIZE_DAN_3 ,
+                LEASE_AMT_3     ,
+                LEASE_RATE_3
+        )
+        VALUES
+        (
+                #{yyyy},
+                #{seq},
+                #{priceLnSeq},
+                #{priceJuso} ,
+                #{priceLotNum},
+                #{priceDistance},
+                #{priceHouseCnt},
+                #{priceBYear},
+                #{priceElapYear},
+                #{priceCbStruc},
+                #{priceNumYear},
+                #{priceCheckYn1},
+                #{priceOnlySize1},
+                #{priceCurrMinAmt1},
+                #{priceCurrMaxAmt1},
+                #{priceCurrAvgAmt1},
+                #{priceCurrSizeDan1},
+                #{priceLeaseAmt1},
+                #{priceLeaseRate1},
+                #{priceCheckYn2},
+                #{priceOnlySize2},
+                #{priceCurrMinAmt2},
+                #{priceCurrMaxAmt2},
+                #{priceCurrAvgAmt2},
+                #{priceCurrSizeDan2},
+                #{priceLeaseAmt2},
+                #{priceLeaseRate2},
+                #{priceCheckYn3},
+                #{priceOnlySize3},
+                #{priceCurrMinAmt3},
+                #{priceCurrMaxAmt3},
+                #{priceCurrAvgAmt3},
+                #{priceCurrSizeDan3},
+                #{priceLeaseAmt3},
+                #{priceLeaseRate3}
+        )
+
+		]]>
+	</insert>
+	<insert id="es01_w02_es2112_save" >
+		<![CDATA[
+		INSERT INTO
+        ES2112
+        (
+                YYYY         ,
+                SEQ          ,
+                LN_SEQ       ,
+                AU_NO        ,
+                JUSO         ,
+                FLOOR_CODE   ,
+                FLOOR_RATE   ,
+                ONLY_SIZE    ,
+                B_YEAR       ,
+                ELAP_YEAR    ,
+                CB_STRUC     ,
+                NUM_YEAR     ,
+                LAW_AMT      ,
+                CURR_SIZE_DAN,
+                BID_AMT      ,
+                BID_RATE
+        )
+        VALUES
+        (
+                #{yyyy},
+                #{seq},
+                #{auLnSeqNm},
+                #{auNo},
+                #{auJuso} ,
+                #{auFloorCode},
+                #{auFloorRate},
+                #{auOnlySize},
+                #{auBYear},
+                #{auElapYear},
+                #{auCbStruc},
+                #{auNumYear},
+                #{auLawAmt},
+                #{auCurrSizeDan},
+                #{auBidAmt},
+                #{auBidRate}
+        )
+
+		]]>
+	</insert>
+	<insert id="es01_w02_es2122_insert" >
+		<![CDATA[
+		INSERT INTO
+        ES2122
+        (
+                YYYY           ,
+                SEQ            ,
+                EXAMPLE_GU     ,
+                LN_SEQ         ,
+                JUSO_C         ,
+				ONLY_SIZE      , 
+                CURR_SIZE_DAN  ,
+                PRICE_DATE_M   ,
+                PRICE_RATE_M   ,
+                PRICE_DATE_S   ,
+                PRICE_RATE_S   ,
+                PRICE_RATE_C   ,
+                MIN_AMT        ,
+                MAX_AMT        ,
+                FLOOR_M_CODE   ,
+                FLOOR_M_RATE   ,
+                FLOOR_S_CODE   ,
+                FLOOR_S_RATE   ,
+                FLOOR_C        ,
+                OF_JANGA_RATE_M,
+                OF_JANGA_RATE_S,
+                OF_JANGA_RATE_C,
+                FACTOR_TOT     ,
+                APAS_DAN       ,
+                APPL_DAN       ,
+                HWANSAN_AMT
+        )
+        VALUES
+        (
+                #{yyyy},
+                #{seq},
+                #{price2ExampleGu},
+                #{price2LnSeq},
+                #{price2JusoC},
+				#{price2OnlySize},
+                #{price2CurrSizeDan},
+                #{price2PriceDateM},
+                #{price2PriceRateM},
+                #{price2PriceDateS},
+                #{price2PriceRateS},
+                #{price2PriceRateC},
+                #{price2MinAmt},
+                #{price2ManAmt},
+                #{price2FloorMCode},
+                #{price2FloorMRate},
+                #{price2FloorSCode},  
+                #{price2FloorSRate},
+                #{price2FloorC},
+                #{price2OfJangaRateM},
+                #{price2OfJangaRateS},
+                #{price2OfJangaRateC},
+                #{price2FactorTot},
+                #{price2ApasDan},
+                #{price2ApplDan},
+                #{price2HwansanAmt}
+        )
+		]]>
+	</insert>
+	 
+</mapper>

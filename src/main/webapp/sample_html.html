@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>-->
+<!--    <script src="/editor/mustache/mustache.min.js"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>-->
+    <script src="/editor/handlebars/handlebars.min.js"></script>
+    <script>
+        Handlebars.registerHelper('combo', function (id, key, value, options) {
+            // let data = GetZoonData(id);
+
+            return Handlebars.compile(`
+            <select name="job">
+                   {{#each list}}
+                        <option value="{{` + key + `}}">{{` + value + `}}</option>
+                   {{/each}}
+            </select>
+            `)(data);
+        });
+
+        Handlebars.registerHelper('inputNone', (jsonStr) => {
+            const options = JSON.parse(jsonStr);
+
+            return Handlebars.compile(`
+				<input type="text" readonly="true" class="input-disabled"
+					{{#if format.천자리_기호_표시}}
+						onkeyup="inputNumberFormat(this)"
+						value={{comma value}}
+					{{else}}
+						value={{value}}
+					{{/if}}
+				/>
+			`)(options)
+        });
+
+        Handlebars.registerHelper('inputMask', (jsonStr) => {
+            const options = JSON.parse(jsonStr);
+
+            return Handlebars.compile(`
+				<input type="text"
+					{{#if format.천자리_기호_표시}}
+						onkeyup="inputNumberFormat(this)"
+						value={{comma value}}
+					{{else}}
+						value={{value}}
+					{{/if}}
+
+					{{#if mask.maxlength}}
+						maxlength="{{mask.maxlength}}"
+					{{/if}}
+				/>
+			`)(options)
+        });
+
+        $(document).ready(function(){
+            let data = [{
+                  a : 1,
+                  b : 2
+              },{
+                  a : 1,
+                  b : 2
+              },{
+                  a : 1,
+                  b : 2
+              },{
+                  a : 1,
+                  b : 2
+              },{
+                  a : 1,
+                  b : 2
+              }];
+
+            $('#container').html(Handlebars.compile($('#template').html())(data));
+        });
+    </script>
+
+    <script id="template" type="text/template">
+        <h2>테스트</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>사례번호</th>
+                <th>소재지</th>
+                <th>*</th>
+                <th>업무용여부</th>
+                <th>전용면적</th>
+                <th>해당층</th>
+                <th>비준율</th>
+            </tr>
+            </thead>
+            <tbody>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                {{#each .}}
+                    {{a}}
+                {{/each}}
+            </td>
+            <td>
+            </td>
+            </tbody>
+        </table>
+    </script>
+
+</head>
+<body>
+    <input type="button" id="button" value="+" />
+    <div id="container"></div><br>
+</body>
+</html>

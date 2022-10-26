@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.old.es02.repository.OldEs02Mapper">
+	<select id="buseoList" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT '%' buseo, '전체' buseo_name
+			  FROM DUAL
+			UNION ALL
+			SELECT buseo, smallname buseo_name
+			  FROM V_IA03
+			 WHERE uses = '0' AND SEARCH_COMBO_USE = 'Y'
+			 ORDER BY BUSEO 
+	</select>
+
+	<select id="damboList" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT '%' cd_code, '전체' cd_desc
+		  		FROM DUAL
+			UNION ALL
+			SELECT cd_code, cd_desc
+		  	FROM ES00
+		 		WHERE attr_00 = 'DIV100'
+		   		AND use_yn = 'Y'
+	</select>
+
+	<select id="procList" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT '%' cd_code, '전체' cd_desc
+			  FROM DUAL
+			UNION ALL
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE cd_div = '172'
+			   AND ATTR_01 = '1'
+	</select>
+
+	<select id="selectstartDt"  resultType="String">
+			SELECT TO_CHAR (ADD_MONTHS (SYSDATE, -2), 'YYYYMMDD') dt 
+  			FROM DUAL
+	</select>
+
+	<select id="selectendDt"  resultType="String">
+			SELECT TO_CHAR (SYSDATE, 'YYYYMMDD')
+  			FROM DUAL
+	</select>
+
+	<select id="sampleList1" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT ESTI_DATE         ,
+		       (SELECT REPLACE(SMALLNAME, '지점', '')
+		          FROM V_IA03
+		         WHERE BUSEO = JUM_CODE ) AS SMALLNAME,
+		       JUM_CODE          ,
+		       (SELECT CD_DESC
+		          FROM ES00
+		         WHERE CD_DIV = '100' 
+		           AND CD_CODE = SEC_CODE) AS SEC_NAME,
+		       SEC_CODE          ,
+		       REQ_JUM           ,
+		       GEO_CODE          , YYYY, SEQ,
+		       MARKET_NAME       ,
+		       SANGHO            ,
+		       DAEPYO_NAME       ,
+		       MARKET_DIV        ,
+		       MARKET_CEO        ,
+		       DEBTOR            ,
+		       POSS_OWNER        ,
+		       GUARANTOR         ,
+		       DEBTOR_RELATION   ,
+		       B_USE_CODE        ,
+		       B_USE_DESC        ,
+		       B_NAME            ,
+		       JUSO1             , JUSO1||' '||B_NAME AS JUSO,
+		       L_SIZE            ,
+		       L_SIZE_PY         ,
+		       B_SIZE            ,
+		       B_SIZE_PY         ,
+		       CURR_AMT          ,
+		       INCREASE_AMT      ,
+		       PLMIN_BID_AMT     ,
+		       PL_BID_AMT        ,
+		       APPL_RATE         ,
+		       PRE_BOND_AMT      ,
+		       SPARE_SEC_AMT     ,
+		       EXCEED_YN         ,
+		       EXCEED_AMT        ,
+		       JUM_SABUN         , (SELECT NAME FROM V_IA01 WHERE SABUN = JUM_SABUN ) AS JUM_SABUN_NAME,
+		       JUM_COMP_DATE     ,
+		       JUM_TRAN_DATE     ,
+		       JUM_TRAN_SABUN    ,
+		       MANA_RECE_DATE    ,
+		       MANA_RECE_SABUN   , (SELECT NAME FROM V_IA01 WHERE SABUN = MANA_RECE_SABUN ) AS MANA_SABUN_NAME,
+		       MANA_COMP_DATE    ,
+		       PROC_DIV          ,
+		       RES_PL_BID_AMT    ,
+		       DOC_KEY           ,
+		       DECODE(BID_USE_YN, 'Y', 'Y', NULL) AS BID_USE_YN      ,
+		       DECODE (SUBSTR(SEQ, 5, 2), '00', '初', '再') AS ES_DIV,
+		       (SELECT CD_DESC
+		          FROM ES00
+		         WHERE CD_DIV = '172' 
+		           AND CD_CODE = PROC_DIV) AS PROC_NAME,
+		       DECODE(EXCEED_YN, '1', '초과', '2', '부족') AS EXCEED_YN_DESC,
+		       APPRAISE_GU       , (SELECT CD_DESC
+		                              FROM ES00
+		                             WHERE ATTR_00 = 'DIV194'
+		                               AND CD_CODE = APPRAISE_GU
+		                               AND CD_CODE > '0') AS APPRAISE_GU_NAME,                               
+		       (SELECT 'Y' FROM JB10 WHERE YYYY = A.YYYY AND SEQ = A.SEQ) AS BACKUP_YN ,
+		       PRE_YYYY,
+		       PRE_SEQ,
+		       LIQUOR_TYPE,
+		       (SELECT CD_DESC FROM ES00 WHERE CD_DIV = '600' AND CD_CODE = A.LIQUOR_TYPE) AS LIQUOR_TYPE_NM
+		  FROM ES10 A
+		  where 1=1
+		   <if test="jumCode != null and jumCode != '' ">
+           AND jum_code IN  (SELECT BUSEO FROM   V_IA03 WHERE (BUSEO LIKE #{jumCode}  OR PRE_BUSEO LIKE #{jumCode} ))        
+           </if>
+            <if test="searchSecCode != null and searchSecCode != ''">
+ 			AND SEC_CODE   =#{searchSecCode} 
+ 			</if>
+ 			 <if test="procDiv != null and procDiv != '' ">
+ 			 AND PROC_DIV    =#{procDiv}  
+ 			</if>
+ 			<if test="sangho != null and sangho != '' ">
+ 			AND SANGHO LIKE '%' || #{sangho} || '%'
+ 			</if>
+ 			
+ 			<if test="marketName != null and marketName != ''">
+ 			AND MARKET_NAME LIKE '%' || #{marketName}  || '%' 		
+ 			</if>
+ 			<if test="searchJuso != null and searchJuso != ''">
+ 			AND (JUSO1 LIKE '%' || #{searchJuso}  || '%' OR B_NAME LIKE '%' ||  #{searchJuso} || '%') 		
+ 			</if>        
+		   AND ESTI_DATE BETWEEN #{startDt}  AND #{endDt} 
+		 ORDER BY ESTI_DATE DESC , JUM_CODE, SEC_CODE, GEO_CODE, MARKET_NAME  
+	</select>
+
+	<select id="selectLiquorType" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT CD_CODE,CD_DESC 
+				FROM ES00
+				WHERE CD_DIV = '600' AND USE_YN='Y'
+
+	</select>
+
+	<select id="appraisalList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 'N' AS appraisalGubun, '일반감정' AS appraisalNm  FROM DUAL
+		UNION ALL
+		SELECT 'Y' AS appraisalGubun, '응찰감정' AS appraisalNm  FROM DUAL
+		ORDER BY 1
+
+	</select>
+
+	<delete id="es02_w06_delete" statementType="CALLABLE">
+		{call SPESU_DELETE_SEQ
+			(
+				#{targetSeq}, #{targetYyyy}
+			)
+		}
+	</delete>
+
+	<select id="trusteeList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT '%' AS sabun, '전체' as name
+		FROM dual  
+		ORDER BY 1
+	</select>
+
+	<select id="es02w01List" resultType="com.hitejinro.common.entity.CamelMap">
+	SELECT A.*,
+		(SELECT NAME FROM V_IA01 WHERE SABUN = A.MANA_RECE_SABUN) AS NAME
+	FROM (
+			SELECT   YYYY, SEQ, SEC_CODE, JUM_CODE, ESTI_DATE, GEO_CODE, SANGHO,
+					MARKET_DIV, MARKET_NAME, L_SIZE, L_SIZE_PY, B_SIZE, B_SIZE_PY,
+					CURR_AMT, PLMIN_BID_AMT, PL_BID_AMT, C_CL_AMT, L_CL_AMT, B_CL_AMT,
+					C_CL_AMT + L_CL_AMT + B_CL_AMT CLN_TOT_AMT, C_PL_AMT, L_PL_AMT,
+					B_PL_AMT, C_PL_AMT + L_PL_AMT + B_PL_AMT PL_TOT_AMT,
+					REPLACE (B.SMALLNAME, '지점', '') SMALLNAME,
+					(SELECT CD_DESC
+						FROM ES00
+					WHERE CD_DIV = '100' AND CD_CODE = A.SEC_CODE) SEC_NAME, PROC_DIV,
+					(SELECT CD_DESC
+						FROM ES00
+					WHERE CD_DIV = '172' AND CD_CODE = A.PROC_DIV) PROC_NAME,
+					DECODE (SUBSTR (SEQ, 5, 2), '00', '初', '再') ES_DIV, JUM_TRAN_DATE,
+					CASE
+						WHEN A.MANA_RECE_SABUN IS NULL
+						THEN (SELECT SABUN
+								FROM ES02
+								WHERE JUM_CODE = A.JUM_CODE)
+						ELSE A.MANA_RECE_SABUN
+					END MANA_RECE_SABUN, 'N' AS CHECK_SELECT,
+					DECODE(PROC_DIV, '20', 'E', '21', 'E', 'D') AS CHECK_ENABLE
+				FROM ES10 A, V_IA03 B
+			WHERE A.JUM_CODE = B.BUSEO
+			<if test="jumCode != null and jumCode != '' ">
+				AND JUM_CODE LIKE #{jumCode}
+			</if>	
+			<if test="searchSecCode != null and searchSecCode != '' ">
+				AND SEC_CODE LIKE #{searchSecCode}
+			</if>
+				AND JUM_TRAN_DATE BETWEEN #{startDt} AND #{endDt} 
+				AND PROC_DIV IN ('19', '20','21')
+			ORDER BY JUM_CODE, ESTI_DATE, SEC_CODE, GEO_CODE, MARKET_NAME
+		) A
+	WHERE MANA_RECE_SABUN LIKE #{manaReceSabun}
+	</select>
+
+	<select id="reassessmentData" resultType="String">
+	     SELECT 
+            SUBSTRB(SEQ,1,4)||LPAD(TO_NUMBER(SUBSTRB(SEQ,5,2))+1, 2,'0') AS NEW_SEQ
+       FROM ES10
+      WHERE YYYY      = #{targetYyyy}
+        AND SEQ    LIKE SUBSTRB(#{targetSeq} ,1,4)||'%'
+        AND ROWNUM    = 1
+	</select>
+
+	<select id="selectAllNotDamboList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT cd_code, cd_desc
+		FROM es00
+		WHERE attr_00 = 'DIV100'
+		AND use_yn = 'Y'
+	</select>
+
+</mapper>

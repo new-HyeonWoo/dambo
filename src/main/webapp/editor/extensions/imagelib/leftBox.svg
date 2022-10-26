@@ -1,0 +1,22 @@
+<svg width="640" height="480" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <!-- Created with SVG-edit - https://github.com/SVG-Edit/svgedit-->
+ <defs>
+  <pattern height="100" id="gridpattern" patternUnits="userSpaceOnUse" width="100" x="0" y="0">
+   <image height="100" id="svg_1" width="100" x="0" y="0"/>
+  </pattern>
+  <pattern height="200" id="gridpattern" patternUnits="userSpaceOnUse" width="200" x="0" y="0">
+   <image height="200" width="200" x="0" xlink:href="data:image/png;base64,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" y="0"/>
+  </pattern>
+ </defs>
+ <g class="layer">
+  <title>Layer 1</title>
+  <polygon cx="19.75" cy="113.25" edge="0" fill="#ffff56" id="svg_14" orient="x" shape="regularPoly" sides="5" strokeWidth="5" strokecolor="#000000"/>
+  <g id="svg_16">
+   <polygon cx="34.75" cy="85.75" edge="122.00387" fill="#ffff56" id="svg_12" orient="x" points="40.897796630859375,72.73258972167969 24.92181396484375,52.56858825683594 37.81109619140625,36.12416076660156 61.753082275390625,46.124969482421875 63.6607666015625,68.75022888183594 40.897796630859375,72.73258972167969 " shape="regularPoly" sides="5" stroke="#000000" stroke-width="2" strokeWidth="5" strokecolor="#000000"/>
+   <rect fill="#ffff56" height="117.82291" id="svg_4" stroke="#000000" stroke-dasharray="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="2" width="120.68088" x="38.56912" y="35.92709"/>
+  </g>
+  <polygon cx="19.75" cy="113.25" edge="0" fill="#ffff56" id="svg_17" orient="x" shape="regularPoly" sides="5" strokeWidth="5" strokecolor="#000000"/>
+  <polygon cx="19.75" cy="113.25" edge="0" fill="#ffff56" id="svg_22" orient="x" shape="regularPoly" sides="5" strokeWidth="5" strokecolor="#000000"/>
+  <polygon cx="19.75" cy="113.25" edge="0" fill="#ffff56" id="svg_27" orient="x" shape="regularPoly" sides="5" strokeWidth="5" strokecolor="#000000"/>
+ </g>
+</svg>

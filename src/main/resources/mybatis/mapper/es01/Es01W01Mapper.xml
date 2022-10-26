@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.mapper.Es01W01Mapper">
+
+    <resultMap id="resultMap1" type="java.util.HashMap">
+        <result property="MENT_ITEMS" column="MENT_ITEMS" jdbcType="CLOB" javaType="java.lang.String" />
+        <result property="MENT_ITEM" column="MENT_ITEM" jdbcType="CLOB" javaType="java.lang.String" />
+    </resultMap>
+    <update id="save3">
+        UPDATE ES3402
+        SET DIVIDE_AMT        =  #{수정_8_배당금}
+        WHERE YYYY            =  #{수정_0_년도}
+          AND SEQ             =  #{수정_0_일련번호}
+          AND PRO_RATE_CODE_1 =  #{수정_1_배당순위코드첫자리}
+          AND PRO_RIGHT_DATE  =  #{수정_2_처리발생일자}
+          AND PRO_SEQ         =  #{수정_3_처리일련번호}
+          AND RIGHT_DATE      =  #{수정_4_권리발생일자}
+          AND SHA_GU          =  #{수정_5_배당표구분}
+          AND LN_SEQ          =  #{수정_6_발생순번}
+          AND RANK            =  #{수정_7_순위}
+    </update>
+
+    <select id="selectList1" resultType="java.util.HashMap">
+        <![CDATA[
+            SELECT MANAGE_FLAG
+            FROM V_IA03
+            WHERE BUSEO   = #{_부서코드}
+        ]]>
+    </select>
+
+    <select id="selectList2" resultType="java.util.HashMap" resultMap="resultMap1">
+        SELECT CD_CODE, ATTR_01, MENT_ITEMS, CD_DESC,
+               MENT_ITEMS AS MENT_ITEM
+        FROM (SELECT cd_code, attr_01, cd_desc,
+                     (SELECT ment_items
+                      FROM es2321
+                      WHERE yyyy = #{년도}
+                      AND seq = #{일련번호}
+                      AND repo_div = a.cd_code) AS ment_items
+            FROM es00 a
+        WHERE cd_div = '164' AND attr_01 IS NOT NULL)
+    </select>
+
+    <select id="selectList3" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT YYYY, SEQ, NTAX_LEVY_DATE, NTAX_ARRE_AMT, NTAX_ADD_AMT,
+               NTAX_LEVY_CAUSE, NTAX_ISSUE_DATE, NTAX_VAILD_DATE, LRATE_LEVY_DATE,
+               LRATE_ARRE_AMT, LRATE_ADD_AMT, LRATE_LEVY_CAUSE, LRATE_ISSU_DATE,
+               LRATE_VAILD_DATE
+        FROM es2322
+        WHERE yyyy = #{년도}  AND seq = #{일련번호}
+        ]]>
+    </select>
+
+    <select id="selectList4" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT YYYY, SEQ,
+               TO_CHAR(TO_DATE(ntax_levy_date),'YYYY-MM-DD') NTAX_LEVY_DATE,
+               TO_CHAR(ntax_arre_amt,'99,999,999,990') NTAX_ARRE_AMT,
+               TO_CHAR(ntax_add_amt,'99,999,999,990') NTAX_ADD_AMT,
+               NTAX_LEVY_CAUSE,
+               CASE WHEN ntax_issue_date = '00000000' THEN ' '
+                    ELSE TO_CHAR(TO_DATE(ntax_issue_date),'YYYY-MM-DD') END NTAX_ISSUE_DATE,
+               NTAX_VAILD_DATE,
+               CASE WHEN LRATE_LEVY_DATE = '00000000' THEN ' '
+                    ELSE TO_CHAR(TO_DATE(LRATE_LEVY_DATE),'YYYY-MM-DD') END LRATE_LEVY_DATE,
+               TO_CHAR(lrate_arre_amt,'99,999,999,990') LRATE_ARRE_AMT,
+               TO_CHAR(lrate_add_amt,'99,999,999,990') LRATE_ADD_AMT,
+               LRATE_LEVY_CAUSE,
+               CASE WHEN LRATE_ISSU_DATE = '00000000' THEN ' '
+                    ELSE TO_CHAR(TO_DATE(LRATE_ISSU_DATE),'YYYY-MM-DD') END LRATE_ISSU_DATE,
+               LRATE_VAILD_DATE
+        FROM es2322
+        WHERE yyyy = #{년도}   AND seq = #{일련번호}
+        ]]>
+    </select>
+
+    <select id="selectList5" resultType="java.util.HashMap" resultMap="resultMap1">
+        SELECT YYYY, SEQ, REPO_DIV, MENT_ITEMS
+        FROM es2321
+        WHERE yyyy = #{년도}  AND seq = #{일련번호}  AND repo_div = #{보고서구분}
+    </select>
+    <select id="selectList6" resultType="java.util.HashMap">
+        SELECT 예상낙찰가        ,
+               채권금액          ,
+               0 AS 단독담보     ,
+               FN_HITE_RANKING(A.YYYY,A.SEQ,'0') AS 당사순위,
+               당사설정금액      ,
+               담보여력_설정전   ,
+               담보여력_설정후   ,
+               초과_부족설정액_문자,
+               합계_예상낙찰가              ,
+               토지_채권금액                ,
+               토지_가압류존재시_당사설정액 ,
+               토지_당사설정금액            ,
+               토지_담보여력_설정전         ,
+               토지_담보여력_설정후         ,
+               토지_초과_부족설정구분       ,
+               토지_초과_부족설정액         ,
+               토지_초과_부족설정액_문자    ,
+               건물_채권금액                ,
+               건물_가압류존재시_당사설정액 ,
+               건물_당사설정금액            ,
+               건물_담보여력_설정전         ,
+               건물_담보여력_설정후         ,
+               건물_초과_부족설정구분       ,
+               건물_초과_부족설정액         ,
+               건물_초과_부족설정액_문자
+        FROM V_ES10_01 A, V_ES10_02 B
+        WHERE A.YYYY = #{년도}
+          AND A.SEQ  = #{일련번호}
+          AND A.YYYY = B.YYYY
+          AND A.SEQ  = B.SEQ
+    </select>
+    <select id="selectList7" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT DECODE(ERA_YN, 1, '존재함', NULL) AS 말소되지않는권리자존재여부
+        FROM (SELECT 1 AS ERA_YN
+        FROM ES2404
+        WHERE YYYY = #{년도}
+        AND SEQ  = #{일련번호}
+        AND NVL(ERA_YN, 'N') = 'N'
+        AND EXISTS (SELECT ATTR_07 FROM ES00 WHERE ATTR_00 = 'DIV509' AND CD_CODE = RIGHT_CODE AND ATTR_07 = '0')
+        AND ROWNUM = 1
+        UNION
+        SELECT 1 AS ERA_YN
+        FROM ES2404 A
+        WHERE YYYY = #{년도}
+        AND SEQ  = #{일련번호}
+        AND NVL(ERA_YN, 'N') = 'N'
+        AND RANK < (SELECT RANK FROM ES2404 B WHERE B.YYYY = A.YYYY AND B.SEQ = A.SEQ AND NVL(HITE_YN,'N') = 'Y' AND ROWNUM = 1)
+        AND EXISTS (SELECT ATTR_07 FROM ES00 WHERE ATTR_00 = 'DIV509' AND CD_CODE = RIGHT_CODE AND ATTR_07 = '1')
+        AND ROWNUM = 1
+        )
+        ]]>
+    </select>
+    <select id="selectList8" resultType="java.util.HashMap">
+        SELECT D.SEC_NAME,
+               DECODE(D.SHA_GU, '2', TO_CHAR(D.LN_SEQ), (SELECT ATTR_01 FROM ES00 WHERE CD_DIV='999' AND CD_CODE = D.LN_SEQ)) AS LN_SEQ,
+               D.LOT_NUM AS LOT_NUM,
+               D.RIGHT_PERSON||CHR(13)||DECODE(D.RIGHT_DATE, '00000000',NULL, '99999999', NULL,'('||TO_CHAR(TO_DATE(D.RIGHT_DATE,'YYYYMMDD'),'YYYY-MM-DD')||')') AS RIGHT_PERSON,
+               NVL(DIVIDE_AMT,0) AS DIVIDE_AMT
+        FROM (
+                 SELECT A.LOT_NUM, A.SEC_CODE, A.SEC_NAME, A.PL_BID_AMT, B.SHA_GU,
+                        RIGHT_DATE, B.LN_SEQ,
+                        B.LN_SEQ||B.SERIAL_NO AS SERIAL_NO,
+                        B.RIGHT_PERSON, TO_NUMBER(B.RANK) AS RANK, B.DIVIDE_AMT
+                 FROM V_ES2404 A,
+                      (
+                          SELECT YYYY, SEQ, TO_CHAR(SEC_CODE) AS SHA_GU, LN_SEQ,
+                                 '00000000' AS RIGHT_DATE,
+                                 0 AS SERIAL_NO,
+                                 '예상낙찰가' AS RIGHT_PERSON, '0' AS RANK,
+                                 PL_BID_AMT   AS DIVIDE_AMT
+                          FROM V_ES2404 A
+                          UNION ALL
+                          SELECT YYYY, SEQ, SHA_GU, LN_SEQ, RIGHT_DATE, SERIAL_NO, RIGHT_PERSON, RANK,
+                                 SUM(DIVIDE_AMT) AS DIVIDE_AMT
+                          FROM ES3405 A
+                          GROUP BY YYYY, SEQ, SHA_GU, LN_SEQ, RIGHT_DATE, SERIAL_NO, RIGHT_PERSON, RANK
+                          UNION ALL
+                          SELECT YYYY, SEQ, SHA_GU, LN_SEQ,
+                                 '99999999' AS RIGHT_DATE,
+                                 999 AS SERIAL_NO,
+                                 '배당잔액' AS RIGHT_PERSON, '999' AS RANK,
+                                 MIN(PL_BID_AMT)-SUM(DIVIDE_AMT) AS DIVIDE_AMT
+                          FROM ES3405 A
+                          GROUP BY YYYY, SEQ, SHA_GU, LN_SEQ
+                          ORDER BY YYYY, SEQ, SHA_GU, LN_SEQ, SERIAL_NO
+                      ) B
+                 WHERE A.YYYY = #{년도}
+                   AND A.SEQ  = #{일련번호}
+                   AND A.YYYY = B.YYYY
+                   AND A.SEQ  = B.SEQ
+                   AND A.SEC_CODE = SHA_GU
+                   AND A.LN_SEQ   = B.LN_SEQ
+             ) C,
+             (
+                 SELECT B.SHA_GU, DECODE(B.SHA_GU, '2', '토지', '3','건물') AS SEC_NAME,
+                        B.LN_SEQ, B.LOT_NUM,
+                        A.NO, A.RIGHT_DATE, A.RIGHT_PERSON
+                 FROM (
+                          SELECT 0 AS NO,
+                                 '00000000' AS RIGHT_DATE,
+                                 '예상낙찰가' AS RIGHT_PERSON
+                          FROM DUAL
+                          UNION ALL
+                          SELECT DISTINCT 1 AS NO, RIGHT_DATE, RIGHT_PERSON
+                          FROM ES3405 A
+                          WHERE YYYY = #{년도}
+                            AND SEQ  = #{일련번호}
+                          UNION ALL
+                          SELECT 9 AS NO,
+                              '99999999' AS RIGHT_DATE,
+                              '배당잔액' AS RIGHT_PERSON
+                          FROM DUAL
+                          ORDER BY 1,2
+                      ) A,
+                      (
+                          SELECT DISTINCT A.SHA_GU, A.LN_SEQ, B.LOT_NUM
+                          FROM ES3405 A,
+                               (
+                                   SELECT 2 AS SHA_GU, YYYY, SEQ, LN_SEQ, LOT_NUM FROM ES2013
+                                   UNION ALL
+                                   SELECT 3 AS SHA_GU, YYYY, SEQ, TO_NUMBER(REGI_GU) AS LN_SEQ, LOT_NUM FROM ES2015
+                               ) B
+                          WHERE A.YYYY   = #{년도}
+                            AND A.SEQ    = #{일련번호}
+                            AND A.YYYY   = B.YYYY
+                            AND A.SEQ    = B.SEQ
+                            AND A.LN_SEQ = B.LN_SEQ
+                            AND A.SHA_GU = B.SHA_GU
+                      ) B
+             ) D
+        WHERE C.RIGHT_DATE  (+) = D.RIGHT_DATE
+          AND C.RIGHT_PERSON(+) = D.RIGHT_PERSON
+          AND C.SHA_GU      (+) = D.SHA_GU
+          AND C.LN_SEQ      (+) = D.LN_SEQ
+        ORDER BY SEC_NAME DESC ,D.NO,D.RIGHT_DATE,D.RIGHT_PERSON,D.LOT_NUM, C.SERIAL_NO
+
+    </select>
+    <select id="selectList9" resultType="java.util.HashMap">
+        SELECT  배당표구분명        ,
+                발생순번            ,
+                일단지구분          ,
+                지번                ,
+                DECODE(권리발생일자, '00000000', NULL, TO_CHAR(TO_DATE(권리발생일자,'YYYYMMDD'),'YYYY-MM-DD')) AS 권리발생일자,
+                채권금액_단독담보   ,
+                채권금액_공동담보   ,
+                안분된비율          ,
+                안분된금액          ,
+                공동담보_비율       ,
+                공동담보_금액       ,
+                배당액              ,
+                배당순위코드        ,
+                배당순위명          ,
+                권리자              ,
+                배당순서            ,
+                YYYY                 AS PK_YYYY                ,
+                SEQ                  AS PK_SEQ                 ,
+                배당순위코드의첫자리 AS PK_배당순위코드의첫자리,
+                처리발생일자         AS PK_처리발생일자        ,
+                처리일련번호         AS PK_처리일련번호        ,
+                권리발생일자         AS PK_권리발생일자        ,
+                배당표구분           AS PK_배당표구분          ,
+                발생순번             AS PK_발생순번            ,
+                순위                 AS PK_순위
+        FROM V_ES3402
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{일련번호}
+        ORDER BY 배당표구분, 일단지구분, LPAD(순위,3, '0')
+    </select>
+
+    <update id="save1">
+        MERGE INTO es2321 a
+            USING (SELECT  #{YYYY} AS yyyy,  #{SEQ} AS seq,  #{REPO_DIV} AS repo_div
+                   FROM DUAL) b
+            ON (a.yyyy = b.yyyy AND a.seq = b.seq AND a.repo_div = b.repo_div)
+            WHEN MATCHED THEN
+                UPDATE
+                    SET ment_items =  #{MENT_ITEMS}
+            WHEN NOT MATCHED THEN
+            INSERT(YYYY,SEQ, repo_div, ment_items)
+            VALUES(#{YYYY},#{SEQ} #{REPO_DIV} , #{MENT_ITEMS} )
+    </update>
+    
+    <update id="save4">
+        UPDATE ES3405
+        SET DIVIDE_AMT        = #{수정_8_배당금}
+        WHERE YYYY            = #{수정_0_년도}
+          AND SEQ             = #{수정_0_일련번호}
+          AND PRO_RATE_CODE_1 = #{수정_1_배당순위코드첫자리}
+          AND PRO_RIGHT_DATE  = #{수정_2_처리발생일자}
+          AND PRO_SEQ         = #{수정_3_처리일련번호}
+          AND RIGHT_DATE      = #{수정_4_권리발생일자}
+          AND SHA_GU          = #{수정_5_배당표구분}
+          AND LN_SEQ          = #{수정_6_발생순번}
+          AND RANK            = #{수정_7_순위}
+    </update>
+    <update id="save5">
+        UPDATE ES10
+        SET (SHARE_YN,
+             PRE_BOND_AMT,
+             SPARE_SEC_AMT,
+             EXCEED_AMT,
+             EXCEED_YN) = (
+            SELECT 'Y' AS 배당표수정여부,
+                   채권금액,
+                   담보여력_설정전,
+                   초과_부족설정액,
+                   초과_부족설정구분
+            FROM V_ES10_01
+            WHERE YYYY =   #{년도}
+              AND SEQ  =   #{일련번호}
+        )
+        WHERE YYYY =   #{년도}
+          AND SEQ  =   #{일련번호}
+    </update>
+
+    <update id="save2">
+        MERGE INTO es2322 a
+            USING (SELECT  #{YYYY} AS yyyy,  #{SEQ} AS seq
+                   FROM DUAL) b
+            ON (a.yyyy = b.yyyy AND a.seq = b.seq)
+            WHEN MATCHED THEN
+                UPDATE
+                    SET "NTAX_LEVY_DATE"=#{NTAX_LEVY_DATE},"NTAX_ARRE_AMT"=#{NTAX_ARRE_AMT},"NTAX_ADD_AMT"=#{NTAX_ADD_AMT},"NTAX_LEVY_CAUSE"=#{NTAX_LEVY_CAUSE},"NTAX_ISSUE_DATE"=#{NTAX_ISSUE_DATE},"NTAX_VAILD_DATE"=#{NTAX_VAILD_DATE},"LRATE_LEVY_DATE"=#{LRATE_LEVY_DATE},"LRATE_ARRE_AMT"=#{LRATE_ARRE_AMT},"LRATE_ADD_AMT"=#{LRATE_ADD_AMT},"LRATE_LEVY_CAUSE"=#{LRATE_LEVY_CAUSE},"LRATE_ISSU_DATE"=#{LRATE_ISSU_DATE},"LRATE_VAILD_DATE"=#{LRATE_VAILD_DATE}
+            WHEN NOT MATCHED THEN
+            INSERT("YYYY","SEQ","NTAX_LEVY_DATE","NTAX_ARRE_AMT","NTAX_ADD_AMT","NTAX_LEVY_CAUSE","NTAX_ISSUE_DATE","NTAX_VAILD_DATE","LRATE_LEVY_DATE","LRATE_ARRE_AMT","LRATE_ADD_AMT","LRATE_LEVY_CAUSE","LRATE_ISSU_DATE","LRATE_VAILD_DATE")
+            VALUES(#{YYYY},#{SEQ},#{NTAX_LEVY_DATE},#{NTAX_ARRE_AMT},#{NTAX_ADD_AMT},#{NTAX_LEVY_CAUSE},#{NTAX_ISSUE_DATE},#{NTAX_VAILD_DATE},#{LRATE_LEVY_DATE},#{LRATE_ARRE_AMT},#{LRATE_ADD_AMT},#{LRATE_LEVY_CAUSE},#{LRATE_ISSU_DATE},#{LRATE_VAILD_DATE})
+    </update>
+
+</mapper>

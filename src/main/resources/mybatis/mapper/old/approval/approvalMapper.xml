@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hitejinro.old.approval.repository.ApprovalMapper">
+
+    <insert id="insertApprovalInfo" parameterType="com.hitejinro.old.approval.model.ApprovalEntity">
+	    INSERT INTO RVS_SANCTN_INFO (
+		    APPRSL_YEAR,
+		    APPRSL_SN,
+		    HQ_BHF_SE_CD,
+		    SANCTN_SN,
+		    TRNSC_ID,
+		    SANCTN_FORMAT_CD,
+		    DOC_SJ,
+		    INTRFC_ID,
+		    CHARGER_DEPT_CD,
+		    RECPTN_SYS_ID,
+		    SUCCES_AT_CD,
+		    ERROR_DETAIL_DTLS,
+		    TRNSMIS_STTUS,
+		    DRAFTER_DEPT_CD,
+		    DRAFTER_EMPNO,
+		    SANCTN_DOC_BDT,
+		    SANCTN_DOC_URL,
+		    CHARGER_EMPNO,
+		    REQUST_SYS_ID,
+		    REQUST_DT,
+		    RSPNS_DT,
+		    REGIST_EMPL_NO,
+		    REGIST_DT,
+		    REGIST_EMPL_IP
+		) VALUES (
+		    #{apprslYear},
+		    #{apprslSn},
+		    #{hqBhfSeCd},
+		    #{sanctnSn},
+		    #{trnscId},
+		    #{sanctnFormatCd},
+		    #{docSj},
+		    #{intrfcId},
+		    #{chargerDeptCd},
+		    #{recptnSysId},
+		    'S00',
+		    #{errorDetailDtls},
+		    #{trnsmisSttus},
+		    #{drafterDeptCd},
+		    #{drafterEmpno},
+		    #{sanctnDocBdt},
+		    #{sanctnDocUrl},
+		    #{chargerEmpno},
+		    #{requstSysId},
+		    #{requstDt},
+		    #{rspnsDt},
+		    #{registEmplNo},
+		    SYSDATE,
+		    #{registEmplIp}
+		)
+    </insert>
+
+    <insert id="insertApprovalHistory">
+		INSERT INTO RVS_SANCTN_INFO_HISTORY (
+			APPRSL_YEAR,
+			APPRSL_SN,
+			HQ_BHF_SE_CD,
+			SANCTN_SN,
+			TRNSC_ID,
+			SANCTN_FORMAT_CD,
+			DOC_SJ,
+			INTRFC_ID,
+			CHARGER_DEPT_CD,
+			RECPTN_SYS_ID,
+			SUCCES_AT_CD,
+			ERROR_DETAIL_DTLS,
+			TRNSMIS_STTUS,
+			DRAFTER_DEPT_CD,
+			DRAFTER_EMPNO,
+			SANCTN_DOC_BDT,
+			SANCTN_DOC_URL,
+			CHARGER_EMPNO,
+			REQUST_SYS_ID,
+			REQUST_DT,
+			RSPNS_DT,
+			REGIST_EMPL_NO,
+			REGIST_DT,
+			REGIST_EMPL_IP,
+		    TYPE,
+			BHF_LAST_SANCTNER_AT,
+			SANCTNER_EMPNO,
+			SANCTN_DT,
+			SANCTN_STTUS,
+			UPDT_EMPL_NO,
+			UPDT_DT,
+			UPDT_EMPL_IP
+		) VALUES (
+			 #{appvalInfo.apprslYear},
+			 #{appvalInfo.apprslSn},
+			 #{appvalInfo.hqBhfSeCd},
+			 #{appvalInfo.sanctnSn},
+			 #{appvalInfo.trnscId},
+			 #{appvalInfo.sanctnFormatCd},
+			 #{appvalInfo.docSj},
+			 #{appvalInfo.intrfcId},
+			 #{appvalInfo.chargerDeptCd},
+			 #{appvalInfo.recptnSysId},
+			 'S00',
+			 #{appvalInfo.errorDetailDtls},
+			 #{appvalInfo.trnsmisSttus},
+			 #{appvalInfo.drafterDeptCd},
+			 #{appvalInfo.drafterEmpno},
+			 #{appvalInfo.sanctnDocBdt},
+			 #{appvalInfo.sanctnDocUrl},
+			 #{appvalInfo.chargerEmpno},
+			 #{appvalInfo.requstSysId},
+			 #{appvalInfo.requstDt},
+			 #{appvalInfo.rspnsDt},
+			 #{appvalInfo.registEmplNo},
+			 SYSDATE,
+			 #{appvalInfo.registEmplIp},
+		     #{type},
+		     #{appvalInfo.bhfLastSanctnerAt},
+		     #{appvalInfo.sanctnerEmpno},
+		     #{appvalInfo.sanctnDt},
+		     #{appvalInfo.sanctnSttus},
+		     #{appvalInfo.updtEmplNo},
+			 SYSDATE,
+		     #{appvalInfo.updtEmplIp}
+		 )
+	</insert>
+
+    <update id="updateApprovalInfo" parameterType="com.hitejinro.old.approval.model.ApprovalEntity">
+	    UPDATE RVS_SANCTN_INFO
+		SET
+		    BHF_LAST_SANCTNER_AT = #{bhfLastSanctnerAt},
+		    TRNSMIS_STTUS = #{trnsmisSttus},
+		    SANCTNER_EMPNO = #{sanctnerEmpno},
+			REQUST_SYS_ID = #{requstSysId},
+			RECPTN_SYS_ID = #{recptnSysId},
+		    SANCTN_DT = #{sanctnDt},
+		    SANCTN_STTUS = #{sanctnSttus},
+		    UPDT_EMPL_NO = #{updtEmplNo},
+		    UPDT_DT = SYSDATE,
+		    UPDT_EMPL_IP = #{updtEmplIp}
+		WHERE INTRFC_ID = #{intrfcId}
+    </update>
+
+	<select id="selectApprovalInfo" resultType="com.hitejinro.old.approval.model.ApprovalEntity">
+		SELECT * FROM
+	 	RVS_SANCTN_INFO
+		WHERE INTRFC_ID = #{intrfcId}
+	</select>
+
+	<update id="updateStatus" parameterType="com.hitejinro.old.approval.model.ApprovalEntity">
+		UPDATE ES10
+		SET
+			PROC_DIV = #{convertType}
+		WHERE YYYY = #{appvalInfo.apprslYear}
+		  AND SEQ = #{appvalInfo.apprslSn}
+	</update>
+
+	<select id="selectStatus" resultType="String">
+		SELECT PROC_DIV
+		FROM ES10
+		WHERE YYYY = #{apprslYear}
+		  AND SEQ = #{apprslSn}
+	</select>
+</mapper>

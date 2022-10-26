@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.mapper.UserMapper">
+
+    <select id="sample" resultType="hashmap">
+        SELECT '%' buseo, '전체' buseo_name
+        FROM DUAL
+    </select>
+    
+    <select id="selectUser" resultType="java.util.HashMap">
+        SELECT a.sabun, a.NAME, b.buseo,
+               NVL((SELECT leader_name
+                        FROM   (SELECT EMPLOYEE_NUMBER SABUN,
+                                       EMPLOYEE_KOR_NAME NAME,
+                                       DUTY_NAME LEADER_NAME,
+                                       DUTY_CODE LEADER_NAME_CODE,
+                                       POSITION_NAME JIKGUB,
+                                       POSITION_CODE JIKGUB_NAME,
+                                       DEPARTMENT_CODE BUSEO,
+                                       DEPARTMENT_NAME BUSEO_NAME,
+                                       SERVE_TYPE INTEOJIK
+                                FROM   BHR_IF_EMPLOYEES_V)
+                        WHERE  sabun = a.sabun), '      ') AS jikwi,
+               b.gubun_name2 as smallname,
+               c.fullname as jikname
+        FROM   (
+        SELECT EMPLOYEE_NUMBER SABUN,
+               EMPLOYEE_KOR_NAME NAME,
+               DEPARTMENT_CODE BUSEO,
+               POSITION_CODE JIKGUB
+        FROM   BHR_IF_EMPLOYEES_V) a,
+               (SELECT DEPARTMENT_CODE BUSEO,
+                       DEPARTMENT_KOREAN_NAME FULLNAME,
+                       DEPARTMENT_KOREAN_NAME MIDDLENAME,
+                       DEPARTMENT_KOREAN_NAME SMALLNAME,
+                       ORDER_NO BUSUN,
+                               CASE
+                                 WHEN ENABLED_FLAG = 'Y' THEN '0'
+                                 ELSE '1'
+                               END USES,
+                       DEPARTMENT_TYPE_CODE BUSEO_TYPE,
+                       DEPARTMENT_KOREAN_NAME GUBUN_NAME2,
+                       PRE_DEPARTMENT_CODE PRE_BUSEO,
+                       CDEPT_CODE
+                FROM   BHR_IF_CURRENT_DEPARTMENTS_V) b,
+               (SELECT DISTINCT(POSITION_CODE) CODE,
+                       POSITION_NAME FULLNAME,
+                       POSITION_NAME MIDDLENAME,
+                       POSITION_NAME SMALLNAME,
+                       '1' USES
+                FROM   BHR_IF_EMPLOYEES_V
+                WHERE  POSITION_CODE IS NOT NULL
+        		   AND  ORG_ID = '224'
+        				) c
+        WHERE  a.buseo = b.buseo
+        and    a.jikgub = c.code
+        and    A.sabun = #{empNo}
+    </select>
+
+    <select id="selectUserDeptCdByEmpNo" resultType="string">
+        SELECT BUSEO
+        FROM V_IA01
+        WHERE SABUN = #{empNo}
+    </select>
+
+</mapper>

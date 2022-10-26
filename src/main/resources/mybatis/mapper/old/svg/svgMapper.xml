@@ -1,0 +1,1192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hitejinro.old.approval.repository.ApprovalMapper">
+
+<!--     <resultMap id="eventInfo" type="eventVO"> -->
+<!--         <id column="P_BRANCH_CD" property="branchCd" /> -->
+<!--         <id column="P_PRMT_NO" property="prmtNo" /> -->
+<!--         <result column="P_PRMT_KIND_CD" property="prmtKindCd" /> -->
+<!--         <result column="E_EVENT_TYPE_CD" property="eventTypeCd" /> -->
+<!--         <result column="E_EVENT_TYPE_NM" property="eventTypeNm" /> -->
+<!--         <result column="P_PRMT_NM" property="prmtNm" /> -->
+<!--         <result column="P_PRMT_STATUS_CD" property="prmtStatusCd" /> -->
+<!--         <result column="P_PRMT_STATUS_NM" property="prmtStatusNm" /> -->
+<!--         <result column="P_START_DATE" property="startDate" /> -->
+<!--         <result column="P_END_DATE" property="endDate" /> -->
+<!--         <result column="P_DEPT_CD" property="deptCd" /> -->
+<!--         <result column="P_DEPT_NM" property="deptNm" /> -->
+<!--         <result column="P_CHARGER_CD" property="chargerCd" /> -->
+<!--         <result column="P_CHARGER_NM" property="chargerNm" /> -->
+<!--         <result column="P_GOAL_PCNT" property="goalPcnt" /> -->
+<!--         <result column="P_PARTIN_ABLE_PCNT" property="partinAblePcnt" /> -->
+<!--         <result column="P_GOAL_SALE_AMT" property="goalSaleAmt" /> -->
+<!--         <result column="P_GOAL_HOTEL_SALE_AMT" property="goalHotelSaleAmt" /> -->
+<!--         <result column="P_GOAL_FNB_SALE_AMT" property="goalFnbSaleAmt" /> -->
+<!--         <result column="P_GOAL_ETC_SALE_AMT" property="goalEtcSaleAmt" /> -->
+<!--         <result column="P_GOAL_CASINO_SALE_AMT" property="goalCasinoSaleAmt" /> -->
+<!--         <result column="P_GOAL_EXP_PROFIT_AMT" property="goalExpProfitAmt" /> -->
+<!--         <result column="P_PARTIN_PCNT" property="partinPcnt" /> -->
+<!--         <result column="P_CONFM_SALE_AMT" property="confmSaleAmt" /> -->
+<!--         <result column="P_CONFM_HOTEL_SALE_AMT" property="confmHotelSaleAmt" /> -->
+<!--         <result column="P_CONFM_FNB_SALE_AMT" property="confmFnbSaleAmt" /> -->
+<!--         <result column="P_CONFM_ETC_SALE_AMT" property="confmEtcSaleAmt" /> -->
+<!--         <result column="P_CONFM_EXP_PROFIT_AMT" property="confmExpProfitAmt" /> -->
+<!--         <result column="P_KIOSK_JOIN_CLOSE_DTIME" property="kioskJoinProposeCloseDtime" /> -->
+<!--         <result column="P_AUTO_JOIN_CONFM_YN" property="autoJoinConfmYn" /> -->
+<!--         <result column="P_SOUVENIR_EVENT_YN" property="souvenirEventYn" /> -->
+<!--         <result column="P_USE_YN" property="useYn" /> -->
+<!--         <result column="P_DELETE_YN" property="deleteYn" /> -->
+<!--         <result column="P_DEL_REASON_CTNS" property="delReasonCtns" /> -->
+<!--         <result column="P_REMARK_CTNS" property="remarkCtns" /> -->
+<!--         <result column="P_REG_DTIME" property="regDtime" /> -->
+<!--         <result column="P_REG_EMP_NM" property="regEmpNm" /> -->
+<!--         <result column="P_UPD_DTIME" property="updDtime" /> -->
+<!--         <result column="P_UPD_EMP_NM" property="updEmpNm" /> -->
+<!--         <result column="E_PARTIN_MAN_MANAGE_YN" property="partinManManageYn" /> -->
+<!--         <result column="E_TABLE_SEAT_MANAGE_YN" property="tableSeatManageYn" /> -->
+<!--         <result column="E_EVENT_PLACE_TABLE_INST_YN" property="eventPlaceTableInstYn" /> -->
+<!--         <result column="E_EVENT_PLACE_TABLE_WIDTH_CNT" property="eventPlaceTableWidthCnt" /> -->
+<!--         <result column="E_EVENT_PLACE_TABLE_HEIGHT_CN" property="eventPlaceTableHeightCnt" /> -->
+<!--         <result column="E_EVENT_PLC_TBL_INDV_MX_ST_CNT" property="eventPlcTblIndvMxStCnt" /> -->
+<!--         <result column="F_ATCHMN_SN" property="atchmnSn" /> -->
+<!--         <result column="E_KIND_CD" property="kindCd" /> -->
+<!--         <result column="R_RESERVE_NO" property="reserveNo" /> -->
+<!--         <result column="R_RESERVE_STATUS_NM" property="reserveStatusNm" /> -->
+<!--         <result column="R_EVENT_NM" property="eventNm" /> -->
+
+<!--         <collection property="costPlanInfoList" ofType="costPlanInfoVO" notNullColumn="I_COST_PLAN_NO"> -->
+<!--             <id column="P_BRANCH_CD" property="branchCd" /> -->
+<!--             <id column="P_PRMT_NO" property="prmtNo" /> -->
+<!--             <id column="I_COST_PLAN_NO" property="costPlanNo" /> -->
+<!--             <result column="I_ACCNTKIND_CD" property="accntkindCd" /> -->
+<!--             <result column="I_COST_TYPE_LCLS_CD" property="costTypeLclsCd" /> -->
+<!--             <result column="I_COST_TYPE_MCLS_CD" property="costTypeMclsCd" /> -->
+<!--             <result column="I_COST_TYPE_LCLS_CD_SEQ" property="costTypeLclsCdSeq" /> -->
+<!--             <result column="I_COST_TYPE_MCLS_CD_SEQ" property="costTypeMclsCdSeq" /> -->
+<!--             <result column="I_COST_DETAIL_CTNS" property="costDetailCtns" /> -->
+<!--             <result column="I_USE_AMT" property="useAmt" /> -->
+<!--             <result column="I_PLU_UPRC" property="pluUprc" /> -->
+
+<!--             <collection property="costPlanDetailList" column="D_COST_DETAIL_NO" ofType="costPlanDetailVO" notNullColumn="D_COST_DETAIL_NO"> -->
+<!--                 <id column="P_BRANCH_CD" property="branchCd" /> -->
+<!--                 <id column="P_PRMT_NO" property="prmtNo" /> -->
+<!--                 <id column="D_COST_PLAN_NO" property="costPlanNo" /> -->
+<!--                 <id column="D_COST_DETAIL_NO" property="costDetailNo" /> -->
+<!--                 <result column="D_ACCNTKIND_CD" property="accntkindCd" /> -->
+<!--                 <result column="D_ACCNTSBJECT_CD" property="accntsbjectCd" /> -->
+<!--                 <result column="D_COST_TYPE_MCLS_CD" property="costTypeMclsCd" /> -->
+<!--                 <result column="D_COST_DETAIL_CTNS" property="costDetailCtns" /> -->
+<!--                 <result column="D_PLU_UPRC" property="pluUprc" /> -->
+<!--                 <result column="D_PLU_QTY" property="pluQty" /> -->
+<!--                 <result column="D_USE_QTY" property="useQty" /> -->
+<!--                 <result column="D_USE_AMT" property="useAmt" /> -->
+<!--             </collection> -->
+<!--         </collection> -->
+
+
+<!--     </resultMap> -->
+
+<!--     <select id="selectEventList" parameterType="searchPromotionVO" resultType="eventVO"> -->
+<!--         SELECT * -->
+<!--         FROM -->
+<!--         ( -->
+<!--             SELECT -->
+<!--                 <choose> -->
+<!--                     <when test="orderBy != null and orderBy != ''"> -->
+<!--                         ROW_NUMBER() OVER (ORDER BY ${orderBy}) AS RNUM -->
+<!--                     </when> -->
+<!--                     <otherwise> -->
+<!--                         ROW_NUMBER() OVER (ORDER BY T.PRMT_NO DESC) AS RNUM -->
+<!--                     </otherwise> -->
+<!--                 </choose> -->
+<!--                 , T.* -->
+<!--                 , B.ATTR1_DC AS KIND_NM -->
+<!--                 , C.CMMN_CDNM_KOR AS PRMT_TYPE_NM -->
+<!--                 , CS.CMMN_CDNM_KOR AS PRMT_STATUS_NM -->
+<!--                 , CR.CMMN_CDNM_KOR AS RESERVE_STATUS_NM -->
+<!--                 , O.OBJ_NM AS DEPT_NM -->
+<!--                 , U.EMP_NM AS CHARGER_NM -->
+<!--             FROM -->
+<!--             ( -->
+<!--                 SELECT P.BRANCH_CD -->
+<!--                     , P.PRMT_NO -->
+<!--                     , P.PRMT_KIND_CD -->
+<!--                     , P.PRMT_NM -->
+<!--                     , P.PRMT_STATUS_CD -->
+<!--                     , E.EVENT_TYPE_CD AS PRMT_TYPE_CD -->
+<!--                     , P.DEPT_CD -->
+<!--                     , P.CHARGER_CD -->
+<!--                     , P.START_DATE -->
+<!--                     , P.END_DATE -->
+<!--                     , R.RESERVE_STATUS_CD -->
+<!--                     , R.PLACE -->
+<!--                 FROM PR_CO_PRMT_MST P -->
+<!--                 LEFT JOIN PR_EV_MST E ON P.BRANCH_CD = E.BRANCH_CD AND P.PRMT_NO = E.PRMT_NO -->
+<!--                 LEFT JOIN -->
+<!--                 ( -->
+<!--                     SELECT R.BRANCH_CD -->
+<!--                         , R.PRMT_NO -->
+<!--                         , R.RESERVE_NO -->
+<!--                         , R.RESERVE_STATUS_CD -->
+<!--                         , TO_CHAR(WM_CONCAT(CR.CMMN_CDNM_KOR)) AS PLACE -->
+<!--                     FROM PR_EV_RES_MST R -->
+<!--                     INNER JOIN PR_EV_VENUE_RES_INFO V ON R.BRANCH_CD = V.BRANCH_CD AND R.RESERVE_NO = V.RESERVE_NO -->
+<!--                     LEFT JOIN PR_CO_COM_CMMN_CD_INFO CR ON V.POB_CD = CR.CMMN_CD AND CR.CLS_CD = 'PM_VENUE_LEVEL3' -->
+<!--                     GROUP BY R.BRANCH_CD, R.PRMT_NO, R.RESERVE_NO, R.RESERVE_STATUS_CD -->
+<!--                 ) R ON E.BRANCH_CD = R.BRANCH_CD AND E.PRMT_NO = R.PRMT_NO -->
+<!--                 WHERE P.BRANCH_CD = #{branchCd} -->
+<!--                 AND P.PRMT_KIND_CD = 'E' -->
+<!--                 <if test="prmtNo != null and prmtNo != ''"> -->
+<!--                     AND P.PRMT_NO = #{prmtNo} -->
+<!--                 </if> -->
+<!--                 <if test="prmtNm != null and prmtNm != ''"> -->
+<!--                     AND ( -->
+<!--                     UPPER(P.PRMT_NM) LIKE '%' || UPPER(#{prmtNm}) || '%' -->
+<!--                     OR UPPER(P.PRMT_NO) LIKE '%' || UPPER(#{prmtNm}) || '%' -->
+<!--                     ) -->
+<!--                 </if> -->
+<!--                 <if test="prmtTypeCd != null and prmtTypeCd.size > 0"> -->
+<!--                     AND E.EVENT_TYPE_CD IN -->
+<!--                     <foreach collection="prmtTypeCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                         #{item} -->
+<!--                     </foreach> -->
+<!--                 </if> -->
+<!--                 <if test="prmtStatusCd != null and prmtStatusCd.size > 0"> -->
+<!--                     AND P.PRMT_STATUS_CD IN -->
+<!--                     <foreach collection="prmtStatusCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                         #{item} -->
+<!--                     </foreach> -->
+<!--                 </if> -->
+<!--                 <if test="chargerCd != null and chargerCd != ''"> -->
+<!--                     AND P.CHARGER_CD = #{chargerCd} -->
+<!--                 </if> -->
+<!--                 <if test="deptCd != null and deptCd != ''"> -->
+<!--                     AND P.DEPT_CD = #{deptCd} -->
+<!--                 </if> -->
+<!--                 <if test="startDate != null and startDate != ''"> -->
+<!--                     AND P.END_DATE <![CDATA[ >= ]]> TO_DATE(#{startDate}, 'YYYY-MM-DD') -->
+<!--                 </if> -->
+<!--                 <if test="endDate != null and endDate != ''"> -->
+<!--                     AND P.START_DATE <![CDATA[ < ]]> TO_DATE(#{endDate}, 'YYYY-MM-DD')+1 -->
+<!--                 </if> -->
+<!--             ) T -->
+<!--             LEFT JOIN PR_CO_COM_CMMN_CD_INFO C ON T.BRANCH_CD = C.BRANCH_CD AND T.PRMT_TYPE_CD = C.CMMN_CD AND C.CLS_CD = 'PM_PRMT_TYPE' -->
+<!--             LEFT JOIN PR_CO_COM_BRANCH_CMMN B ON C.BRANCH_CD = B.BRANCH_CD AND C.CLS_CD = B.CLS_CD AND C.CMMN_CD = B.CMMN_CD -->
+<!--             LEFT JOIN PR_CO_COM_CMMN_CD_INFO CS ON T.BRANCH_CD = CS.BRANCH_CD AND T.PRMT_STATUS_CD = CS.CMMN_CD AND CS.CLS_CD = 'PM_PRMT_STATUS' -->
+<!--             LEFT JOIN PR_CO_COM_CMMN_CD_INFO CR ON T.BRANCH_CD = CR.BRANCH_CD AND T.RESERVE_STATUS_CD = CR.CMMN_CD AND CR.CLS_CD = 'PM_RES_STATUS' -->
+<!--             LEFT JOIN PR_ORG_MST_V O ON T.DEPT_CD = O.OBJ_ID -->
+<!--             LEFT JOIN PR_ORG_EMP_V U ON T.CHARGER_CD = U.EMP_ID -->
+<!--             WHERE 1 = 1 -->
+<!--             <if test="place != null and place != ''"> -->
+<!--                 AND UPPER(T.PLACE) LIKE '%' || UPPER(#{place}) || '%' -->
+<!--             </if> -->
+<!--             <if test="chargerNm != null and chargerNm != ''"> -->
+<!--                 AND UPPER(U.EMP_NM) LIKE '%' || UPPER(#{chargerNm}) || '%' -->
+<!--             </if> -->
+<!--             <if test="deptNm != null and deptNm != ''"> -->
+<!--                 AND UPPER(O.OBJ_NM) LIKE '%' || UPPER(#{deptNm}) || '%' -->
+<!--             </if> -->
+<!--             <if test="startDate != null and startDate != ''"> -->
+<!--                 AND T.END_DATE <![CDATA[ >= ]]> TO_DATE(#{startDate}, 'YYYY-MM-DD') -->
+<!--             </if> -->
+<!--             <if test="endDate != null and endDate != ''"> -->
+<!--                 AND T.START_DATE <![CDATA[ < ]]> TO_DATE(#{endDate}, 'YYYY-MM-DD')+1 -->
+<!--             </if> -->
+<!--         ) -->
+<!--         <if test="pagingYn == null"> -->
+<!--             WHERE RNUM <![CDATA[ > ]]> #{firstIndex} -->
+<!--             AND RNUM <![CDATA[ <= ]]> #{firstIndex} + #{recordCountPerPage} -->
+<!--         </if> -->
+<!--     </select> -->
+
+<!--     <select id="selectEventCount" parameterType="searchPromotionVO" resultType="java.lang.Integer"> -->
+<!--         SELECT COUNT(1) -->
+<!--         FROM -->
+<!--         ( -->
+<!--             SELECT -->
+<!--                 <choose> -->
+<!--                     <when test="orderBy != null and orderBy != ''"> -->
+<!--                         ROW_NUMBER() OVER (ORDER BY ${orderBy}) AS RNUM -->
+<!--                     </when> -->
+<!--                     <otherwise> -->
+<!--                         ROW_NUMBER() OVER (ORDER BY T.PRMT_NO DESC) AS RNUM -->
+<!--                     </otherwise> -->
+<!--                 </choose> -->
+<!--                 , T.* -->
+<!--                 , B.ATTR1_DC AS KIND_NM -->
+<!--                 , C.CMMN_CDNM_KOR AS PRMT_TYPE_NM -->
+<!--                 , CS.CMMN_CDNM_KOR AS PRMT_STATUS_NM -->
+<!--                 , CR.CMMN_CDNM_KOR AS RESERVE_STATUS_NM -->
+<!--                 , O.OBJ_NM AS DEPT_NM -->
+<!--                 , U.EMP_NM AS CHARGER_NM -->
+<!--             FROM -->
+<!--             ( -->
+<!--                 SELECT P.BRANCH_CD -->
+<!--                     , P.PRMT_NO -->
+<!--                     , P.PRMT_KIND_CD -->
+<!--                     , P.PRMT_NM -->
+<!--                     , P.PRMT_STATUS_CD -->
+<!--                     , E.EVENT_TYPE_CD AS PRMT_TYPE_CD -->
+<!--                     , P.DEPT_CD -->
+<!--                     , P.CHARGER_CD -->
+<!--                     , P.START_DATE -->
+<!--                     , P.END_DATE -->
+<!--                     , R.RESERVE_STATUS_CD -->
+<!--                     , R.PLACE -->
+<!--                 FROM PR_CO_PRMT_MST P -->
+<!--                 LEFT JOIN PR_EV_MST E ON P.BRANCH_CD = E.BRANCH_CD AND P.PRMT_NO = E.PRMT_NO -->
+<!--                 LEFT JOIN -->
+<!--                 ( -->
+<!--                     SELECT R.BRANCH_CD -->
+<!--                         , R.PRMT_NO -->
+<!--                         , R.RESERVE_NO -->
+<!--                         , R.RESERVE_STATUS_CD -->
+<!--                         , TO_CHAR(WM_CONCAT(CR.CMMN_CDNM_KOR)) AS PLACE -->
+<!--                     FROM PR_EV_RES_MST R -->
+<!--                     INNER JOIN PR_EV_VENUE_RES_INFO V ON R.BRANCH_CD = V.BRANCH_CD AND R.RESERVE_NO = V.RESERVE_NO -->
+<!--                     LEFT JOIN PR_CO_COM_CMMN_CD_INFO CR ON V.POB_CD = CR.CMMN_CD AND CR.CLS_CD = 'PM_VENUE_LEVEL3' -->
+<!--                     GROUP BY R.BRANCH_CD, R.PRMT_NO, R.RESERVE_NO, R.RESERVE_STATUS_CD -->
+<!--                 ) R ON E.BRANCH_CD = R.BRANCH_CD AND E.PRMT_NO = R.PRMT_NO -->
+<!--                 WHERE P.BRANCH_CD = #{branchCd} -->
+<!--                 AND P.PRMT_KIND_CD = 'E' -->
+<!--                 <if test="prmtNo != null and prmtNo != ''"> -->
+<!--                     AND P.PRMT_NO = #{prmtNo} -->
+<!--                 </if> -->
+<!--                 <if test="prmtNm != null and prmtNm != ''"> -->
+<!--                     AND ( -->
+<!--                     UPPER(P.PRMT_NM) LIKE '%' || UPPER(#{prmtNm}) || '%' -->
+<!--                     OR UPPER(P.PRMT_NO) LIKE '%' || UPPER(#{prmtNm}) || '%' -->
+<!--                     ) -->
+<!--                 </if> -->
+<!--                 <if test="prmtTypeCd != null and prmtTypeCd.size > 0"> -->
+<!--                     AND E.EVENT_TYPE_CD IN -->
+<!--                     <foreach collection="prmtTypeCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                         #{item} -->
+<!--                     </foreach> -->
+<!--                 </if> -->
+<!--                 <if test="prmtStatusCd != null and prmtStatusCd.size > 0"> -->
+<!--                     AND P.PRMT_STATUS_CD IN -->
+<!--                     <foreach collection="prmtStatusCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                         #{item} -->
+<!--                     </foreach> -->
+<!--                 </if> -->
+<!--                 <if test="chargerCd != null and chargerCd != ''"> -->
+<!--                     AND P.CHARGER_CD = #{chargerCd} -->
+<!--                 </if> -->
+<!--                 <if test="deptCd != null and deptCd != ''"> -->
+<!--                     AND P.DEPT_CD = #{deptCd} -->
+<!--                 </if> -->
+<!--                 <if test="startDate != null and startDate != ''"> -->
+<!--                     AND P.END_DATE <![CDATA[ >= ]]> TO_DATE(#{startDate}, 'YYYY-MM-DD') -->
+<!--                 </if> -->
+<!--                 <if test="endDate != null and endDate != ''"> -->
+<!--                     AND P.START_DATE <![CDATA[ < ]]> TO_DATE(#{endDate}, 'YYYY-MM-DD')+1 -->
+<!--                 </if> -->
+<!--             ) T -->
+<!--             LEFT JOIN PR_CO_COM_CMMN_CD_INFO C ON T.BRANCH_CD = C.BRANCH_CD AND T.PRMT_TYPE_CD = C.CMMN_CD AND C.CLS_CD = 'PM_PRMT_TYPE' -->
+<!--             LEFT JOIN PR_CO_COM_BRANCH_CMMN B ON C.BRANCH_CD = B.BRANCH_CD AND C.CLS_CD = B.CLS_CD AND C.CMMN_CD = B.CMMN_CD -->
+<!--             LEFT JOIN PR_CO_COM_CMMN_CD_INFO CS ON T.BRANCH_CD = CS.BRANCH_CD AND T.PRMT_STATUS_CD = CS.CMMN_CD AND CS.CLS_CD = 'PM_PRMT_STATUS' -->
+<!--             LEFT JOIN PR_CO_COM_CMMN_CD_INFO CR ON T.BRANCH_CD = CR.BRANCH_CD AND T.RESERVE_STATUS_CD = CR.CMMN_CD AND CR.CLS_CD = 'PM_RES_STATUS' -->
+<!--             LEFT JOIN PR_ORG_MST_V O ON T.DEPT_CD = O.OBJ_ID -->
+<!--             LEFT JOIN PR_ORG_EMP_V U ON T.CHARGER_CD = U.EMP_ID -->
+<!--             WHERE 1 = 1 -->
+<!--             <if test="place != null and place != ''"> -->
+<!--                 AND UPPER(T.PLACE) LIKE '%' || UPPER(#{place}) || '%' -->
+<!--             </if> -->
+<!--             <if test="chargerNm != null and chargerNm != ''"> -->
+<!--                 AND UPPER(U.EMP_NM) LIKE '%' || UPPER(#{chargerNm}) || '%' -->
+<!--             </if> -->
+<!--             <if test="deptNm != null and deptNm != ''"> -->
+<!--                 AND UPPER(O.OBJ_NM) LIKE '%' || UPPER(#{deptNm}) || '%' -->
+<!--             </if> -->
+<!--             <if test="startDate != null and startDate != ''"> -->
+<!--                 AND T.END_DATE <![CDATA[ >= ]]> TO_DATE(#{startDate}, 'YYYY-MM-DD') -->
+<!--             </if> -->
+<!--             <if test="endDate != null and endDate != ''"> -->
+<!--                 AND T.START_DATE <![CDATA[ < ]]> TO_DATE(#{endDate}, 'YYYY-MM-DD')+1 -->
+<!--             </if> -->
+<!--         ) -->
+<!--     </select> -->
+    
+    
+<!--     <select id="simpleEventCount" resultType="java.lang.Integer"> -->
+<!--         SELECT 1 FROM PR_CO_PRMT_MST WHERE PR_CO_PRMT_MST.PRMT_NO = #{prmtNo} AND PR_CO_PRMT_MST.PRMT_KIND_CD = 'E' -->
+<!--     </select> -->
+
+<!--     <select id="selectEventInfo" parameterType="searchEventVO" resultMap="eventInfo"> -->
+<!--         SELECT P.BRANCH_CD AS P_BRANCH_CD -->
+<!--             , P.PRMT_NO AS P_PRMT_NO -->
+<!--             , P.PRMT_KIND_CD AS P_PRMT_KIND_CD -->
+<!--             , E.EVENT_TYPE_CD AS E_EVENT_TYPE_CD -->
+<!--             , CT.CMMN_CDNM_KOR AS E_EVENT_TYPE_NM -->
+<!--             , P.PRMT_NM AS P_PRMT_NM -->
+<!--             , P.PRMT_STATUS_CD AS P_PRMT_STATUS_CD -->
+<!--             , CS.CMMN_CDNM_KOR AS P_PRMT_STATUS_NM -->
+<!--             , P.START_DATE AS P_START_DATE -->
+<!--             , P.END_DATE AS P_END_DATE -->
+<!--             , P.DEPT_CD AS P_DEPT_CD -->
+<!--             , O.OBJ_NM AS P_DEPT_NM -->
+<!--             , P.CHARGER_CD AS P_CHARGER_CD -->
+<!--             , M.EMP_NM AS P_CHARGER_NM -->
+<!--             , P.GOAL_PCNT AS P_GOAL_PCNT -->
+<!--             , P.PARTIN_ABLE_PCNT AS P_PARTIN_ABLE_PCNT -->
+<!--             , P.GOAL_SALE_AMT AS P_GOAL_SALE_AMT -->
+<!--             , P.GOAL_HOTEL_SALE_AMT AS P_GOAL_HOTEL_SALE_AMT -->
+<!--             , P.GOAL_FNB_SALE_AMT AS P_GOAL_FNB_SALE_AMT -->
+<!--             , P.GOAL_ETC_SALE_AMT AS P_GOAL_ETC_SALE_AMT -->
+<!--             , P.GOAL_CASINO_SALE_AMT AS P_GOAL_CASINO_SALE_AMT -->
+<!--             , P.GOAL_EXP_PROFIT_AMT AS P_GOAL_EXP_PROFIT_AMT -->
+<!--             , P.PARTIN_PCNT AS P_PARTIN_PCNT -->
+<!--             , P.CONFM_SALE_AMT AS P_CONFM_SALE_AMT -->
+<!--             , P.CONFM_HOTEL_SALE_AMT AS P_CONFM_HOTEL_SALE_AMT -->
+<!--             , P.CONFM_FNB_SALE_AMT AS P_CONFM_FNB_SALE_AMT -->
+<!--             , P.CONFM_ETC_SALE_AMT AS P_CONFM_ETC_SALE_AMT -->
+<!--             , P.CONFM_EXP_PROFIT_AMT AS P_CONFM_EXP_PROFIT_AMT -->
+<!--             , P.KIOSK_JOIN_PROPOSE_CLOSE_DTIME AS P_KIOSK_JOIN_CLOSE_DTIME -->
+<!--             , P.AUTO_JOIN_CONFM_YN AS P_AUTO_JOIN_CONFM_YN -->
+<!--             , P.SOUVENIR_EVENT_YN AS P_SOUVENIR_EVENT_YN -->
+<!--             , P.USE_YN AS P_USE_YN -->
+<!--             , P.DELETE_YN AS P_DELETE_YN -->
+<!--             , P.DEL_REASON_CTNS AS P_DEL_REASON_CTNS -->
+<!--             , P.REMARK_CTNS AS P_REMARK_CTNS -->
+<!--             , P.REG_DTIME AS P_REG_DTIME -->
+<!--             , R.EMP_NM AS P_REG_EMP_NM -->
+<!--             , R.EVENT_NM AS R_EVENT_NM -->
+<!--             , P.UPD_DTIME AS P_UPD_DTIME -->
+<!--             , U.EMP_NM AS P_UPD_EMP_NM -->
+<!--             , E.PARTIN_MAN_MANAGE_YN AS E_PARTIN_MAN_MANAGE_YN -->
+<!--             , E.TABLE_SEAT_MANAGE_YN AS E_TABLE_SEAT_MANAGE_YN -->
+<!--             , E.EVENT_PLACE_TABLE_INST_YN AS E_EVENT_PLACE_TABLE_INST_YN -->
+<!--             , E.EVENT_PLACE_TABLE_WIDTH_CNT AS E_EVENT_PLACE_TABLE_WIDTH_CNT -->
+<!--             , E.EVENT_PLACE_TABLE_HEIGHT_CNT AS E_EVENT_PLACE_TABLE_HEIGHT_CNT -->
+<!--             , E.EVENT_PLC_TBL_INDV_MX_ST_CNT AS E_EVENT_PLC_TBL_INDV_MX_ST_CNT -->
+<!--             , I.COST_PLAN_NO AS I_COST_PLAN_NO -->
+<!--             , I.ACCNTKIND_CD AS I_ACCNTKIND_CD -->
+<!--             , I.COST_TYPE_LCLS_CD AS I_COST_TYPE_LCLS_CD -->
+<!--             , I.COST_TYPE_MCLS_CD AS I_COST_TYPE_MCLS_CD -->
+<!--             , CCL.SORTSEQ AS I_COST_TYPE_LCLS_CD_SEQ -->
+<!--             , CCM.SORTSEQ AS I_COST_TYPE_MCLS_CD_SEQ -->
+<!--             , I.COST_DETAIL_CTNS AS I_COST_DETAIL_CTNS -->
+<!--             , I.USE_AMT AS I_USE_AMT -->
+<!--             , I.PLU_UPRC AS I_PLU_UPRC -->
+<!--             , D.COST_PLAN_NO AS D_COST_PLAN_NO -->
+<!--             , D.COST_DETAIL_NO AS D_COST_DETAIL_NO -->
+<!--             , D.ACCNTKIND_CD As D_ACCNTKIND_CD -->
+<!--             , D.ACCNTSBJECT_CD As D_ACCNTSBJECT_CD -->
+<!--             , D.COST_TYPE_MCLS_CD As D_COST_TYPE_MCLS_CD -->
+<!--             , D.COST_DETAIL_CTNS As D_COST_DETAIL_CTNS -->
+<!--             , D.PLU_UPRC As D_PLU_UPRC -->
+<!--             , D.PLU_QTY As D_PLU_QTY -->
+<!--             , D.USE_QTY As D_USE_QTY -->
+<!--             , D.USE_AMT As D_USE_AMT -->
+<!--             , F.ATCHMN_SN AS F_ATCHMN_SN -->
+<!--             , CB.ATTR1 AS E_KIND_CD -->
+<!--             , R.RESERVE_NO AS R_RESERVE_NO -->
+<!--             , R.RESERVE_STATUS_NM || '(' || R.RESERVE_STATUS_CD || ')' AS R_RESERVE_STATUS_NM -->
+
+<!--         FROM PR_CO_PRMT_MST P -->
+<!--         INNER JOIN PR_EV_MST E ON P.BRANCH_CD = E.BRANCH_CD AND P.PRMT_NO = E.PRMT_NO -->
+<!--         LEFT JOIN PR_CO_COST_STEP1_PLAN_INFO I ON P.BRANCH_CD = I.BRANCH_CD AND P.PRMT_NO = I.PRMT_NO -->
+<!--         LEFT JOIN PR_CO_COST_STEP1_PLAN_DETAIL D ON I.BRANCH_CD = D.BRANCH_CD AND I.PRMT_NO = D.PRMT_NO AND I.COST_PLAN_NO = D.COST_PLAN_NO -->
+<!--         LEFT JOIN ( -->
+<!--             SELECT RM.BRANCH_CD, RM.RESERVE_NO, RM.PRMT_NO, RM.RESERVE_STATUS_CD, CR.CMMN_CDNM_KOR AS RESERVE_STATUS_NM, RM.EVENT_NM -->
+<!--             FROM PR_EV_RES_MST RM -->
+<!--             LEFT JOIN PR_CO_COM_CMMN_CD_INFO CR ON RM.RESERVE_STATUS_CD = CR.CMMN_CD AND CR.CLS_CD = 'PM_RES_STATUS' -->
+<!--         ) R ON P.BRANCH_CD = R.BRANCH_CD AND P.PRMT_NO = R.PRMT_NO -->
+<!--         LEFT JOIN PR_CO_ATCHMN_FL_MNG F ON P.BRANCH_CD = F.BRANCH_CD AND P.PRMT_NO = F.PRMT_NO AND 'F' = F.ATCHMNFL_TYPE_CD -->
+<!--         LEFT JOIN PR_ORG_MST_V O ON P.DEPT_CD = O.OBJ_ID -->
+<!--         LEFT JOIN PR_ORG_EMP_V M ON P.CHARGER_CD = M.EMP_ID -->
+<!--         LEFT JOIN PR_ORG_EMP_V R ON P.REG_EMP_NO = R.EMP_ID -->
+<!--         LEFT JOIN PR_ORG_EMP_V U ON P.UPD_EMP_NO = U.EMP_ID -->
+        
+<!--         LEFT JOIN PR_CO_COM_CMMN_CD_INFO CCL ON I.COST_TYPE_LCLS_CD = CCL.CMMN_CD AND CCL.CLS_CD = 'PM_COST_TYPE' -->
+<!--         LEFT JOIN PR_CO_COM_CMMN_CD_INFO CCM ON I.COST_TYPE_MCLS_CD = CCM.CMMN_CD AND CCM.CLS_CD = 'PM_COST_DETAIL_TYPE' -->
+        
+<!--         LEFT JOIN PR_CO_COM_CMMN_CD_INFO CT ON E.EVENT_TYPE_CD = CT.CMMN_CD AND CT.CLS_CD = 'PM_PRMT_TYPE' -->
+<!--         LEFT JOIN PR_CO_COM_BRANCH_CMMN CB ON CT.CLS_CD = CB.CLS_CD AND CT.CMMN_CD = CB.CMMN_CD AND CT.CLS_CD = 'PM_PRMT_TYPE' -->
+<!--         LEFT JOIN PR_CO_COM_CMMN_CD_INFO CS ON P.PRMT_STATUS_CD = CS.CMMN_CD AND CS.CLS_CD = 'PM_PRMT_STATUS' -->
+<!--         WHERE P.BRANCH_CD = #{branchCd} -->
+<!--         AND P.PRMT_NO = #{prmtNo} -->
+<!--     </select> -->
+
+    <insert id="insertSvgData">
+	    <selectKey resultType="int" keyProperty="seqno" order="BEFORE">
+            SELECT RVS_IMG_SEQ.NEXTVAL FROM DUAL
+	    </selectKey>
+        INSERT INTO RVS_IMG (
+            SEQ
+            , IMG_ORG_NM
+            , IMG_NM
+            , SVG_DATA
+            , IMG_PATH
+            , UPD_DT
+        ) VALUES (
+            #{seqno}
+            , #{imgOrgNm}
+            , #{imgNm}
+            , #{svgData:CLOB}
+            , #{imgPath}
+            , SYSDATE
+        )
+    </insert>
+    
+<!--     <insert id="insertEventInfo" parameterType="eventVO"> -->
+<!--         INSERT INTO PR_EV_MST ( -->
+<!--             BRANCH_CD -->
+<!--             , PRMT_NO -->
+<!--             , PARTIN_MAN_MANAGE_YN -->
+<!--             , TABLE_SEAT_MANAGE_YN -->
+<!--             , EVENT_PLACE_TABLE_INST_YN -->
+<!--             , EVENT_TYPE_CD -->
+<!--             , EVENT_PLACE_TABLE_WIDTH_CNT -->
+<!--             , EVENT_PLACE_TABLE_HEIGHT_CNT -->
+<!--             , EVENT_PLC_TBL_INDV_MX_ST_CNT -->
+<!--             , REG_DTIME -->
+<!--             , REG_EMP_NO -->
+<!--             , REG_IP -->
+<!--             , UPD_DTIME -->
+<!--             , UPD_EMP_NO -->
+<!--             , UPD_IP -->
+<!--         ) VALUES ( -->
+<!--             #{branchCd} -->
+<!--             , #{prmtNo} -->
+<!--             , #{partinManManageYn} -->
+<!--             , #{tableSeatManageYn} -->
+<!--             , #{eventPlaceTableInstYn} -->
+<!--             , #{eventTypeCd} -->
+<!--             , #{eventPlaceTableWidthCnt} -->
+<!--             , #{eventPlaceTableHeightCnt} -->
+<!--             , #{eventPlcTblIndvMxStCnt} -->
+<!--             , SYSDATE -->
+<!--             , #{regEmpNo} -->
+<!--             , #{regIp} -->
+<!--             , SYSDATE -->
+<!--             , #{updEmpNo} -->
+<!--             , #{updIp} -->
+<!--         ) -->
+<!--     </insert> -->
+
+<!--     <update id="updateEventInfo" parameterType="eventVO"> -->
+<!--         UPDATE PR_EV_MST -->
+<!--         SET UPD_DTIME = SYSDATE -->
+<!--             , UPD_EMP_NO = #{updEmpNo} -->
+<!--             , UPD_IP = #{updIp} -->
+<!--             <if test="partinManManageYn != null and partinManManageYn != ''"> -->
+<!--                 , PARTIN_MAN_MANAGE_YN = #{partinManManageYn} -->
+<!--             </if> -->
+<!--             <if test="tableSeatManageYn != null and tableSeatManageYn != ''"> -->
+<!--                 , TABLE_SEAT_MANAGE_YN = #{tableSeatManageYn} -->
+<!--             </if> -->
+<!--             <if test="eventPlaceTableInstYn != null and eventPlaceTableInstYn != ''"> -->
+<!--                 , EVENT_PLACE_TABLE_INST_YN = #{eventPlaceTableInstYn} -->
+<!--             </if> -->
+<!--             <if test="eventPlaceTableWidthCnt != null and eventPlaceTableWidthCnt != ''"> -->
+<!--                 , EVENT_PLACE_TABLE_WIDTH_CNT = #{eventPlaceTableWidthCnt} -->
+<!--             </if> -->
+<!--             <if test="eventPlaceTableHeightCnt != null and eventPlaceTableHeightCnt != ''"> -->
+<!--                 , EVENT_PLACE_TABLE_HEIGHT_CNT = #{eventPlaceTableHeightCnt} -->
+<!--             </if> -->
+<!--             <if test="eventPlcTblIndvMxStCnt != null and eventPlcTblIndvMxStCnt != ''"> -->
+<!--                 , EVENT_PLC_TBL_INDV_MX_ST_CNT = #{eventPlcTblIndvMxStCnt} -->
+<!--             </if> -->
+<!--             <if test="eventTypeCd != null and eventTypeCd != ''"> -->
+<!--                 , EVENT_TYPE_CD = #{eventTypeCd} -->
+<!--             </if> -->
+<!--         WHERE BRANCH_CD = #{branchCd} -->
+<!--         AND PRMT_NO = #{prmtNo} -->
+<!--     </update> -->
+
+<!--     <update id="mergeEventInfo" parameterType="eventVO"> -->
+<!--         MERGE INTO PR_EV_MST -->
+<!--         USING DUAL -->
+<!--         ON ( -->
+<!--             BRANCH_CD = #{branchCd} -->
+<!--             AND PRMT_NO = #{prmtNo} -->
+<!--         ) -->
+<!--         WHEN MATCHED THEN -->
+<!--             UPDATE -->
+<!--             SET PARTIN_MAN_MANAGE_YN = #{partinManManageYn} -->
+<!--                 , TABLE_SEAT_MANAGE_YN = #{tableSeatManageYn} -->
+<!--                 , EVENT_PLACE_TABLE_INST_YN = #{eventPlaceTableInstYn} -->
+<!--                 , EVENT_TYPE_CD = #{eventTypeCd} -->
+<!--                 , EVENT_PLACE_TABLE_WIDTH_CNT = #{eventPlaceTableWidthCnt} -->
+<!--                 , EVENT_PLACE_TABLE_HEIGHT_CNT = #{eventPlaceTableHeightCnt} -->
+<!--                 , EVENT_PLC_TBL_INDV_MX_ST_CNT = #{eventPlcTblIndvMxStCnt} -->
+<!--                 , UPD_DTIME = SYSDATE -->
+<!--                 , UPD_EMP_NO = #{updEmpNo} -->
+<!--                 , UPD_IP = #{updIp} -->
+<!--         WHEN NOT MATCHED THEN -->
+<!--             INSERT ( -->
+<!--                 BRANCH_CD -->
+<!--                 , PRMT_NO -->
+<!--                 , PARTIN_MAN_MANAGE_YN -->
+<!--                 , TABLE_SEAT_MANAGE_YN -->
+<!--                 , EVENT_PLACE_TABLE_INST_YN -->
+<!--                 , EVENT_TYPE_CD -->
+<!--                 , EVENT_PLACE_TABLE_WIDTH_CNT -->
+<!--                 , EVENT_PLACE_TABLE_HEIGHT_CNT -->
+<!--                 , EVENT_PLC_TBL_INDV_MX_ST_CNT -->
+<!--                 , REG_DTIME -->
+<!--                 , REG_EMP_NO -->
+<!--                 , REG_IP -->
+<!--             ) VALUES ( -->
+<!--                 #{branchCd} -->
+<!--                 , #{prmtNo} -->
+<!--                 , #{partinManManageYn} -->
+<!--                 , #{tableSeatManageYn} -->
+<!--                 , #{eventPlaceTableInstYn} -->
+<!--                 , #{eventTypeCd} -->
+<!--                 , #{eventPlaceTableWidthCnt} -->
+<!--                 , #{eventPlaceTableHeightCnt} -->
+<!--                 , #{eventPlcTblIndvMxStCnt} -->
+<!--                 , SYSDATE -->
+<!--                 , #{regEmpNo} -->
+<!--                 , #{regIp} -->
+<!--             ) -->
+<!--     </update> -->
+
+<!--     <select id="selectGoodsInfoList" resultType="com.hitejinro.common.entity.CamelMap"> -->
+<!--         SELECT * -->
+<!--         FROM -->
+<!--         ( -->
+<!--             SELECT  -->
+<!--             <choose> -->
+<!--                 <when test="orderBy != null and orderBy != ''"> -->
+<!--                     ROW_NUMBER() OVER (ORDER BY ${orderBy}) AS RNUM -->
+<!--                 </when> -->
+<!--                 <otherwise> -->
+<!--                     ROWNUM AS RNUM -->
+<!--                 </otherwise> -->
+<!--             </choose> -->
+<!--             , T.* -->
+<!--             FROM -->
+<!--             ( -->
+<!--                 SELECT CNTC_LCLAS_CODE AS GOODS_CLS_CD -->
+<!--                     , CNTC_LCLAS_NAME AS GOODS_CLS_NM -->
+<!--                     , CNTC_MCLAS_CODE AS GOODS_MCLS_CD -->
+<!--                     , CNTC_MCLAS_NAME AS GOODS_MCLS_NM -->
+<!--                     , CNTC_SCLAS_CODE AS GOODS_SCLS_CD -->
+<!--                     , CNTC_SCLAS_NAME AS GOODS_SCLS_NM -->
+<!--                     , CNTC_GOODS_CODE AS GOODS_CD -->
+<!--                     , CNTC_GOODS_NAME AS GOODS_NM -->
+<!--                     , SALES_AMT AS BASE_UPRC -->
+<!--                 FROM PR_CNTC_GOODS_V -->
+<!--                 WHERE BRANCH_CD = #{branchCd} -->
+<!--                 AND GOODS_TYPE_CD = #{goodsTypeCd} -->
+<!--                 <if test="searchKeyword != null and searchKeyword != ''"> -->
+<!--                     AND ( -->
+<!--                         REPLACE(UPPER(CNTC_GOODS_NAME), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                     ) -->
+<!--                 </if> -->
+<!--                 <if test="cntcLclsCd != null and cntcLclsCd.size > 0"> -->
+<!--                     AND CNTC_LCLAS_CODE IN -->
+<!--                     <foreach collection="cntcLclsCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                         #{item} -->
+<!--                     </foreach> -->
+<!--                 </if> -->
+<!--                 <if test="cntcMclsCd != null and cntcMclsCd.size > 0"> -->
+<!--                     AND CNTC_MCLAS_CODE IN -->
+<!--                     <foreach collection="cntcMclsCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                         #{item} -->
+<!--                     </foreach> -->
+<!--                 </if> -->
+<!--                 <if test="cntcSclsCd != null and cntcSclsCd.size > 0"> -->
+<!--                     AND CNTC_SCLAS_CODE IN -->
+<!--                     <foreach collection="cntcSclsCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                         #{item} -->
+<!--                     </foreach> -->
+<!--                 </if> -->
+<!--             ) T -->
+<!--         ) -->
+<!--         WHERE RNUM <![CDATA[ > ]]> #{firstIndex} -->
+<!--         AND RNUM <![CDATA[ <= ]]> #{firstIndex} + #{recordCountPerPage} -->
+<!--     </select> -->
+
+<!--     <select id="selectGoodsInfoCount" parameterType="searchEventVO" resultType="java.lang.Integer"> -->
+<!--         SELECT COUNT(GOODS_CD) -->
+<!--         FROM ( -->
+<!--             SELECT CNTC_GOODS_CODE AS GOODS_CD -->
+<!--             FROM PR_CNTC_GOODS_V -->
+<!--             WHERE BRANCH_CD = #{branchCd} -->
+<!--             AND GOODS_TYPE_CD = #{goodsTypeCd} -->
+<!--             <if test="prmtNo != null and prmtNo != ''"> -->
+<!--             	AND PRMT_NO = ${prmtNo} -->
+<!--             </if> -->
+<!--             <if test="searchKeyword != null and searchKeyword != ''"> -->
+<!--                 AND ( -->
+<!--                     REPLACE(UPPER(CNTC_GOODS_NAME), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                 ) -->
+<!--             </if> -->
+<!--             <if test="cntcLclsCd != null and cntcLclsCd.size > 0"> -->
+<!--                 AND CNTC_LCLAS_CODE IN -->
+<!--                 <foreach collection="cntcLclsCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                     #{item} -->
+<!--                 </foreach> -->
+<!--             </if> -->
+<!--             <if test="cntcMclsCd != null and cntcMclsCd.size > 0"> -->
+<!--                 AND CNTC_MCLAS_CODE IN -->
+<!--                 <foreach collection="cntcMclsCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                     #{item} -->
+<!--                 </foreach> -->
+<!--             </if> -->
+<!--             <if test="cntcSclsCd != null and cntcSclsCd.size > 0"> -->
+<!--                 AND CNTC_SCLAS_CODE IN -->
+<!--                 <foreach collection="cntcSclsCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                     #{item} -->
+<!--                 </foreach> -->
+<!--             </if> -->
+<!--         ) -->
+<!--     </select> -->
+
+<!--     <insert id="insertGoodsInfo" parameterType="goodsInfoVO"> -->
+<!--         INSERT INTO PR_CO_CNTC_GOODS_INFO ( -->
+<!--             BRANCH_CD -->
+<!--             , PRMT_NO -->
+<!--             , CONTACT_GOODS_SEQ -->
+<!--             , GOODS_CLS_CD -->
+<!--             , GOODS_CD -->
+<!--             , GOODS_NM -->
+<!--             , REG_DTIME -->
+<!--             , REG_EMP_NO -->
+<!--             , REG_IP -->
+<!--             , UPD_DTIME -->
+<!--             , UPD_EMP_NO -->
+<!--             , UPD_IP -->
+<!--         ) VALUES ( -->
+<!--             #{branchCd} -->
+<!--             , #{prmtNo} -->
+<!--             , SEQ_PR_CO_CNTC_GOODS_INFO.NEXTVAL -->
+<!--             , #{goodsClsCd} -->
+<!--             , #{goodsCd} -->
+<!--             , #{goodsNm} -->
+<!--             , SYSDATE -->
+<!--             , #{regEmpNo} -->
+<!--             , #{regIp} -->
+<!--             , #{updDtime} -->
+<!--             , #{updEmpNo} -->
+<!--             , #{updIp} -->
+<!--         ) -->
+<!--     </insert> -->
+
+<!--     <delete id="deleteGoodsInfo" parameterType="eventVO"> -->
+<!--         DELETE -->
+<!--         FROM PR_CO_CNTC_GOODS_INFO -->
+<!--         WHERE BRANCH_CD = #{branchCd} -->
+<!--         AND PRMT_NO = #{prmtNo} -->
+<!--     </delete> -->
+    
+<!--     <delete id="deleteEventJoinCust" parameterType="eventJoinCustInfoVO"> -->
+<!--         DELETE -->
+<!--         FROM PR_EV_JOIN_CUST_INFO -->
+<!--         WHERE BRANCH_CD = #{branchCd} -->
+<!--         AND PRMT_NO = #{prmtNo} -->
+<!--         AND CUST_NO = #{custNo} -->
+<!--     </delete> -->
+
+<!--     <select id="selectBusinessPlaceList" resultType="com.hitejinro.common.entity.CamelMap"> -->
+<!--         SELECT * -->
+<!--         FROM -->
+<!--         ( -->
+<!--             SELECT -->
+<!--             <choose> -->
+<!--                 <when test="orderBy != null and orderBy != ''"> -->
+<!--                     ROW_NUMBER() OVER (ORDER BY ${orderBy}) AS RNUM -->
+<!--                 </when> -->
+<!--                 <otherwise> -->
+<!--                     ROWNUM AS RNUM -->
+<!--                 </otherwise> -->
+<!--             </choose>  -->
+<!--             , T.* -->
+<!--             FROM -->
+<!--             ( -->
+<!--                 SELECT DEPT_CD AS BSP_CD -->
+<!--                     , BRANCH_CD -->
+<!--                     , SORTSEQ -->
+<!--                     , DEPT_NM AS BSP_ENM -->
+<!--                     , DEPT_NM_KOR AS BSP_NM -->
+<!--                     , DEPTCLASS AS BSP_CLS_CD -->
+<!--                     , TBLCNT -->
+<!--                     , RES_USE_YN -->
+<!--                     , ACCTDEPT -->
+<!--                 FROM CO_ORG_DEPT_INFO -->
+<!--                 WHERE BRANCH_CD = #{branchCd} -->
+<!--                 <if test="prmtNo != null and prmtNo != ''"> -->
+<!--                 	AND PRMT_NO = ${prmtNo} -->
+<!--                 </if> -->
+<!--                 <if test="searchKeyword != null and searchKeyword != ''"> -->
+<!--                     AND ( -->
+<!--                         REPLACE(UPPER(DEPT_CD), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                         OR REPLACE(UPPER(DEPTCLASS), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                         OR REPLACE(UPPER(DEPT_NM), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                         OR REPLACE(UPPER(DEPT_NM_KOR), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                     ) -->
+<!--                 </if> -->
+<!--                 ORDER BY BSP_CD ASC -->
+<!--             ) T -->
+<!--         ) -->
+<!--         WHERE RNUM <![CDATA[ > ]]> #{firstIndex} -->
+<!--         AND RNUM <![CDATA[ <= ]]> #{firstIndex} + #{recordCountPerPage} -->
+<!--     </select> -->
+
+<!--     <select id="selectBusinessPlaceCount" parameterType="searchEventVO" resultType="java.lang.Integer"> -->
+<!--         SELECT COUNT(DEPT_CD) -->
+<!--         FROM CO_ORG_DEPT_INFO -->
+<!--         WHERE BRANCH_CD = #{branchCd} -->
+<!--         <if test="prmtNo != null and prmtNo != ''"> -->
+<!--         	AND PRMT_NO = ${prmtNo} -->
+<!--         </if> -->
+<!--         <if test="searchKeyword != null and searchKeyword != ''"> -->
+<!--             AND ( -->
+<!--                         REPLACE(UPPER(DEPT_CD), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                         OR REPLACE(UPPER(DEPTCLASS), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                         OR REPLACE(UPPER(DEPT_NM), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                         OR REPLACE(UPPER(DEPT_NM_KOR), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--             ) -->
+<!--         </if> -->
+<!--     </select> -->
+
+<!--     <insert id="insertBusinessPlaceInfo" parameterType="businessPlaceInfoVO"> -->
+<!--         INSERT INTO PR_CO_CNTC_BSP_INFO ( -->
+<!--             BRANCH_CD -->
+<!--             , PRMT_NO -->
+<!--             , CONTACT_BSP_SEQ -->
+<!--             , BSP_CLS_CD -->
+<!--             , BSP_CD -->
+<!--             , BSP_NM -->
+<!--             , REG_DTIME -->
+<!--             , REG_EMP_NO -->
+<!--             , REG_IP -->
+<!--             , UPD_DTIME -->
+<!--             , UPD_EMP_NO -->
+<!--             , UPD_IP -->
+<!--         ) VALUES ( -->
+<!--             #{branchCd} -->
+<!--             , #{prmtNo} -->
+<!--             , SEQ_PR_CO_CNTC_BSP_INFO.NEXTVAL -->
+<!--             , #{bspClsCd} -->
+<!--             , #{bspCd} -->
+<!--             , #{bspNm} -->
+<!--             , SYSDATE -->
+<!--             , #{regEmpNo} -->
+<!--             , #{regIp} -->
+<!--             , SYSDATE -->
+<!--             , #{updEmpNo} -->
+<!--             , #{updIp} -->
+<!--         ) -->
+<!--     </insert> -->
+
+<!--     <delete id="deleteBusinessPlaceInfo" parameterType="businessPlaceInfoVO"> -->
+<!--         DELETE -->
+<!--         FROM PR_CO_CNTC_BSP_INFO -->
+<!--         WHERE BRANCH_CD = #{branchCd} -->
+<!--           AND PRMT_NO = #{prmtNo} -->
+<!--     </delete> -->
+
+<!--     <insert id="insertPublicRelationChannelInfo" parameterType="prChannelInfoVO"> -->
+<!--         INSERT INTO PR_EV_PR_CHANNEL_INFO ( -->
+<!--             BRANCH_CD -->
+<!--             , PRMT_NO -->
+<!--             , CHANNEL_CD -->
+<!--             , CHANNEL_NM -->
+<!--             , CHANNEL_SEQ -->
+<!--             , CHANNEL_URL -->
+<!--             , EVENT_TYPE_CD -->
+<!--             , REG_DTIME -->
+<!--             , REG_EMP_NO -->
+<!--             , REG_IP -->
+<!--             , UPD_DTIME -->
+<!--             , UPD_EMP_NO -->
+<!--             , UPD_IP -->
+<!--         ) VALUES ( -->
+<!--             #{branchCd} -->
+<!--             , #{prmtNo} -->
+<!--             , #{channelCd} -->
+<!--             , #{channelNm} -->
+<!--             , #{channelSeq} -->
+<!--             , #{channelUrl} -->
+<!--             , #{eventTypeCd} -->
+<!--             , SYSDATE -->
+<!--             , #{regEmpNo} -->
+<!--             , #{regIp} -->
+<!--             , SYSDATE -->
+<!--             , #{updEmpNo} -->
+<!--             , #{updIp} -->
+<!--         ) -->
+<!--     </insert> -->
+
+<!--     <delete id="deletePublicRelationChannelInfo" parameterType="prChannelInfoVO"> -->
+<!--         DELETE -->
+<!--         FROM PR_EV_PR_CHANNEL_INFO -->
+<!--         WHERE BRANCH_CD = #{branchCd} -->
+<!--         AND PRMT_NO = #{prmtNo} -->
+<!--     </delete> -->
+
+<!--     <select id="selectGoodsCls" parameterType="searchEventVO" resultType="com.hitejinro.common.entity.CamelMap"> -->
+<!--         SELECT -->
+<!--             <choose> -->
+<!--                 <when test="clsType != null and clsType == 'LCLS'"> -->
+<!--                     CNTC_LCLAS_CODE AS GOODS_CLS_CD -->
+<!--                     , CNTC_LCLAS_NAME AS GOODS_CLS_NM -->
+<!--                 </when> -->
+<!--                 <when test="clsType != null and clsType == 'MCLS'"> -->
+<!--                     CNTC_MCLAS_CODE AS GOODS_CLS_CD -->
+<!--                     , CNTC_MCLAS_NAME AS GOODS_CLS_NM -->
+<!--                 </when> -->
+<!--                 <when test="clsType != null and clsType == 'SCLS'"> -->
+<!--                     CNTC_SCLAS_CODE AS GOODS_CLS_CD -->
+<!--                     , CNTC_SCLAS_NAME AS GOODS_CLS_NM -->
+<!--                 </when> -->
+<!--             </choose> -->
+<!--         FROM PR_CNTC_GOODS_V -->
+<!--         WHERE BRANCH_CD = #{branchCd} -->
+<!--         AND GOODS_TYPE_CD = #{goodsTypeCd} -->
+<!--         <if test="cntcLclsCd != null and cntcLclsCd.size > 0"> -->
+<!--             AND CNTC_LCLAS_CODE IN -->
+<!--             <foreach collection="cntcLclsCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                 #{item} -->
+<!--             </foreach> -->
+<!--         </if> -->
+<!--         <if test="cntcMclsCd != null and cntcMclsCd.size > 0"> -->
+<!--             AND CNTC_MCLAS_CODE IN -->
+<!--             <foreach collection="cntcMclsCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                 #{item} -->
+<!--             </foreach> -->
+<!--         </if> -->
+<!--         <if test="cntcSclsCd != null and cntcSclsCd.size > 0"> -->
+<!--             AND CNTC_SCLAS_CODE IN -->
+<!--             <foreach collection="cntcSclsCd" item="item" index="index" open="(" close=")" separator=","> -->
+<!--                 #{item} -->
+<!--             </foreach> -->
+<!--         </if> -->
+<!--         <choose> -->
+<!--             <when test="clsType != null and clsType == 'LCLS'"> -->
+<!--                 GROUP BY CNTC_LCLAS_CODE, CNTC_LCLAS_NAME -->
+<!--             </when> -->
+<!--             <when test="clsType != null and clsType == 'MCLS'"> -->
+<!--                 GROUP BY CNTC_MCLAS_CODE, CNTC_MCLAS_NAME -->
+<!--             </when> -->
+<!--             <when test="clsType != null and clsType == 'SCLS'"> -->
+<!--                 GROUP BY CNTC_SCLAS_CODE, CNTC_SCLAS_NAME -->
+<!--             </when> -->
+<!--         </choose> -->
+<!--     </select> -->
+
+<!--     <select id="selectEventGoodsInfoList" parameterType="searchEventVO" resultType="com.hitejinro.common.entity.CamelMap"> -->
+<!--         SELECT G.* -->
+<!--         , V.CNTC_LCLAS_CODE AS GOODS_CLS_CD -->
+<!--         , V.CNTC_LCLAS_NAME AS GOODS_CLS_NM -->
+<!--         , V.CNTC_MCLAS_CODE AS GOODS_MCLS_CD -->
+<!--         , V.CNTC_MCLAS_NAME AS GOODS_MCLS_NM -->
+<!--         , V.CNTC_SCLAS_CODE AS GOODS_SCLS_CD -->
+<!--         , V.CNTC_SCLAS_NAME AS GOODS_SCLS_NM -->
+<!--         , V.CNTC_GOODS_CODE AS GOODS_CD -->
+<!--         , V.CNTC_GOODS_NAME AS GOODS_NM -->
+<!--         , V.SALES_AMT AS SALES_AMT -->
+<!--         FROM PR_CO_CNTC_GOODS_INFO G -->
+<!--        	INNER JOIN PR_CNTC_GOODS_V V ON G.BRANCH_CD = V.BRANCH_CD AND G.GOODS_CD = V.CNTC_GOODS_CODE AND V.GOODS_TYPE_CD='EVENT' -->
+<!--         WHERE G.BRANCH_CD = #{branchCd} -->
+<!--         AND G.PRMT_NO = #{prmtNo} -->
+<!-- 		ORDER BY G.CONTACT_GOODS_SEQ ASC -->
+<!--     </select> -->
+
+<!--     <select id="selectEventBusinessPlaceList" parameterType="searchEventVO" resultType="com.hitejinro.common.entity.CamelMap"> -->
+<!--         SELECT B.* -->
+<!--         , D.DEPT_CD AS BSP_CD -->
+<!-- 	  	, D.DEPT_NM AS BSP_ENM -->
+<!-- 	  	, D.DEPT_NM_KOR AS BSP_NM -->
+<!-- 	  	, D.DEPTCLASS AS BSP_CLS_CD -->
+<!-- 	  	, D.TBLCNT -->
+<!-- 	  	, D.RES_USE_YN -->
+<!-- 	  	, D.ACCTDEPT -->
+<!--         FROM PR_CO_CNTC_BSP_INFO B -->
+<!--        	INNER JOIN CO_ORG_DEPT_INFO D ON B.BRANCH_CD = D.BRANCH_CD AND B.BSP_CD = D.DEPT_CD AND B.BSP_CLS_CD = D.DEPTCLASS -->
+<!--         WHERE B.BRANCH_CD = #{branchCd} -->
+<!--         AND B.PRMT_NO = #{prmtNo} -->
+<!-- 		ORDER BY B.CONTACT_BSP_SEQ ASC -->
+<!--     </select> -->
+
+<!--     <select id="selectEventRelationChannelInfoList" parameterType="searchEventVO" resultType="com.hitejinro.common.entity.CamelMap"> -->
+<!--         SELECT * -->
+<!--         FROM PR_EV_PR_CHANNEL_INFO -->
+<!--         WHERE BRANCH_CD = #{branchCd} -->
+<!--         AND PRMT_NO = #{prmtNo} -->
+<!-- 		ORDER BY CHANNEL_SEQ ASC -->
+<!--     </select> -->
+
+<!--     <select id="selectEventJoinCustInfoList" parameterType="eventJoinCustInfoVO" resultType="eventJoinCustInfoVO"> -->
+<!--         WITH T_UNIT_INFO AS ( -->
+<!--             SELECT BRANCH_CD -->
+<!--                 , UNIT_CD -->
+<!--                 , REMARK AS UNIT_NM -->
+<!--                 , CRM_TEAM_CD               /* 팀 */ -->
+<!--                 , CUST_REGION_CD            /* 지역 */ -->
+<!--                 , OFFM_CD                   /* 사무소 */ -->
+<!--             FROM CR_IOM_UNIT_BASICINFO -->
+<!--             WHERE DEL_YN = 'N' -->
+<!--             AND VALID_YN = 'Y' -->
+<!--             AND OFFM_CD <![CDATA[ <> ]]> 'ZZZZ' -->
+<!--         ) -->
+<!--         SELECT ROW_NUMBER() OVER (ORDER BY C.PARTIN_PROPOSE_DTIME) AS SEQ -->
+<!--             , C.BRANCH_CD -->
+<!--             , C.PRMT_NO -->
+<!--             , C.CUST_NO -->
+<!--             , C.CUST_NM -->
+<!--             , U.UNIT_CD -->
+<!--             , U.UNIT_NM -->
+<!--             , CD.TEAM_CD -->
+<!--             , C1.CMMN_CDNM_KOR AS TEAM_NM -->
+<!--             , CD.CUST_REGION_CD AS REGION_CD -->
+<!--             , C2.CMMN_CDNM_KOR AS REGION_NM -->
+<!--             , CD.OFFM_CD AS OFFICE_CD -->
+<!--             , C3.CMMN_CDNM_KOR AS OFFICE_NM -->
+<!--             , C.ENTICKET_QTY -->
+<!--             , C.ENTICKET_NO -->
+<!--             , C.PARTIN_STATUS_CD -->
+<!--             , C.PARTIN_PROPOSE_DTIME -->
+<!--             , C.PARTIN_REASON_CTNS -->
+<!--             , C.CANCEL_REASON_CTNS -->
+<!--             , C.TARGET_CUST_YN -->
+<!--             , C.DELETE_YN -->
+<!--             , C.REG_DTIME -->
+<!--             , CASE WHEN CM.CUST_NO IS NOT NULL THEN 'CASINO' ELSE 'HOTEL' END AS CUST_GBN -->
+<!--             , CM.C_CUST_NO AS CASINO_CUST_NO -->
+<!--             , NVL(RM.NATION, CM.NATION) AS NATION -->
+<!--             , CASE WHEN CM.CUST_NO IS NOT NULL THEN NULL ELSE NVL(RM.PHONE, NVL(CD.TEL_MOBILE1, CD.TEL_MOBILE2)) END AS MOBILE -->
+<!--             , NVL(RM.I_EMAIL, CD.EMAIL) AS EMAIL -->
+<!--         FROM PR_EV_JOIN_CUST_INFO C -->
+<!--         LEFT JOIN CR_ICM_CUST_MST M ON C.BRANCH_CD = M.BRANCH_CD AND C.CUST_NO = M.CUST_NO -->
+<!--         LEFT JOIN CR_ICM_CUST_MST_C CM ON M.CUST_NO = CM.CUST_NO -->
+<!--         LEFT JOIN CR_ICM_CUST_DET_C CD ON C.BRANCH_CD = CD.BRANCH_CD AND CM.C_CUST_NO = CD.C_CUST_NO AND CM.DEL_YN = 'N' AND CD.DEL_YN = 'N' -->
+<!--         LEFT JOIN CR_ICM_CUST_MST_R RM ON C.BRANCH_CD = RM.BRANCH_CD AND M.CUST_NO = RM.CUST_NO -->
+<!--         LEFT JOIN CR_ICM_CUST_DET_R RD ON C.BRANCH_CD = RD.BRANCH_CD AND RM.CUST_NO = RD.CUST_NO AND RM.DEL_YN = 'N' AND RD.DEL_YN = 'N' -->
+<!--         LEFT JOIN T_UNIT_INFO U ON CD.UNIT_CD = U.UNIT_CD -->
+<!--         LEFT JOIN (SELECT CMMN_CD, CMMN_CDNM_KOR FROM CO_COM_CMMN_CD_INFO WHERE CLS_CD = 'CR_GBN' AND USE_YN = 'Y') -->
+<!--             C1 ON CD.TEAM_CD = C1.CMMN_CD -->
+<!--         LEFT JOIN(SELECT CMMN_CD, CMMN_CDNM_KOR FROM CO_COM_CMMN_CD_INFO WHERE CLS_CD = 'CR_SCDL_RGN_GBN_CD' AND USE_YN = 'Y') -->
+<!--             C2 ON CD.CUST_REGION_CD = C2.CMMN_CD -->
+<!--         LEFT JOIN (SELECT CMMN_CD, CMMN_CDNM_KOR FROM CO_COM_CMMN_CD_INFO WHERE CLS_CD = 'CR_OFFICE_CD' AND USE_YN = 'Y') -->
+<!--             C3 ON CD.OFFM_CD = C3.CMMN_CD -->
+<!--         WHERE C.BRANCH_CD = #{branchCd} -->
+<!--         AND C.PRMT_NO = #{prmtNo} -->
+<!--                AND DELETE_YN = 'N' -->
+<!--         <if test="partinStatusCd != null and partinStatusCd != ''"> -->
+<!--             AND PARTIN_STATUS_CD = #{partinStatusCd} -->
+<!--         </if> -->
+<!--         <if test="custNo != null and custNo != ''"> -->
+<!--             AND C.CUST_NO = #{custNo} -->
+<!--         </if> -->
+<!--         ORDER BY SEQ ASC -->
+<!--     </select> -->
+    
+    
+<!--     <select id="selectSimpleEventJoinCustInfoList" resultType="eventJoinCustInfoVO"> -->
+<!--         SELECT  -->
+<!--             BRANCH_CD -->
+<!--             , PRMT_NO -->
+<!--             , CUST_NO -->
+<!--             , CUST_NM -->
+<!--             , ENTICKET_QTY -->
+<!--             , ENTICKET_NO -->
+<!--             , PARTIN_STATUS_CD -->
+<!--             , PARTIN_PROPOSE_DTIME -->
+<!--             , PARTIN_REASON_CTNS -->
+<!--             , CANCEL_REASON_CTNS -->
+<!--             , TARGET_CUST_YN -->
+<!--             , DELETE_YN -->
+<!--         FROM PR_EV_JOIN_CUST_INFO -->
+<!--         WHERE -->
+<!--             BRANCH_CD = #{branchCd} -->
+<!--                AND DELETE_YN = 'N' -->
+<!--             <if test="prmtNo != null and prmtNo != ''"> -->
+<!--                 AND PRMT_NO = #{prmtNo} -->
+<!--             </if> -->
+<!--             <if test="partinStatusCd != null and partinStatusCd != ''"> -->
+<!--                 AND PARTIN_STATUS_CD = #{partinStatusCd} -->
+<!--             </if> -->
+<!--             <if test="custNo != null and custNo != ''"> -->
+<!--                 AND CUST_NO = #{custNo} -->
+<!--             </if> -->
+<!--     </select> -->
+    
+<!--     <select id="selectSimpleEventJoinCustInfoListPage" resultType="eventJoinCustInfoVO" parameterType="searchEventVO"> -->
+<!--      WITH T_UNIT_INFO AS ( -->
+<!--             SELECT BRANCH_CD -->
+<!--                 , UNIT_CD -->
+<!--                 , REMARK AS UNIT_NM -->
+<!--                 , CRM_TEAM_CD               /* 팀 */ -->
+<!--                 , CUST_REGION_CD            /* 지역 */ -->
+<!--                 , OFFM_CD                   /* 사무소 */ -->
+<!--             FROM CR_IOM_UNIT_BASICINFO -->
+<!--             WHERE DEL_YN = 'N' -->
+<!--             AND VALID_YN = 'Y' -->
+<!--             AND OFFM_CD <![CDATA[ <> ]]> 'ZZZZ' -->
+<!--         ) -->
+<!--         SELECT * -->
+<!--         FROM  -->
+<!--         ( -->
+<!--         SELECT -->
+        
+<!--            <choose> -->
+<!--                <when test="orderBy != null and orderBy != ''"> -->
+<!--                    ROW_NUMBER() OVER (ORDER BY ${orderBy}) AS RNUM -->
+<!--                </when> -->
+<!--                <otherwise> -->
+<!--                    ROW_NUMBER() OVER (ORDER BY C.CUST_NO DESC) AS RNUM -->
+<!--                </otherwise> -->
+<!--            </choose> -->
+<!--          , ROW_NUMBER() OVER (ORDER BY C.PARTIN_PROPOSE_DTIME) AS SEQ -->
+<!--             , C.BRANCH_CD -->
+<!--             , C.PRMT_NO -->
+<!--             , C.CUST_NO -->
+<!--             , C.CUST_NM -->
+<!--             , U.UNIT_CD -->
+<!--             , U.UNIT_NM -->
+<!--             , CD.TEAM_CD -->
+<!--             , C1.CMMN_CDNM_KOR AS TEAM_NM -->
+<!--             , CD.CUST_REGION_CD AS REGION_CD -->
+<!--             , C2.CMMN_CDNM_KOR AS REGION_NM -->
+<!--             , CD.OFFM_CD AS OFFICE_CD -->
+<!--             , C3.CMMN_CDNM_KOR AS OFFICE_NM -->
+<!--             , C.ENTICKET_QTY -->
+<!--             , C.ENTICKET_NO -->
+<!--             , C.PARTIN_STATUS_CD -->
+<!--             , C.PARTIN_PROPOSE_DTIME -->
+<!--             , C.PARTIN_REASON_CTNS -->
+<!--             , C.CANCEL_REASON_CTNS -->
+<!--             , C.TARGET_CUST_YN -->
+<!--             , C.DELETE_YN -->
+<!--             , C.REG_DTIME -->
+<!--             , CASE WHEN CM.CUST_NO IS NOT NULL THEN 'CASINO' ELSE 'HOTEL' END AS CUST_GBN -->
+<!--             , CM.C_CUST_NO AS CASINO_CUST_NO -->
+<!--             , NVL(RM.NATION, CM.NATION) AS NATION -->
+<!--             , CASE WHEN CM.CUST_NO IS NOT NULL THEN NULL ELSE NVL(RM.PHONE, NVL(CD.TEL_MOBILE1, CD.TEL_MOBILE2)) END AS MOBILE -->
+<!--             , NVL(RM.I_EMAIL, CD.EMAIL) AS EMAIL -->
+<!--         FROM PR_EV_JOIN_CUST_INFO C -->
+<!--         LEFT JOIN CR_ICM_CUST_MST M ON C.BRANCH_CD = M.BRANCH_CD AND C.CUST_NO = M.CUST_NO -->
+<!--         LEFT JOIN CR_ICM_CUST_MST_C CM ON M.CUST_NO = CM.CUST_NO -->
+<!--         LEFT JOIN CR_ICM_CUST_DET_C CD ON C.BRANCH_CD = CD.BRANCH_CD AND CM.C_CUST_NO = CD.C_CUST_NO AND CM.DEL_YN = 'N' AND CD.DEL_YN = 'N' -->
+<!--         LEFT JOIN CR_ICM_CUST_MST_R RM ON C.BRANCH_CD = RM.BRANCH_CD AND M.CUST_NO = RM.CUST_NO -->
+<!--         LEFT JOIN CR_ICM_CUST_DET_R RD ON C.BRANCH_CD = RD.BRANCH_CD AND RM.CUST_NO = RD.CUST_NO AND RM.DEL_YN = 'N' AND RD.DEL_YN = 'N' -->
+<!--         LEFT JOIN T_UNIT_INFO U ON CD.UNIT_CD = U.UNIT_CD -->
+<!--         LEFT JOIN (SELECT CMMN_CD, CMMN_CDNM_KOR FROM CO_COM_CMMN_CD_INFO WHERE CLS_CD = 'CR_GBN' AND USE_YN = 'Y') -->
+<!--             C1 ON CD.TEAM_CD = C1.CMMN_CD -->
+<!--         LEFT JOIN(SELECT CMMN_CD, CMMN_CDNM_KOR FROM CO_COM_CMMN_CD_INFO WHERE CLS_CD = 'CR_SCDL_RGN_GBN_CD' AND USE_YN = 'Y') -->
+<!--             C2 ON CD.CUST_REGION_CD = C2.CMMN_CD -->
+<!--         LEFT JOIN (SELECT CMMN_CD, CMMN_CDNM_KOR FROM CO_COM_CMMN_CD_INFO WHERE CLS_CD = 'CR_OFFICE_CD' AND USE_YN = 'Y') -->
+<!--             C3 ON CD.OFFM_CD = C3.CMMN_CD -->
+<!--         WHERE C.BRANCH_CD = #{branchCd} -->
+<!--             AND C.PARTIN_STATUS_CD = 'Y' -->
+<!--             AND C.DELETE_YN = 'N' -->
+<!--             <if test="prmtNo != null and prmtNo != ''"> -->
+<!--                 AND C.PRMT_NO = #{prmtNo} -->
+<!--             </if> -->
+<!--             <if test="searchKeyword != null and searchKeyword != ''"> -->
+<!--                 AND (REPLACE(UPPER(C.CUST_NO), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                      OR REPLACE(UPPER(CM.C_CUST_NO), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                      OR REPLACE(UPPER(C.CUST_NM), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                      OR REPLACE(UPPER(M.CUST_NM_ORIG), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                      ) -->
+<!--             </if> -->
+<!--             ) -->
+<!--         WHERE  RNUM <![CDATA[ > ]]> #{firstIndex} -->
+<!--         		AND RNUM <![CDATA[ <= ]]> #{firstIndex} + #{recordCountPerPage} -->
+    
+<!--     </select> -->
+    
+<!--     <select id="countSimpleEventJoinCustInfoListPage" resultType="int" parameterType="searchEventVO"> -->
+<!--         SELECT COUNT(1) -->
+<!--         FROM PR_EV_JOIN_CUST_INFO C -->
+<!--         LEFT JOIN CR_ICM_CUST_MST M ON C.BRANCH_CD = M.BRANCH_CD AND C.CUST_NO = M.CUST_NO -->
+<!--         LEFT JOIN CR_ICM_CUST_MST_C CM ON M.CUST_NO = CM.CUST_NO -->
+<!--         WHERE -->
+<!--             C.BRANCH_CD = #{branchCd} -->
+<!--             AND C.PARTIN_STATUS_CD = 'Y' -->
+<!--             AND C.DELETE_YN = 'N' -->
+<!--             <if test="prmtNo != null and prmtNo != ''"> -->
+<!--                 AND C.PRMT_NO = #{prmtNo} -->
+<!--             </if> -->
+<!--             <if test="searchKeyword != null and searchKeyword != ''"> -->
+<!--                 AND (REPLACE(UPPER(C.CUST_NO), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                      OR REPLACE(UPPER(CM.C_CUST_NO), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                      OR REPLACE(UPPER(C.CUST_NM), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                      OR REPLACE(UPPER(M.CUST_NM_ORIG), ' ', '') LIKE '%' || REPLACE(UPPER(#{searchKeyword}), ' ', '') || '%' -->
+<!--                      ) -->
+<!--             </if> -->
+<!--     </select> -->
+
+<!--     <insert id="insertEventJoinCustInfo" parameterType="eventJoinCustInfoVO"> -->
+<!--         INSERT INTO PR_EV_JOIN_CUST_INFO ( -->
+<!--             BRANCH_CD -->
+<!--             , PRMT_NO -->
+<!--             , CUST_NO -->
+<!--             , CUST_NM -->
+<!--             , ENTICKET_QTY -->
+<!--             , ENTICKET_NO -->
+<!--             , PARTIN_STATUS_CD -->
+<!--             , PARTIN_PROPOSE_DTIME -->
+<!--             , PARTIN_REASON_CTNS -->
+<!--             , CANCEL_REASON_CTNS -->
+<!--             , TARGET_CUST_YN -->
+<!--             , DELETE_YN -->
+<!--             , REG_DTIME -->
+<!--             , REG_EMP_NO -->
+<!--             , REG_IP -->
+<!--         ) VALUES ( -->
+<!--             #{branchCd} -->
+<!--             , #{prmtNo} -->
+<!--             , #{custNo} -->
+<!--             , #{custNm} -->
+<!--             , #{enticketQty} -->
+<!--             , #{enticketNo} -->
+<!--             , 'N' -->
+<!--             , SYSDATE -->
+<!--             , #{partinReasonCtns} -->
+<!--             , #{cancelReasonCtns} -->
+<!--             , 'N' -->
+<!--             , 'N' -->
+<!--             , SYSDATE -->
+<!--             , #{regEmpNo} -->
+<!--             , #{regIp} -->
+<!--         ) -->
+<!--     </insert> -->
+
+<!--     <update id="updateEventJoinCustInfo" parameterType="eventJoinCustInfoVO"> -->
+<!--         UPDATE PR_EV_JOIN_CUST_INFO -->
+<!--         SET UPD_DTIME = SYSDATE -->
+<!--             , UPD_EMP_NO = #{updEmpNo} -->
+<!--             , UPD_IP = #{updIp} -->
+<!--         <if test="custNm != null and custNm != ''"> -->
+<!--             , CUST_NM = #{custNm} -->
+<!--         </if> -->
+<!--         <if test="enticketQty != null and enticketQty != ''"> -->
+<!--             , ENTICKET_QTY = #{enticketQty} -->
+<!--         </if> -->
+<!--         <if test="enticketNo != null and enticketNo != ''"> -->
+<!--             , ENTICKET_NO = #{enticketNo} -->
+<!--         </if> -->
+<!--         <if test="partinStatusCd != null and partinStatusCd != ''"> -->
+<!--             , PARTIN_STATUS_CD = #{partinStatusCd} -->
+<!--         </if> -->
+<!--         <if test="partinProposeDtime != null"> -->
+<!--             , PARTIN_PROPOSE_DTIME = #{partinProposeDtime} -->
+<!--         </if> -->
+<!--         <if test="partinReasonCtns != null and partinReasonCtns != ''"> -->
+<!--             , PARTIN_REASON_CTNS = #{partinReasonCtns} -->
+<!--         </if> -->
+<!--         <if test="cancelReasonCtns != null and cancelReasonCtns != ''"> -->
+<!--             , CANCEL_REASON_CTNS = #{cancelReasonCtns} -->
+<!--         </if> -->
+<!--         <if test="targetCustYn != null and targetCustYn != ''"> -->
+<!--             , TARGET_CUST_YN = #{targetCustYn} -->
+<!--         </if> -->
+<!--         <if test="deleteYn != null and deleteYn != ''"> -->
+<!--             , DELETE_YN = #{deleteYn} -->
+<!--         </if> -->
+<!--         WHERE BRANCH_CD = #{branchCd} -->
+<!--         AND PRMT_NO = #{prmtNo} -->
+<!--         <if test="custNo != null and custNo != ''"> -->
+<!--             AND CUST_NO = #{custNo} -->
+<!--         </if> -->
+<!--     </update> -->
+    
+</mapper>

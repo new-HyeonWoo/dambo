@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.mapper.Es82Mapper">
+	<select id="select1" resultType="java.util.HashMap">
+		SELECT D.*,
+			   TRUNC(MONTHS_BETWEEN(TO_DATE(ESTI_DATE_21, 'YYYYMMDD'), TO_DATE(ESTI_DATE_11, 'YYYYMMDD'))) AS MON_CNT_91,
+			   TRUNC(MONTHS_BETWEEN(TO_DATE(ESTI_DATE_22, 'YYYYMMDD'), TO_DATE(ESTI_DATE_12, 'YYYYMMDD'))) AS MON_CNT_92,
+			   PLMIN_BID_AMT_21-PLMIN_BID_AMT_11 AS PLMIN_BID_AMT_91,
+			   PLMIN_BID_AMT_22-PLMIN_BID_AMT_12 AS PLMIN_BID_AMT_92,
+			   PL_BID_AMT_21-PL_BID_AMT_11       AS PL_BID_AMT_91   ,
+			   PL_BID_AMT_22-PL_BID_AMT_12       AS PL_BID_AMT_92   ,
+			   PRE_BOND_AMT_21-PRE_BOND_AMT_11   AS PRE_BOND_AMT_91 ,
+			   PRE_BOND_AMT_22-PRE_BOND_AMT_12   AS PRE_BOND_AMT_92 ,
+			   SPARE_SEC_AMT_21-SPARE_SEC_AMT_11 AS SPARE_SEC_AMT_91,
+			   SPARE_SEC_AMT_22-SPARE_SEC_AMT_12 AS SPARE_SEC_AMT_92,
+			   L_SIZE_21-L_SIZE_11               AS L_SIZE_91       ,
+			   L_SIZE_22-L_SIZE_12               AS L_SIZE_92       ,
+			   B_SIZE_21-B_SIZE_11               AS B_SIZE_91       ,
+			   B_SIZE_22-B_SIZE_12               AS B_SIZE_92
+		FROM (
+				 SELECT MIN(DECODE(NO, 11, ESTI_DATE      )) AS ESTI_DATE_11    ,
+						MIN(DECODE(NO, 11, JUM_SABUN_NAME )) AS JUM_SABUN_11    ,
+						MIN(DECODE(NO, 11, RECE_SABUN_NAME)) AS RECE_SABUN_11   ,
+						MIN(DECODE(NO, 11, PLMIN_BID_AMT  )) AS PLMIN_BID_AMT_11,
+						MIN(DECODE(NO, 11, PL_BID_AMT     )) AS PL_BID_AMT_11   ,
+						MIN(DECODE(NO, 11, PRE_BOND_AMT   )) AS PRE_BOND_AMT_11 ,
+						MIN(DECODE(NO, 11, SPARE_SEC_AMT  )) AS SPARE_SEC_AMT_11,
+						MIN(DECODE(NO, 11, L_SIZE         )) AS L_SIZE_11       ,
+						MIN(DECODE(NO, 11, B_SIZE         )) AS B_SIZE_11       ,
+						MIN(DECODE(NO, 11, USE_DESC       )) AS USE_DESC_11     ,
+						MIN(DECODE(NO, 11, LCATEGORY      )) AS LCATEGORY_11    ,
+						MIN(DECODE(NO, 11, REST_PL_USE    )) AS REST_PL_USE_11  ,
+						MIN(DECODE(NO, 11, REST_OT_LAW    )) AS REST_OT_LAW_11  ,
+						MIN(DECODE(NO, 11, REST_EN_RULE   )) AS REST_EN_RULE_11 ,
+						MIN(DECODE(NO, 11, REST_FU_LAW    )) AS REST_FU_LAW_11  ,
+						MIN(DECODE(NO, 11, REST_MAIN_USE  )) AS REST_MAIN_USE_11,
+						MIN(DECODE(NO, 12, ESTI_DATE      )) AS ESTI_DATE_12    ,
+						MIN(DECODE(NO, 12, JUM_SABUN_NAME )) AS JUM_SABUN_12    ,
+						MIN(DECODE(NO, 12, RECE_SABUN_NAME)) AS RECE_SABUN_12   ,
+						MIN(DECODE(NO, 12, PLMIN_BID_AMT  )) AS PLMIN_BID_AMT_12,
+						MIN(DECODE(NO, 12, PL_BID_AMT     )) AS PL_BID_AMT_12   ,
+						MIN(DECODE(NO, 12, PRE_BOND_AMT   )) AS PRE_BOND_AMT_12 ,
+						MIN(DECODE(NO, 12, SPARE_SEC_AMT  )) AS SPARE_SEC_AMT_12,
+						MIN(DECODE(NO, 12, L_SIZE         )) AS L_SIZE_12       ,
+						MIN(DECODE(NO, 12, B_SIZE         )) AS B_SIZE_12       ,
+						MIN(DECODE(NO, 12, USE_DESC       )) AS USE_DESC_12     ,
+						MIN(DECODE(NO, 12, LCATEGORY      )) AS LCATEGORY_12    ,
+						MIN(DECODE(NO, 12, REST_PL_USE    )) AS REST_PL_USE_12  ,
+						MIN(DECODE(NO, 12, REST_OT_LAW    )) AS REST_OT_LAW_12  ,
+						MIN(DECODE(NO, 12, REST_EN_RULE   )) AS REST_EN_RULE_12 ,
+						MIN(DECODE(NO, 12, REST_FU_LAW    )) AS REST_FU_LAW_12  ,
+						MIN(DECODE(NO, 12, REST_MAIN_USE  )) AS REST_MAIN_USE_12,
+						MIN(DECODE(NO, 21, ESTI_DATE      )) AS ESTI_DATE_21    ,
+						MIN(DECODE(NO, 21, JUM_SABUN_NAME )) AS JUM_SABUN_21    ,
+						MIN(DECODE(NO, 21, RECE_SABUN_NAME)) AS RECE_SABUN_21   ,
+						MIN(DECODE(NO, 21, PLMIN_BID_AMT  )) AS PLMIN_BID_AMT_21,
+						MIN(DECODE(NO, 21, PL_BID_AMT     )) AS PL_BID_AMT_21   ,
+						MIN(DECODE(NO, 21, PRE_BOND_AMT   )) AS PRE_BOND_AMT_21 ,
+						MIN(DECODE(NO, 21, SPARE_SEC_AMT  )) AS SPARE_SEC_AMT_21,
+						MIN(DECODE(NO, 21, L_SIZE         )) AS L_SIZE_21       ,
+						MIN(DECODE(NO, 21, B_SIZE         )) AS B_SIZE_21       ,
+						MIN(DECODE(NO, 21, USE_DESC       )) AS USE_DESC_21     ,
+						MIN(DECODE(NO, 21, LCATEGORY      )) AS LCATEGORY_21    ,
+						MIN(DECODE(NO, 21, REST_PL_USE    )) AS REST_PL_USE_21  ,
+						MIN(DECODE(NO, 21, REST_OT_LAW    )) AS REST_OT_LAW_21  ,
+						MIN(DECODE(NO, 21, REST_EN_RULE   )) AS REST_EN_RULE_21 ,
+						MIN(DECODE(NO, 21, REST_FU_LAW    )) AS REST_FU_LAW_21  ,
+						MIN(DECODE(NO, 21, REST_MAIN_USE  )) AS REST_MAIN_USE_21,
+						MIN(DECODE(NO, 22, ESTI_DATE      )) AS ESTI_DATE_22    ,
+						MIN(DECODE(NO, 22, JUM_SABUN_NAME )) AS JUM_SABUN_22    ,
+						MIN(DECODE(NO, 22, RECE_SABUN_NAME)) AS RECE_SABUN_22   ,
+						MIN(DECODE(NO, 22, PLMIN_BID_AMT  )) AS PLMIN_BID_AMT_22,
+						MIN(DECODE(NO, 22, PL_BID_AMT     )) AS PL_BID_AMT_22   ,
+						MIN(DECODE(NO, 22, PRE_BOND_AMT   )) AS PRE_BOND_AMT_22 ,
+						MIN(DECODE(NO, 22, SPARE_SEC_AMT  )) AS SPARE_SEC_AMT_22,
+						MIN(DECODE(NO, 22, L_SIZE         )) AS L_SIZE_22       ,
+						MIN(DECODE(NO, 22, B_SIZE         )) AS B_SIZE_22       ,
+						MIN(DECODE(NO, 22, USE_DESC       )) AS USE_DESC_22     ,
+						MIN(DECODE(NO, 22, LCATEGORY      )) AS LCATEGORY_22    ,
+						MIN(DECODE(NO, 22, REST_PL_USE    )) AS REST_PL_USE_22  ,
+						MIN(DECODE(NO, 22, REST_OT_LAW    )) AS REST_OT_LAW_22  ,
+						MIN(DECODE(NO, 22, REST_EN_RULE   )) AS REST_EN_RULE_22 ,
+						MIN(DECODE(NO, 22, REST_FU_LAW    )) AS REST_FU_LAW_22  ,
+						MIN(DECODE(NO, 22, REST_MAIN_USE  )) AS REST_MAIN_USE_22
+				 FROM (
+						  SELECT 11                 AS NO           ,
+								 AA.ESTI_DATE       AS ESTI_DATE    ,
+								 AA.JUM_SABUN       AS JUM_SABUN    , (SELECT NAME FROM V_IA01 WHERE SABUN = AA.JUM_SABUN) AS JUM_SABUN_NAME,
+								 AA.MANA_RECE_SABUN AS RECE_SABUN   , (SELECT NAME FROM V_IA01 WHERE SABUN = AA.MANA_RECE_SABUN) AS RECE_SABUN_NAME,
+								 AA.PLMIN_BID_AMT   AS PLMIN_BID_AMT,
+								 AA.PL_BID_AMT      AS PL_BID_AMT   ,
+								 AA.PRE_BOND_AMT    AS PRE_BOND_AMT ,
+								 AA.SPARE_SEC_AMT   AS SPARE_SEC_AMT,
+								 AA.L_SIZE          AS L_SIZE       ,
+								 AA.B_SIZE          AS B_SIZE       ,
+								 DECODE(SEC_CODE, '101', '아파트'     ,
+										'102', '연립,다세대',
+										'104', '상업용'     ,
+										'105', '오피스텔'   ,
+										(
+											SELECT (SELECT CD_DESC
+													FROM ES00
+													WHERE ATTR_00 = 'DIV126'
+													  AND CD_CODE = CURR_USE_CODE)
+											FROM (
+													 SELECT YYYY, SEQ, CURR_USE_CODE FROM JB2302
+													 UNION
+													 SELECT YYYY, SEQ, CURR_USE_CODE FROM JB2303
+												 ) C
+											WHERE YYYY = AA.YYYY
+											  AND SEQ  = AA.SEQ      )
+									 ) AS USE_DESC     ,
+								 (SELECT D.*
+								  FROM (
+
+										   SELECT (SELECT CD_DESC FROM ES00 WHERE ATTR_00 = 'DIV112' AND CD_CODE = LCATEGORY) AS LCATEGORY
+										   FROM JB2011
+										   WHERE YYYY = #{_이전년도}
+											 AND SEQ  = #{_이전담보순번}
+										   UNION
+										   SELECT SUBSTRB(MAX(SYS_CONNECT_BY_PATH(LCATEGORY, ',')), 2, 40) AS LCATEGORY
+										   FROM (
+											   SELECT YYYY, SEQ, LN_SEQ,
+											   (SELECT CD_DESC FROM ES00 WHERE ATTR_00 = 'DIV112' AND CD_CODE = LCATEGORY) AS LCATEGORY
+											   FROM JB2013 WHERE YYYY = #{_이전년도}  AND SEQ  = #{_이전담보순번}
+											   ORDER BY YYYY, SEQ, LN_SEQ
+											   )
+										   START WITH LN_SEQ = 1
+										   CONNECT BY PRIOR LN_SEQ = LN_SEQ-1
+												  AND PRIOR YYYY = YYYY
+												  AND PRIOR SEQ = SEQ
+												  AND YYYY = #{_이전년도}
+												  AND SEQ  = #{_이전담보순번}
+									   ) D
+								  WHERE LCATEGORY IS NOT NULL
+								 )                  AS LCATEGORY    ,
+								 AB.REST_PL_USE     AS REST_PL_USE  ,
+								 AB.REST_OT_LAW     AS REST_OT_LAW  ,
+								 AB.REST_EN_RULE    AS REST_EN_RULE ,
+								 AB.REST_FU_LAW     AS REST_FU_LAW  ,
+								 AB.REST_MAIN_USE   AS REST_MAIN_USE
+						  FROM JB10 AA, JB2017 AB
+						  WHERE AA.YYYY = #{_이전년도}
+							AND AA.SEQ  = (SELECT SEQ
+							  FROM JB10 A
+							  WHERE YYYY   = #{_이전년도}
+							AND SEQ      = #{_이전담보순번}
+							  )
+							AND AA.YYYY = AB.YYYY
+							AND AA.SEQ  = AB.SEQ
+						  UNION ALL
+						  SELECT 12                 AS NO           ,
+							  (  SELECT SUBSTR(APPR_DATETIME,1,8) APPR_DATE
+							  FROM ES03
+							  WHERE YYYY = #{_이전년도}
+							  AND SEQ = #{_이전담보순번}
+							  AND PROC_DIV = '22'
+							  AND ROWNUM = 1)  AS ESTI_DATE    ,
+
+							  AA.JUM_SABUN       AS JUM_SABUN    ,
+							  (SELECT NAME FROM V_IA01 WHERE SABUN = (  SELECT APPR_SABUN
+							  FROM ES03
+							  WHERE YYYY = #{_이전년도}
+							  AND SEQ = #{_이전담보순번}
+							  AND PROC_DIV = '22'
+							  AND ROWNUM = 1)) AS JUM_SABUN_NAME,
+							  AA.MANA_RECE_SABUN AS RECE_SABUN   , (SELECT NAME FROM V_IA01 WHERE SABUN = AA.MANA_RECE_SABUN) AS RECE_SABUN_NAME,
+							  AA.PLMIN_BID_AMT   AS PLMIN_BID_AMT,
+							  AA.PL_BID_AMT      AS PL_BID_AMT   ,
+							  AA.PRE_BOND_AMT    AS PRE_BOND_AMT ,
+							  AA.SPARE_SEC_AMT   AS SPARE_SEC_AMT,
+							  AA.L_SIZE          AS L_SIZE       ,
+							  AA.B_SIZE          AS B_SIZE       ,
+							  DECODE(SEC_CODE, '101', '아파트'     ,
+							  '102', '연립,다세대',
+							  '104', '상업용'     ,
+							  '105', '오피스텔'   ,
+							  (
+							  SELECT (SELECT CD_DESC
+							  FROM ES00
+							  WHERE ATTR_00 = 'DIV126'
+							  AND CD_CODE = CURR_USE_CODE)
+							  FROM (
+							  SELECT YYYY, SEQ, CURR_USE_CODE FROM ES2302
+							  UNION
+							  SELECT YYYY, SEQ, CURR_USE_CODE FROM ES2303
+							  ) C
+							  WHERE YYYY = AA.YYYY
+							  AND SEQ  = AA.SEQ      )
+							  ) AS USE_DESC     ,
+							  (SELECT D.*
+							  FROM (
+
+							  SELECT (SELECT CD_DESC FROM ES00 WHERE ATTR_00 = 'DIV112' AND CD_CODE = LCATEGORY) AS LCATEGORY
+							  FROM ES2011
+							  WHERE YYYY = #{_이전년도}
+							  AND SEQ  = #{_이전담보순번}
+							  UNION
+							  SELECT SUBSTRB(MAX(SYS_CONNECT_BY_PATH(LCATEGORY, ',')), 2, 40) AS LCATEGORY
+							  FROM (
+							  SELECT YYYY, SEQ, LN_SEQ,
+							  (SELECT CD_DESC FROM ES00 WHERE ATTR_00 = 'DIV112' AND CD_CODE = LCATEGORY) AS LCATEGORY
+							  FROM ES2013 WHERE YYYY = #{_이전년도}  AND SEQ  = #{_이전담보순번}
+							  ORDER BY YYYY, SEQ, LN_SEQ
+							  )
+							  START WITH LN_SEQ = 1
+							  CONNECT BY PRIOR LN_SEQ = LN_SEQ-1
+							  AND PRIOR YYYY = YYYY
+							  AND PRIOR SEQ = SEQ
+							  AND YYYY = #{_이전년도}
+							  AND SEQ  = #{_이전담보순번}
+							  ) D
+							  WHERE LCATEGORY IS NOT NULL
+							  )                  AS LCATEGORY    ,
+							  AB.REST_PL_USE     AS REST_PL_USE  ,
+							  AB.REST_OT_LAW     AS REST_OT_LAW  ,
+							  AB.REST_EN_RULE    AS REST_EN_RULE ,
+							  AB.REST_FU_LAW     AS REST_FU_LAW  ,
+							  AB.REST_MAIN_USE   AS REST_MAIN_USE
+						  FROM ES10 AA, ES2017 AB
+						  WHERE AA.YYYY = #{_이전년도}
+							AND AA.SEQ  = (SELECT   SEQ
+							  FROM ES10 A
+							  WHERE YYYY   = #{_이전년도}
+							AND SEQ      = #{_이전담보순번}
+							  )
+							AND AA.YYYY = AB.YYYY
+							AND AA.SEQ  = AB.SEQ
+						  UNION ALL
+						  SELECT 21                 AS NO           ,
+							  AA.ESTI_DATE       AS ESTI_DATE    ,
+							  AA.JUM_SABUN       AS JUM_SABUN    , (SELECT NAME FROM V_IA01 WHERE SABUN = AA.JUM_SABUN) AS JUM_SABUN_NAME,
+							  AA.MANA_RECE_SABUN AS RECE_SABUN   , (SELECT NAME FROM V_IA01 WHERE SABUN = AA.MANA_RECE_SABUN) AS RECE_SABUN_NAME,
+							  AA.PLMIN_BID_AMT   AS PLMIN_BID_AMT,
+							  AA.PL_BID_AMT      AS PL_BID_AMT   ,
+							  AA.PRE_BOND_AMT    AS PRE_BOND_AMT ,
+							  AA.SPARE_SEC_AMT   AS SPARE_SEC_AMT,
+							  AA.L_SIZE          AS L_SIZE       ,
+							  AA.B_SIZE          AS B_SIZE       ,
+							  DECODE(SEC_CODE, '101', '아파트'     ,
+							  '102', '연립,다세대',
+							  '104', '상업용'     ,
+							  '105', '오피스텔'   ,
+							  (
+							  SELECT (SELECT CD_DESC
+							  FROM ES00
+							  WHERE ATTR_00 = 'DIV126'
+							  AND CD_CODE = CURR_USE_CODE)
+							  FROM (
+							  SELECT YYYY, SEQ, CURR_USE_CODE FROM JB2302
+							  UNION
+							  SELECT YYYY, SEQ, CURR_USE_CODE FROM JB2303
+							  ) C
+							  WHERE YYYY = AA.YYYY
+							  AND SEQ  = AA.SEQ      )
+							  ) AS USE_DESC     ,
+							  (SELECT D.*
+							  FROM (
+
+							  SELECT (SELECT CD_DESC FROM ES00 WHERE ATTR_00 = 'DIV112' AND CD_CODE = LCATEGORY) AS LCATEGORY
+							  FROM JB2011
+							  WHERE YYYY = #{YYYY}
+							  AND SEQ  = #{SEQ}
+							  UNION
+
+							  SELECT SUBSTRB(MAX(SYS_CONNECT_BY_PATH(LCATEGORY, ',')), 2, 40) AS LCATEGORY
+							  FROM (
+							  SELECT YYYY, SEQ, LN_SEQ,
+							  (SELECT CD_DESC FROM ES00 WHERE ATTR_00 = 'DIV112' AND CD_CODE = LCATEGORY) AS LCATEGORY
+							  FROM JB2013 WHERE YYYY = #{YYYY}   AND SEQ  = #{SEQ}
+							  ORDER BY YYYY, SEQ, LN_SEQ
+							  )
+							  START WITH LN_SEQ = 1
+							  CONNECT BY PRIOR LN_SEQ = LN_SEQ-1
+							  AND PRIOR YYYY = YYYY
+							  AND PRIOR SEQ = SEQ
+							  AND YYYY = #{YYYY}
+							  AND SEQ  = #{SEQ}
+							  ) D
+							  WHERE LCATEGORY IS NOT NULL
+							  )                  AS LCATEGORY    ,
+							  AB.REST_PL_USE     AS REST_PL_USE  ,
+							  AB.REST_OT_LAW     AS REST_OT_LAW  ,
+							  AB.REST_EN_RULE    AS REST_EN_RULE ,
+							  AB.REST_FU_LAW     AS REST_FU_LAW  ,
+							  AB.REST_MAIN_USE   AS REST_MAIN_USE
+						  FROM JB10 AA, JB2017 AB
+						  WHERE AA.YYYY = #{YYYY}
+							AND AA.SEQ  = #{SEQ}
+							AND AA.YYYY = AB.YYYY
+							AND AA.SEQ  = AB.SEQ
+						  UNION ALL
+
+						  SELECT 22                 AS NO           ,
+							  (  SELECT SUBSTR(APPR_DATETIME,1,8) APPR_DATE
+							  FROM ES03
+							  WHERE YYYY = #{YYYY}
+							  AND SEQ = #{SEQ}
+							  AND PROC_DIV = '22'
+							  AND ROWNUM = 1)  AS ESTI_DATE    ,
+
+							  AA.JUM_SABUN       AS JUM_SABUN    ,
+							  (SELECT NAME FROM V_IA01 WHERE SABUN = (  SELECT APPR_SABUN
+							  FROM ES03
+							  WHERE YYYY = #{YYYY}
+							  AND SEQ = #{SEQ}
+							  AND PROC_DIV = '22'
+							  AND ROWNUM = 1)) AS JUM_SABUN_NAME,
+							  AA.MANA_RECE_SABUN AS RECE_SABUN   , (SELECT NAME FROM V_IA01 WHERE SABUN = AA.MANA_RECE_SABUN) AS RECE_SABUN_NAME,
+							  AA.PLMIN_BID_AMT   AS PLMIN_BID_AMT,
+							  AA.PL_BID_AMT      AS PL_BID_AMT   ,
+							  AA.PRE_BOND_AMT    AS PRE_BOND_AMT ,
+							  AA.SPARE_SEC_AMT   AS SPARE_SEC_AMT,
+							  AA.L_SIZE          AS L_SIZE       ,
+							  AA.B_SIZE          AS B_SIZE       ,
+							  DECODE(SEC_CODE, '101', '아파트'     ,
+							  '102', '연립,다세대',
+							  '104', '상업용'     ,
+							  '105', '오피스텔'   ,
+							  (
+							  SELECT (SELECT CD_DESC
+							  FROM ES00
+							  WHERE ATTR_00 = 'DIV126'
+							  AND CD_CODE = CURR_USE_CODE)
+							  FROM (
+							  SELECT YYYY, SEQ, CURR_USE_CODE FROM ES2302
+							  UNION
+							  SELECT YYYY, SEQ, CURR_USE_CODE FROM ES2303
+							  ) C
+							  WHERE YYYY = AA.YYYY
+							  AND SEQ  = AA.SEQ      )
+							  ) AS USE_DESC     ,
+							  (SELECT D.*
+							  FROM (
+
+							  SELECT (SELECT CD_DESC FROM ES00 WHERE ATTR_00 = 'DIV112' AND CD_CODE = LCATEGORY) AS LCATEGORY
+							  FROM ES2011
+							  WHERE YYYY = #{YYYY}
+							  AND SEQ  = #{SEQ}
+							  UNION
+
+							  SELECT SUBSTRB(MAX(SYS_CONNECT_BY_PATH(LCATEGORY, ',')), 2, 40) AS LCATEGORY
+							  FROM (
+							  SELECT YYYY, SEQ, LN_SEQ,
+							  (SELECT CD_DESC FROM ES00 WHERE ATTR_00 = 'DIV112' AND CD_CODE = LCATEGORY) AS LCATEGORY
+							  FROM ES2013 WHERE YYYY = #{YYYY}   AND SEQ  = #{SEQ}
+							  ORDER BY YYYY, SEQ, LN_SEQ
+							  )
+							  START WITH LN_SEQ = 1
+							  CONNECT BY PRIOR LN_SEQ = LN_SEQ-1
+							  AND PRIOR YYYY = YYYY
+							  AND PRIOR SEQ = SEQ
+							  AND YYYY = #{YYYY}
+							  AND SEQ  = #{SEQ}
+							  ) D
+							  WHERE LCATEGORY IS NOT NULL
+							  )                  AS LCATEGORY    ,
+							  AB.REST_PL_USE     AS REST_PL_USE  ,
+							  AB.REST_OT_LAW     AS REST_OT_LAW  ,
+							  AB.REST_EN_RULE    AS REST_EN_RULE ,
+							  AB.REST_FU_LAW     AS REST_FU_LAW  ,
+							  AB.REST_MAIN_USE   AS REST_MAIN_USE
+						  FROM ES10 AA, ES2017 AB
+						  WHERE AA.YYYY = #{YYYY}
+							AND AA.SEQ  = #{SEQ}
+							AND AA.YYYY = AB.YYYY
+							AND AA.SEQ  = AB.SEQ
+					  ) C
+			 ) D
+	</select>
+	<select id="select2" resultType="java.util.HashMap">
+		SELECT MENT_ITEMS
+		FROM ES2321
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+		  AND REPO_DIV = '3000'
+	</select>
+</mapper>

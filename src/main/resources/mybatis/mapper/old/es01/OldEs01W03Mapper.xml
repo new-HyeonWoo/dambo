@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.old.es01.repository.OldEs01W03Mapper">
+
+<select id="selectRegDepsitStoreAreaList"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD, 
+	       CMMN_CD_NM,
+	       EXP_CD_VALUE_02,  <!-- AS 가임대한도  -->
+	       EXP_CD_VALUE_03,  <!--AS 지역별한도 -->
+	       EXP_CD_VALUE_04  <!--AS 최우선한도 -->
+ 		 FROM RVS_CMMN_CD_INFO
+ 		WHERE CMMN_CD_VALUE = 'DIV106' 
+		   AND EXP_CD_VALUE_01 = '10'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV186List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV186'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectStoreProcList"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT '%' CMMN_CD, '전체' CMMN_CD_NM
+		  FROM DUAL
+		UNION ALL
+		SELECT CMMN_CD, CMMN_CD_NM
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CL_CD = '172'
+	</select>
+	<select id="selectEs01_w03DIV180List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV180'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV301List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD, CMMN_CD_NM, TO_NUMBER(EXP_CD_VALUE_02) AS NUM_YEAR 
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV301'
+		   AND CMMN_CD LIKE '36%' 
+		   AND USE_AT  = 'Y'
+		 ORDER BY CMMN_CD  
+	</select>
+	<select id="selectEs01_w03DIV301_21List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD, SUBSTRB(EXP_CD_VALUE_07,4,30)||'_'||SUBSTRB(EXP_CD_VALUE_08,3,30) AS CMMN_CD_NM, TO_NUMBER(EXP_CD_VALUE_02) AS NUM_YEAR 
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE    = 'DIV301'
+		   AND CMMN_CD LIKE '21%'
+	</select>
+	<select id="selectEs01_w03DIV178List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+	  FROM RVS_CMMN_CD_INFO
+	 WHERE CMMN_CD_VALUE = 'DIV178'
+	   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV127List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV127'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV174List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV174'
+		   AND USE_AT  = 'Y'
+
+	</select>
+	<select id="selectEs01_w03DIV177List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_06) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV177'
+		   AND EXP_CD_VALUE_01 = '1'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV139List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV139'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV179List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV179'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV114List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV114'
+		   AND USE_AT  = 'Y'
+
+	</select>
+	<select id="selectEs01_w03DIV181List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV181'
+		   AND EXP_CD_VALUE_01 = '3'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV191List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_07) AS RATE,
+       TO_NUMBER(EXP_CD_VALUE_08) AS AMT
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV191'
+		   AND EXP_CD_VALUE_01 = '2'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV999List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       EXP_CD_VALUE_01 AS ALPHABET,
+       '2'     AS 경매구분
+	  FROM RVS_CMMN_CD_INFO
+	 WHERE CMMN_CD_VALUE = 'DIV999'
+	   AND USE_AT  = 'Y'
+	   AND CMMN_CD <![CDATA[ <  ]]> 27
+	</select>
+	<select id="selectEs01_w03DIV150List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV150'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV104List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD, 
+       CMMN_CD_NM, 
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV104'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV207List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD, CMMN_CD_NM,
+       EXP_CD_VALUE_08 AS IDX
+		  FROM RVS_CMMN_CD_INFO A
+		 WHERE CMMN_CD_VALUE = 'DIV207'
+		   AND USE_AT = 'Y'
+		 ORDER BY SORT_ORDR, CMMN_CD  
+
+	</select>
+	<select id="selectEs01_w03DIV207FloorList"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       '전체 '|| CMMN_CD ||'층 중 ' AS CMMN_CD_NM,
+       '전체 '|| CMMN_CD ||'층' AS CD_DESC_가격사례
+	  FROM (
+	        SELECT DISTINCT EXP_CD_VALUE_02 AS CMMN_CD
+	          FROM RVS_CMMN_CD_INFO
+	         WHERE CMMN_CD_VALUE = 'DIV207'
+	           AND USE_AT  = 'Y'
+	         ORDER BY LPAD(EXP_CD_VALUE_02, 2, '0')
+	       )
+
+	</select>
+	<select id="selectEs01_w03DIV182List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV182'
+		   AND EXP_CD_VALUE_01 = '3'
+		   AND USE_AT  = 'Y'
+
+	</select>
+	<select id="selectEs01_w03DIV154List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV154'
+		   AND EXP_CD_VALUE_01 = 'Y'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV100List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV100'
+		   AND EXP_CD_VALUE_02 = '100'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03DIV177FloorList"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT CMMN_CD,
+       CMMN_CD_NM||': '||EXP_CD_VALUE_08 AS CMMN_CD_NM,
+       EXP_CD_VALUE_04 AS 층수,
+       TO_NUMBER(EXP_CD_VALUE_06) AS 보정표적용율,
+       TO_NUMBER(EXP_CD_VALUE_08) AS IDX
+		  FROM RVS_CMMN_CD_INFO
+		 WHERE CMMN_CD_VALUE = 'DIV177'
+		   AND EXP_CD_VALUE_01 = '1'
+		   AND USE_AT  = 'Y'
+	</select>
+	<select id="selectEs01_w03Es4110List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT APPRSL_YEAR					
+		       ,APPRSL_SN			
+		       ,INCDNT_NO
+				,CMPTNC_COURT
+				,AUC_SE
+				,AUCSM
+				,TLPHON_NO
+				,AUC_REQST_CRDTR
+				,RQEST_AMOUNT
+				,AUCBEGIN_RGISTDE
+				,INFLOW_PARTCLRMATTER
+				,COURTAPRPC_LAD_PCTOTAMT
+				,COURTAPRPC_LAD_PW_UP
+				,COURTAPRPC_LAD_PYPER_PC
+				,COURTAPRPC_BULD_PC_TOTAMT
+				,COURTAPRPC_BULDPW_UP
+				,COURTAPRPC_BULD_PYPER_PC
+				,COURTAPRPC_SM_PC_TOTAMT
+				,BIDPREARNGEPC_AMOUNT
+				,SCSBIDPC_RT
+				,AUCCT_CALC_CRDTR_TOP_BONDAM
+				,AUCCT_CALC_APPLCTRGET
+				,AUCCT_CALC_APPLC_AMOUNT
+				,LNRANKMAN_BONDTOPAM_SM
+				,LNRANKMAN_DVDND_SM
+				,PERPROFS_BONDTOPAM_SM
+				,PERPROFS_DVDND_SM
+				,PERPROFS_UNCLECT_BONDAM
+				,ERSRIMPRTY_LNRANK_RIGHT_BNDCT_SM
+				,REAL_ACQSPC
+				,PREARNGEHOLDPD__SALEPOSBLPNTTM_PD
+				,THREEFYER_STDPX_RISINGRT
+				,PRSMP_EXPECTSALE_AMOUNT
+				,SALE_EXPC_AMOUNT
+				,SALE_EXPC_PRVONSH
+				,ACQSCT_ACQSTXRT
+				,ACQSCT_ACQSTX
+				,ACQSCT_REGISTTAXRT
+				,ACQSCT_RGSTAX
+				,ACQSCT_ENFRCEXCUT_EXPECTCT
+				,ACQSCT_BONDPUCHAS_LSTMN
+				,ACQSCT_ETCACQS_MRNCT
+				,ACQSCT_SM
+				,ACQSPRMPC_SM
+				,TOTACQSPRMPC_SM
+				,HOLDERN_RENTERN
+				,HOLDERN_RENTGTN
+				,HOLDERN_MTRENTINCME
+				,HOLDERN_ETC_ERN
+				,HOLDERN_SM
+				,HOLDCT_OPRTNTYCT
+				,HOLDCT_RENTERNLMP_VAT
+				,HOLDCT_CRRX
+				,HOLDCT_PRPRTAX
+				,HOLDCT_CRTAXSE
+				,HOLDCT_CRTAXAMOUNT
+				,HOLDCT_ETCMNTNCECT
+				,HOLDCT_SM
+				,DSPSCT_SE
+				,DSPSCT_AMOUNT
+				,DSPSCT_ETCDSPS_CT
+				,DSPSCT_SM
+				,IEMACCTO_SM_CT_SM
+				,IEMACCTOSM_ERN_SM
+				,IEMACCTOSM_EXPECT_PRFLOS
+				,LAST_ALL_PRFLOS
+				,ENTENDDECSN_AT
+		  FROM RVS_ENTEND_INPUTTABLE_MASTR
+		 WHERE  APPRSL_YEAR = #{searchYyyy}  AND APPRSL_SN =  #{searchSeq}  
+	</select>
+	<select id="selectEs01_w03Es4111List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT APPRSL_YEAR          , 
+		       APPRSL_SN        ,
+		       AUC_TME         ,
+		       AUC_DE      ,
+		       AUC_AMOUNT       ,
+		       SUSBID_AT  
+		  FROM RVS_ENTEND_INPUTTABLE_AUC_DUDT     
+		 WHERE  APPRSL_YEAR = #{searchYyyy}  AND APPRSL_SN =  #{searchSeq}  
+	</select>
+	<select id="selectEs01_w03Es4112List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT APPRSL_YEAR                 , <!-- 년도 -->
+		       APPRSL_SN                  , <!-- 일련번호-->
+		       BHF_APPRSLDE,
+				BHF_APPRSLMAN_CHARGER,
+				BHF_APPRSLMAN_,
+				BHF_APPRSLMAN_TIMHDER,
+				BHF_APPRSLMAN_BRNMGER,
+				BHF_ONEATMB_EXPECT_BIDPC,
+				BHF_EXPECT_SCSBIDPC,
+				BHF_EXPECT_SCSBIDPC_RT,
+				BHF_MRTGG_CAP,
+				BHF_PERPROFSBOND_AMOUNT,
+				BHF_PERPROFSRANK_RGISTRIGHT,
+				HEDOFC_APPRSLON,
+				HEDOFC_APPRSLMAN_ONEATMBSANCTN,
+				HEDOFC_APPRSLMAN_SCDSANCTN,
+				HEDOFC_APPRSLMAN_THREEATMBSANCTN,
+				HEDOFC_APPRSLMAN_,
+				HEDOFC_APPRSLMAN_TIMHDER,
+				HEDOFC_ONEATMB_EXPECT_BID_PC,
+				HEDOFC_EXPECT_SCSBIDPC,
+				HEDOFC_EXPECT_SCSBIDPC_RT,
+				HEDOFC_MRTGG_CAP,
+				HEDOFC_PERPROFSBOND_AMOUNT,
+				HEDOFC_PERPROFSRANK_RGISTRIGHT
+ 		 FROM RVS_ENTND_INPTBL_BFPRSL_INF
+		 WHERE  APPRSL_YEAR = #{searchYyyy}  AND APPRSL_SN =  #{searchSeq}  
+	</select>
+	<select id="selectEs01_w03Es4113List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT APPRSL_YEAR        , <!--  AS 년도 -->
+		       APPRSL_SN        , <!--   AS 일련번호-->
+		       DETAIL_SN       , <!-- AS 순번    -->
+		       SCSBID_AMOUNT     , <!-- AS 금액    -->
+		       SUCBIDR  , <!--AS 권리자 -->                                    
+		       SCSBID_RIGHT_DTLS    <!-- AS 권리내역-->
+		  FROM RVS_ENTND_INPTBL_RGHT_INF  
+		 WHERE  APPRSL_YEAR = #{searchYyyy}  AND APPRSL_SN =  #{searchSeq}  
+	</select>
+	<select id="selectEs01_w03Es4114List"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT APPRSL_YEAR        , 
+		       APPRSL_SN        , 
+		       DETAIL_SN       ,
+		       SCSBID_AMOUNT     , 
+		       SUCBIDR  ,                  
+		       SCSBID_RIGHT_DTLS   
+		  FROM RVS_ENTND_INPTBL_ALTM  
+		 WHERE  APPRSL_YEAR = #{searchYyyy}  AND APPRSL_SN =  #{searchSeq}  
+	</select>
+	<select id="selectEs01_w03RegistrationTaxList"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 2.2 AS CMMN_CD, '2.2%' AS CMMN_CD_NM FROM DUAL
+		UNION ALL
+		SELECT 1.2 AS CMMN_CD, '1.2%' AS CMMN_CD_NM FROM DUAL
+	</select>
+	<select id="selectEs01_w03ComprehensiveRealEstateTaxList"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT *
+		  FROM (
+		        SELECT '4' AS GU, '1' AS GU_CODE, '종합합산' AS GU_DESC, 119   AS GU_VAL FROM DUAL
+		        UNION ALL
+		        SELECT '4' AS GU, '2' AS GU_CODE, '별도합산' AS GU_DESC, 2800  AS GU_VAL FROM DUAL
+		        UNION ALL
+		        SELECT '5' AS GU, '1' AS GU_CODE, '종합합산' AS GU_DESC, 119   AS GU_VAL FROM DUAL
+		        UNION ALL
+		        SELECT '5' AS GU, '2' AS GU_CODE, '별도합산' AS GU_DESC, 2800  AS GU_VAL FROM DUAL
+		        UNION ALL
+		        SELECT '1' AS GU, '9' AS GU_CODE, '집합건물' AS GU_DESC, 0.005  AS GU_VAL FROM DUAL
+		       )
+		 WHERE GU = SUBSTRB(#{secCode},1,1)
+	</select>
+	<select id="selectEs01_w03DisposalCostList"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 25 AS disposalCostRate, '1' AS disposalCostGubun, '사업용 처분에 따른 법인세' AS disposalCost FROM DUAL
+		UNION ALL
+		SELECT 55 AS disposalCostRate, '2' AS disposalCostGubun, '비사업용 처분에 따른 법인세' AS disposalCost FROM DUAL
+	</select>
+	<select id="selectEs01_w03AcquisitionTaxList"  resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 2.1 AS CMMN_CD, '2.1%' AS CMMN_CD_NM FROM DUAL
+		UNION ALL 
+		SELECT 1.1 AS CMMN_CD, '1.1%' AS CMMN_CD_NM FROM DUAL
+	</select>
+	<select id="selectProfitCaseList"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT '3' AS CMMN_CD, '본건사례' AS CMMN_CD_NM FROM DUAL
+			UNION ALL
+			SELECT '4' AS CMMN_CD, '임대사례' AS CMMN_CD_NM FROM DUAL
+	</select>
+	<select id="selectYesNoList"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT 'Y' AS CMMN_CD, '예'     AS CMMN_CD_NM FROM DUAL
+			UNION ALL
+			SELECT 'N' AS CMMN_CD, '아니오' AS CMMN_CD_NM FROM DUAL
+	</select>
+	<select id="selectUseGubunList"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT '1' AS CMMN_CD, '주거용' AS CMMN_CD_NM FROM DUAL 
+			UNION ALL
+			SELECT '2' AS CMMN_CD, '업무용' AS CMMN_CD_NM FROM DUAL
+
+	</select>
+	<select id="selectEs01_w03Es2153List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT B.APPRSL_YEAR                         , <!--  년도   -->
+			       B.APPRSL_SN                          , <!--  일련번호 -->
+			       A.LN_SEQ                       , <!--  사례번호 -->
+			       DECODE(A.CASE_NO, 1, '지하',
+			                        2, '1층',
+			                        3, '2층이상') , <!--  해당층   -->
+			       B.CHOISE_AT                     , <!--  선택여부  -->
+			       B.DVR_AR                    , <!--  전용면적  -->
+			       B.TOT_FLOORCO                   , <!--  층수   -->
+			       B.FLOORCO_CMPR_RT                   , <!--  층수_비준율 -->
+			       B.ESTATE_LC                     , <!--  위치     -->
+			       B.LAD_PRPOS_AREA                     , <!--  용도지역  -->
+			       B.LWET_PC                 , <!--  최저가   -->
+			       B.TOP_PC                 , <!--  최고가   -->
+			       B.AVRG_PC                 , <!--  평균가격  -->
+			       B.PWPER_UP                , <!--  M2당단가 -->
+			       B.MT_RNTCHRG                   , <!--  월임대료 -->
+			       B.MT_RNTCHRG                      , <!--  보증금   -->
+			       NVL(B.RENT_OPRATNINTRT, 5)       , <!--  운용이율  -->
+			       B.RENT_TOTFYERRNTCHRG                   , <!--  총연간임대료 -->
+			       B.UNITPER_FYER_RNTCHRG                  <!--  단위당연간임대료 -->
+			  FROM (SELECT LEVEL AS LN_SEQ
+			          FROM DUAL CONNECT BY  LEVEL <![CDATA[ <  ]]>  4
+			       ) A, 
+			       (
+			       <!-- 감정가산정액_본건 -->
+			        SELECT APPRSL_YEAR         ,
+			               APPRSL_SN          ,
+							CASE_NO,
+							CHOISE_AT,
+							DVR_AR,
+							TOT_FLOORCO,
+							FLOORCO_CMPR_RT,
+							ESTATE_LC,
+							LAD_PRPOS_AREA,
+							LWET_PC,
+							TOP_PC,
+							AVRG_PC,
+							PWPER_UP,
+							MT_RNTCHRG,
+							GRNTY_AMOUNT,
+							RENT_OPRATNINTRT,
+							RENT_TOTFYERRNTCHRG,
+							UNITPER_FYER_RNTCHRG
+			          FROM RVS_APRSLMNTPRDCTN_CMLS
+			         WHERE APPRSL_YEAR = NVL(#{searchYyyy},'0')
+			           AND APPRSL_SN  = NVL(#{searchSeq},'0')
+			       ) B
+			 WHERE A.CASE_NO = B.CASE_NO(+)
+	</select>
+	<select id="selectEs01_w03Es2183List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT APPRSL_YEAR                  ,      <!-- 년도  -->
+			       APPRSL_SN                   ,      <!-- 일련번호-->
+			       ROAD_SMTONGSEX       ,      <!-- 도로계통성(CD_DIV: DIV178)-->
+			       CMRCFCLTY_ACCESSEX       ,      <!-- 상업시설접근성(CD_DIV: DIV179)-->
+			       PBLFCLT_ACCESSEX        ,      <!-- 공공시설접근성(CD_DIV: DIV180)-->
+			       MAINABMNTNMATR_AT  ,      <!-- 주요혐오시설소재여부-->
+			       NEARBYDEVLOP_PLAN           ,      <!-- 인근개발계획-->
+			       PC_TREND             <!-- 가격동향(CD_DIV: DIV186)-->
+			  FROM RVS_APRSLMNTPRDCTN_FR_4_CMLS
+			 WHERE APPRSL_YEAR = #{searchYyyy}
+			   AND APPRSL_SN  = #{searchSeq}
+	</select>
+	<select id="selectEs01_w03Es2143List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT APPRSL_YEAR                               , <!--  년도 -->
+			       APPRSL_SN                                , <!--  일련번호 -->
+					ESTATE_LOCPLC,
+					''              as addrPop         ,
+					USE_SITTN,
+					DVR_AR,
+					TOT_FLOORCO,
+					FLOORCO_CMPR_RT,
+					ESTATE_LC,
+					LAD_PRPOS_AREA,
+					BILDNG_YEAR,
+					ELAPSE_YEAR,
+					AGBLDG_RESCUE,
+					CN_YYCNT,
+					ROAD_CND,
+					ACCES_CND,
+					EXAMIN_AMOUNT,
+					CASE_PC                       <!--  사례가격 -->
+			  FROM RVS_APRSLMNTPRDCTN_NRBPCS_CMLS  
+			 WHERE APPRSL_YEAR = #{searchYyyy}
+			   AND APPRSL_SN  = #{searchSeq}
+	</select>
+	
+	<select id=" selectEs01_w03Es2113List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT APPRSL_YEAR                               , <!--  년도   -->
+			       APPRSL_SN                                , <!--  일련번호 -->
+			       CASE_NO,
+				   (SELECT EXP_CD_VALUE_01   FROM RVS_CMMN_CD_INFO
+			             WHERE CMMN_CD_VALUE ='DIV999'
+			             AND CMMN_CD = LN_SEQ)  as EXAMPLE_GU_NM , <!--  사례번호명, -->
+					AUC_INCDNT_NO,
+					FATHERSTATU_LOCPLC,
+					ESTATE_USE_SITTN,
+					PRVUSE_AR,
+					FLOORCO,
+					FLOORCO_CMPR_RT,
+					ESTATE_LC,
+					PRPOS_AREA,
+					BILDNG_YEAR,
+					ELAPSE_YEAR,
+					AGBLDG_RESCUE,
+					CN_YYCNT,
+					ROAD_CND,
+					ACCES_CND,
+					COURT_APPRSL_PC,
+					CASE_PC,
+					SCSBID_PC,
+					SCSBID_PC_RT
+			  FROM RVS_APRSLMNTCMPT_ACS_CMLS
+			 WHERE APPRSL_YEAR = #{searchYyyy}
+			   AND APPRSL_SN  = #{searchSeq}
+	</select>
+	
+	<select id="selectEs01_w03Es2163List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT APPRSL_YEAR                               , <!--  년도       , -->
+			       APPRSL_SN                                , <!--  일련번호   , -->
+			       CASE_NO,
+					ESTATE_LOCPLC,
+			       ''                  as addrPop     , <!--  주소팝업   , -->
+					USE_SITTN,
+					RENTDVR_AR,
+					TOT_FLOORCO,
+					FLOORCO_CMPR_RT,
+					ESTATE_LC,
+					LAD_PRPOS_AREA,
+					BILDNG_YEAR,
+					ELAPSE_YEAR,
+					AGBLDG_RESCUE,
+					CN_YYCNT,
+					ROAD_CND,
+					ACCES_CND,
+					RENT_GTN,
+					RENT_MTRNTCHRG,
+					RENT_OPRATNINTRT,
+					RENT_TOTFYERRNTCHRG,
+					UNITPER_FYER_RNTCHRG
+			  FROM RVS_APRSLMNTPRDCTN_2_CMLS
+			 WHERE APPRSL_YEAR = #{searchYyyy}
+			   AND APPRSL_SN  = #{searchSeq}
+	</select>
+	<select id="selectEs01_w03Es2123List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT APPRSL_YEAR              , <!--  년도  -->
+			       APPRSL_SN               , <!--  일련번호 -->
+			       CASE_SE        , <!--  사례구분   사례구분(1-가격,2-경매) -->
+			       DECODE(CASE_SE, '1', '가격사례', '2', '경매사례') as CASE_SE_NM , <!--  사례구분명, -->
+			       CASE_NO            , <!--  사례번호    -->
+				   (SELECT DECODE(CASE_SE, '1', CMMN_CD, '2', EXP_CD_VALUE_01)
+			              FROM RVS_CMMN_CD_INFO
+			               WHERE CMMN_CD_VALUE = 'DIV999'
+			               AND CMMN_CD = CASE_NO) as CASE_NO_NM , <!--  사례번호명,  -->
+					PNTTMUPDT_TCASE_DE,
+					PNTTMUPDT_TCASE_APPLC_RT,
+					PNTTMUPDT_CASE_DE,
+					PNTTMUPDT_CASE_APPLC_RT,
+					PNTTMUPDT_CMPR_VALUE,
+					DVR_AR_CASE,
+					CASE_PC,
+					LOCPLC_CMPR_VALUE,
+					FLOORACCTOCMPR_TCASE,
+					FLOORACCTOCMPR_TCASE_APPLC_RT,
+					FLOORACCTOCMPR_CASE,
+					FLOORACCTOCMPR_CASE_APPLC_RT,
+					FLOORACCTOCMPR_CMPR_VALUE,
+					LCACCTOCMPR_TCASE_APPLC_RT,
+					LCACCTOCMPR_CASE_APPLC_RT,
+					LCACCTOCMPR_CMPR_VALUE,
+					RESIDPCRTCMPR_CMPR_VALUE,
+					ROADCND_CMPR_VALUE,
+					ACCESCND_TCASE_APPLC_RT,
+					ACCESCND_CASE_APPLC_RT,
+					ACCESCND_CMPR_VALUE,
+					ETCCND_TCASE_APPLC_RT,
+					ETCCND_CASE_CN,
+					ETCCND_CASE_APPLC_RT,
+					ETCCND_CMPR_VALUE,
+					FCTR_SM,
+					CALC_UP,
+					APPLC_UP,
+					CNVRSN_AMOUNT
+			  FROM RVS_APPRSLAMOUNTPRDCTN_3_CMLUSE
+			 WHERE APPRSL_YEAR = #{searchYyyy}
+			   AND APPRSL_SN  = #{searchSeq}
+	</select>
+	<select id="selectEs01_w03Es2123AList"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT CASE_SE        , <!--  사례구분              , -->
+			       DECODE(CASE_SE, '1', '가격사례', '2', '경매사례') , <!--  사례구분명,  -->
+			       CASE_NO            , <!--  사례번호              , -->
+			       (SELECT DECODE(CASE_SE, '1', CMMN_CD, '2', EXP_CD_VALUE_01)  FROM RVS_CMMN_CD_INFO
+			              WHERE CMMN_CD_VALUE = 'DIV999'
+			              AND CMMN_CD = CASE_NO) CASE_SE_NM , <!--  사례번호명,    -->
+			       DVR_AR_CASE         , <!--  전용면적              ,  -->
+			       CASE_PC     , <!--  사례가격              ,  -->
+			       (SELECT FATHERSTATU_LOCPLC
+			          FROM (SELECT 1  GUBUN, APPRSL_YEAR, APPRSL_SN, CASE_NO, ESTATE_LOCPLC FROM ES2143 UNION ALL
+			                SELECT 2  GUBUN, APPRSL_YEAR, APPRSL_SN, CASE_NO, ESTATE_LOCPLC FROM ES2113
+			               ) B
+			         WHERE B.APPRSL_YEAR   = A.APPRSL_YEAR
+			           AND B.APPRSL_SN    = A.APPRSL_SN
+			           AND B.CASE_NO = A.CASE_NO
+			           AND B.GUBUN  = A.CASE_SE)  FATHERSTATU_LOCPLC , <!--  소재지,  -->
+			       LOCPLC_CMPR_VALUE            , <!--  소재지_비교치     -->
+			       PNTTMUPDT_CMPR_VALUE      , <!--  가격_비교치      -->
+			       FLOORACCTOCMPR_CMPR_VALUE           , <!--  층별비교_비교치   --> 
+			       LCACCTOCMPR_CMPR_VALUE          , <!--  위치별비교_비교치  -->
+			       RESIDPCRTCMPR_CMPR_VALUE   , <!--  잔가율비교_비교치  -->
+			       ROADCND_CMPR_VALUE    , <!--  도로조건_비교치    -->
+			       ACCESCND_CMPR_VALUE  , <!--  접근조건_비교치    -->
+			       ETCCND_CMPR_VALUE     , <!--  기타조건_비교치    -->
+			       FCTR_SM        , <!--  요인합계         -->
+			       CALC_UP          , <!--  산정단가    -->
+			       APPLC_UP          , <!--  적용단가         -->
+			       CNVRSN_AMOUNT       <!--  환산금액 -->
+			  FROM RVS_APPRSLAMOUNTPRDCTN_3_CMLUSE A
+			 WHERE APPRSL_YEAR = #{searchYyyy}  AND APPRSL_SN  = #{searchSeq}
+			 ORDER BY CASE_SE, CASE_NO
+	</select>
+	
+	<select id="selectEs01_w03Es2164List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT APPRSL_YEAR              , <!--  년도                  ,     년도 -->
+			       APPRSL_SN               , <!--  일련번호              ,     일련번호 -->
+			       EXAMPLE_GU        , <!--  사례구분              ,     사례구분 -->
+			       DECODE(EXAMPLE_GU, '3', '본건사례', '4', '임대사례') , <!--  사례구분명, -->
+			       LN_SEQ            , <!--  사례번호              , -->
+				   (SELECT DECODE(EXAMPLE_GU, '3', EXP_CD_VALUE_02, '4', CMMN_CD)
+                            FROM RVS_CMMN_CD_INFO
+                           WHERE CMMN_CD_VALUE = 'DIV999' 
+                             AND CMMN_CD = LN_SEQ) EXAMPLE_GU_NM , <!--  사례번호명 -->  
+			       RENT_Y_APPL_AMT   , <!--  단위당연간임대료        단위당연간임대료 -->
+			       RENT_SIZE         , <!--  전용면적                 임대전용면적_사례 -->
+			       JUSO_C            , <!--  소재지_비교치           소재지_비교치 -->
+			       PRICE_DATE_M      , <!--  시점_본건_일자       		-->
+			       PRICE_RATE_M      , <!--  시점_본건_적용율     		-->
+			       PRICE_DATE_S      , <!--  시점_사례_일자       -->
+			       PRICE_RATE_S      , <!--  시점_사례_적용율     -->
+			       PRICE_RATE_C      , <!--  시점_비교치         -->
+			       FLOOR_CODE_M      , <!--  층별비교_본건           층별비교_본건_적용율 -->
+			       FLOOR_RATE_M      , <!--  층별비교_본건_적용율    층별비교_본건_적용율 -->
+			       FLOOR_CODE_S      , <!--  층별비교_사례           층별비교_사례_적용율 -->
+			       FLOOR_RATE_S      , <!--  층별비교_사례_적용율    층별비교_사례_적용율 -->
+			       FLOOR_C           , <!--  층별비교_비교치         층별비교_비교치 -->
+			       LOCATE_RATE_M     , <!--  위치별비교_본건_적용율 위치별비교_본건_적용율 -->
+			       LOCATE_RATE_S     , <!--  위치별비교_사례_적용율 위치별비교_사례_적용율 -->
+			       LOCATE_C          , <!--  위치별비교_비교치       위치별비교_비교치 -->
+			       OF_JANGA_RATE_C   , <!--  잔가율비교_비교치       잔가율비교_비교치 -->
+			       OF_ROAD_RATE_C    , <!--  도로조건_비교치         도로조건_비교치 -->
+			       OF_ACCESS_RATE_M  , <!--  접근조건_본건_적용율    접근조건_본건_적용율 -->
+			       OF_ACCESS_RATE_S  , <!--  접근조건_사례_적용율    접근조건_사례_적용율 -->
+			       OF_ACCESS_RATE_C  , <!--  접근조건_비교치         접근조건_비교치 -->
+			       OF_ETC_RATE_M     , <!--  기타조건_본건_적용율    기타조건_본건_적용율 -->
+			       OF_ETC_DESC_S     , <!--  기타조건_사례           기타조건_사례 -->
+			       OF_ETC_RATE_S     , <!--  기타조건_사례_적용율    기타조건_사례_적용율 -->
+			       OF_ETC_RATE_C     , <!--  기타조건_비교치         기타조건_비교치 -->
+			       FACTOR_TOT        , <!--  요인합계                 요인합계 -->
+			       RENT_AMT          , <!--  적용단위당임료        -->
+			       BACK_RATE         , <!--  환원이율             -->
+			       ES_DAN_PY         , <!--  수익단가_평          -->
+			       HWANSAN_AMT        <!--  환산금액 -->
+			  FROM ES2164
+			 WHERE APPRSL_YEAR = #{searchYyyy}  AND APPRSL_SN  = #{searchSeq}
+	</select>
+	
+	<select id="selectEs01_w03Es2164AList"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT EXAMPLE_GU        , <!--  사례구분             , -->
+			       DECODE(EXAMPLE_GU, '3', '본건사례', '4', '임대사례') , <!--  사례구분명, -->
+			       LN_SEQ            , <!--  사례번호               , -->
+				   (SELECT DECODE(EXAMPLE_GU, '3', EXP_CD_VALUE_02, '4', CMMN_CD)  FROM RVS_CMMN_CD_INFO
+			             WHERE CMMN_CD_VALUE = 'DIV999'
+			             AND CMMN_CD = LN_SEQ) EXAMPLE_GU_NM , <!--  사례번호명,  -->
+			       (SELECT JUSO  FROM ES2163 B
+			         WHERE B.APPRSL_YEAR = A.APPRSL_YEAR AND A.APPRSL_SN = B.APPRSL_SN AND A.LN_SEQ = B.LN_SEQ) JUSO , <!--  소재지, -->
+			       JUSO_C            , <!--  소재지_비교치        	-->
+			       RENT_SIZE         , <!--  임대전용면적         	-->
+			       RENT_Y_APPL_AMT   , <!--  단위당연간임대료_사례 	-->
+			       PRICE_RATE_C      , <!--  시점수정_비교치       	-->
+			       FLOOR_C           , <!--  층별비교_비교치       	-->
+			       LOCATE_C          , <!--  위치별비교_비교치    	-->
+			       OF_JANGA_RATE_C   , <!--  잔가율비교_비교치    	-->
+			       OF_ROAD_RATE_C    , <!--  도로조건_비교치       	-->
+			       OF_ACCESS_RATE_C  , <!--  접근조건_비교치       	-->
+			       OF_ETC_RATE_C     , <!--  기타조건_비교치       	-->
+			       FACTOR_TOT        , <!--  요인합계             	-->
+			       RENT_AMT          , <!--  적용단위당임료        	-->
+			       BACK_RATE         , <!--  환원이율              	-->
+			       ES_DAN_PY         , <!--  수익단가              	-->
+			       HWANSAN_AMT        <!--  환산금액 	-->
+			  FROM ES2164 A
+				 WHERE APPRSL_YEAR = #{searchYyyy}  AND APPRSL_SN  = #{searchSeq}
+				  ORDER BY LN_SEQ
+	</select>
+	<select id="selectEs01_w03Es2103List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT APPRSL_YEAR             , <!--  년도      -->          
+			       APPRSL_SN              , <!--  일련번호      -->      
+			       CO_MIN_AMT       , <!--  비준_최저가격  -->     
+			       CO_MIN_SIZE_DAN  , <!--  비준_최저가격_단가  -->
+			       CO_MAX_AMT       , <!--  비준_최고가격      --> 
+			       CO_MAX_SIZE_DAN  , <!--  비준_최고가격_단가  -->
+			       CO_RATE          , <!--  비준_비율        -->   
+			       EA_MIN_AMT       , <!--  수익_최저가격      --> 
+			       EA_MIN_SIZE_DAN  , <!--  수익_최저가격_단가  -->
+			       EA_MAX_AMT       , <!--  수익_최고가격       -->
+			       EA_MAX_SIZE_DAN  , <!--  수익_최고가격_단가  -->
+			       EA_RATE          , <!--  수익_비율         -->  
+			       APPL_AMT         , <!--  결정가격          -->  
+			       APPL_SIZE_DAN    , <!--  결정가격_단가       -->
+			       APPL_ES_MIN_RATE , <!--  결정가격_격차율_최저 -->
+			       APPL_ES_MAX_RATE , <!--  결정가격_격차율_최고 -->
+			       INT_REP_SIZE     , <!--  인테리어_면적   -->     
+			       INT_REP_SIZE_PY  , <!--  인테리어_면적_평   -->  
+			       INT_REP_DAN_CODE , <!--  인테리어_단가_코드   -->
+			       INT_REP_DAN      , <!--  인테리어_단가     -->   
+			       INT_REP_AMT      , <!--  인테리어_금액   -->     
+			       INC_AMT          , <!--  평가가격      -->       
+			       INC_SIZE_DAN     , <!--  평가가격_단가    -->    
+			       FNL_INC_AMT       <!--  최종평가가격 -->
+			  FROM ES2103
+				 WHERE APPRSL_YEAR = #{searchYyyy}  AND APPRSL_SN  = #{searchSeq}
+	</select>
+		<select id="selectEs01_w03Es2404List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT MAX(RANK_LAST) AS RANK_LAST, <!-- 최종순위 --> 
+			       SUM(AMT) AS AMT <!-- 채권금액  --> 
+			  FROM (
+			        SELECT DISTINCT RANK,
+			               (SELECT CNT
+			                  FROM (SELECT COUNT(*) CNT
+			                          FROM ES2404
+			                         WHERE APPRSL_YEAR   = #{searchYyyy}
+			                           AND APPRSL_SN    = #{searchSeq}
+			                           AND RANK    <![CDATA[ >  ]]>   6
+			                         GROUP BY SHA_GU,LN_SEQ
+			                         ORDER BY 1 DESC
+			                       )
+			                 WHERE ROWNUM  <![CDATA[ =  ]]>   1) AS RANK_LAST,
+			               DISP_RANK         , (SELECT CMMN_CD_NM
+			                                      FROM RVS_CMMN_CD_INFO
+			                                     WHERE CMMN_CD_VALUE = 'DIV511'
+			                                       AND CMMN_CD = DISP_RANK) AS DISP_RANK_NAME,
+			               NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0)   AS AMT
+			          FROM ES2404 A
+			         WHERE APPRSL_YEAR = #{searchYyyy}  AND APPRSL_SN  = #{searchSeq}
+			           AND NVL(HITE_YN,'N') = 'Y'
+			       )
+
+	</select>
+	<select id="selectEs01_w03Es2011List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT INCREASE_AMT                        <!--   AS 평가가격               -->    
+			       ,ROUND(INCREASE_AMT/CB_SIZE     , 0) AS INCREASE_AMT_DAN <!-- AS 평가가격_단가       -->    
+			       ,ROUND(INCREASE_AMT/CB_SIZE_PY  , 0) AS INCREASE_AMT_PY <!-- AS 평가가격_단가_평        -->
+			       ,PL_MIN_BID_AMT                      <!-- AS 제1차예상최저입찰가     -->
+			       ,ROUND(PL_MIN_BID_AMT/CB_SIZE   , 0) AS PL_MIN_BID_AMT_DAN <!-- AS 제1차예상최저입찰가_단가   -->
+			       ,ROUND(PL_MIN_BID_AMT/CB_SIZE_PY, 0) AS PL_MIN_BID_AMT_PY <!-- AS 제1차예상최저입찰가_단가_평-->
+			       ,PL_BID_AMT                          <!-- AS 예상낙찰가         -->
+			       ,ROUND(PL_BID_AMT/CB_SIZE       , 0) AS PL_BID_AMT_DAN <!-- AS 예상낙찰가_단가      -->
+			       ,ROUND(PL_BID_AMT/CB_SIZE_PY    , 0) AS PL_BID_AMT_PY <!-- AS 예상낙찰가_단가_평    -->
+			       ,APPL_RATE                           <!--  AS 예상낙찰가율-->
+			  FROM (
+			        SELECT DECODE(SEC_CODE, '101', CB_TOT_SIZE   , CB_EXM_SIZE   ) AS CB_SIZE    ,
+			               DECODE(SEC_CODE, '101', CB_TOT_SIZE_PY, CB_EXM_SIZE_PY) AS CB_SIZE_PY ,
+			               C.APPL_RATE        ,
+			               C.INCREASE_AMT     ,
+			               C.PL_MIN_BID_AMT ,
+			               C.PL_BID_AMT
+			          FROM ES10 A, XXESOLD.ES2011 B, XXESOLD.ES2301 C
+			         WHERE A.APPRSL_YEAR = #{searchYyyy} 
+			           AND A.APPRSL_SN  = #{searchSeq}
+			           AND A.APPRSL_YEAR = B.APPRSL_YEAR
+			           AND A.APPRSL_SN  = B.APPRSL_SN
+			           AND A.APPRSL_YEAR = C.APPRSL_YEAR
+			           AND A.APPRSL_SN  = C.APPRSL_SN
+			        )
+
+	</select>
+	<select id="selectEs01_w03Es2403List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT APPRSL_YEAR, seq, rno, c_desc, poss_yn, hir_name, sto_lsec_amt, fxdate_yn,
+		       mrent_amt, lease_amt, rep_be_sec_amt, rep_af_sec_amt, fxlea_amt,
+		       fxlea_no_amt
+		  FROM XXESOLD.ES2403
+		 WHERE APPRSL_YEAR = #{searchYyyy}   AND seq = #{searchSeq} 
+	</select>
+	<select id="selectRatificationCaseList"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT '1' AS CMMN_CD, '가격사례' AS CMMN_CD_NM FROM DUAL
+			UNION ALL 
+			SELECT '2' AS CMMN_CD, '경매사례' AS CMMN_CD_NM FROM DUAL
+	</select>
+	<select id="selectEs01_w03Es2113List"  resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT APPRSL_YEAR                               <!-- AS 년도 -->       ,
+			       APPRSL_SN                                <!-- AS 일련번호  --> ,
+			       LN_SEQ                             <!-- AS 사례번호   -->, 
+			       (SELECT EXP_CD_VALUE_01 
+                                FROM RVS_CMMN_CD_INFO
+                               WHERE CMMN_CD_VALUE ='DIV999'
+                                 AND CMMN_CD = LN_SEQ) EXP_CD_VALUE_01 <!--  AS 사례번호명 -->,
+			       AU_NO                              <!-- AS 경매사건번호 -->,
+			       JUSO                               <!-- AS 소재지    --> ,
+			       ''                     JUSOPop            <!-- AS 주소팝업  --> ,
+			       USE_DESC                           <!-- AS 이용상황  --> ,
+			       ONLY_SIZE                          <!-- AS 전용면적  --> ,
+			       FLOOR_CODE                         <!-- AS 층수_코드 --> ,
+			       FLOOR_RATE                         <!-- AS 층수_비준율 -->,
+			       OF_PLACE                           <!-- AS 위치     -->  ,
+			       USE_AREA                           <!-- AS 용도지역  --> ,
+			       B_YEAR                             <!-- AS 건축년도  --> ,
+			       ELAP_YEAR                          <!-- AS 경과년도  --> ,
+			       CB_STRUC                           <!-- AS 구조      --> ,
+			       NUM_YEAR                           <!-- AS 내용년수   -->,
+			       OF_ROAD_CODE                       <!-- AS 도로조건   -->,
+			       OF_ACCESS_CODE                     <!-- AS 접근조건   -->,
+			       LAW_AMT                            <!-- AS 법원감정가 -->,
+			       EXAMPLE_PRICE                      <!-- AS 사례가격   -->,
+			       BID_AMT                            <!-- AS 낙찰가격   -->,
+			       BID_RATE                           <!--  AS 낙찰가율-->
+			  FROM XXESOLD.ES2113
+			WHERE APPRSL_YEAR = #{searchYyyy}   AND seq = #{searchSeq} 
+	</select>
+	 
+</mapper>

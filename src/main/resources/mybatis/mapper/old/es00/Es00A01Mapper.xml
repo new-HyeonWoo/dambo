@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.old.es00.repository.Es00A01Mapper">
+
+	<select id="selectTopMenuList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+			ROWNUM AS row_cnt,
+			G.CD_DIV AS grp_id,
+			G.CD_CODE AS menu_id, 
+			G.CD_DESC AS grp_name,
+			G.USE_YN AS use_yn
+		FROM 
+			ES00 G 
+		WHERE 
+			G.CD_DIV  = '900' 
+		ORDER BY 
+			G.ORDER_SEQ
+	</select>
+
+
+	<select id="selectMenuList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+			ROWNUM AS row_cnt,
+			G.CD_CODE AS grp_id, 
+			G.CD_DESC AS grp_name, 
+			M.CD_CODE AS menu_id, 
+			M.CD_DESC AS menu_name, 
+			M.ATTR_01 AS src_path, 
+			M.USE_YN  AS use_yn, 
+			'0' AS en, 
+			NULL AS chk_flg
+		FROM 
+		  	ES00 G,
+		    ES00 M
+		WHERE 
+		 	G.CD_CODE = M.CD_DIV
+		AND 
+		  	G.CD_DIV  = '900'
+		ORDER BY 
+			G.ORDER_SEQ, 
+			M.ORDER_SEQ
+	</select>
+	
+	<select id="selectGroupHeaderList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+			A.group_id
+		FROM 
+			(SELECT USER_R AS group_id FROM ES90 GROUP BY USER_R UNION SELECT #{user_r} AS group_id FROM DUAL) A
+	</select>
+	
+	<select id="selectGroupList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+			ROWNUM AS row_cnt,
+			#{user_r} AS user_r,
+		    M.CD_CODE AS menu_id,
+		    T.CD_CODE||':'||T.CD_DESC AS top_menu,
+		    M.CD_CODE||':'||M.CD_DESC AS menu_name,
+		    G.USE_YN AS use_yn,
+			G.INIT_YN AS init_yn
+		FROM ES00 T,
+		     ES00 M,
+		     (SELECT USER_R, MENU_ID , USE_YN , INIT_YN FROM ES90 WHERE USER_R = #{user_r}) G
+		WHERE 
+			M.CD_CODE = G.MENU_ID(+)
+		AND 
+			M.CD_DIV  = T.CD_CODE
+		AND 
+			T.CD_DIV  = '900'
+		AND 
+			T.USE_YN  = 'Y'
+		AND 
+			M.USE_YN  = 'Y'
+		ORDER BY 
+			T.ORDER_SEQ, M.ORDER_SEQ
+	</select>
+	
+	<insert id="insertTopMenu">
+		INSERT INTO 
+			ES00(
+				CD_DIV
+				, CD_CODE
+				, CD_DESC
+				, ORDER_SEQ
+				, USE_YN
+				, ATTR_00
+				, ENT_DATE
+				)
+			VALUES
+				(
+				#{cd_div}
+			     , #{cd_code}
+			     , #{cd_desc}
+			     , TO_NUMBER(#{cd_code})
+			     , #{use_yn}
+			     , 'DIV'||#{cd_code}
+			     , SYSDATE
+				)	
+	</insert> 
+	
+	<update id="updateTopMenu">
+		UPDATE ES00
+		   SET CD_DESC    = #{cd_desc}
+		     , USE_YN     = #{use_yn}
+		     , ATTR_00    = 'DIV'||#{cd_code}
+		     , ORDER_SEQ  =  TO_NUMBER(#{cd_code})
+		     , ENT_DATE   = SYSDATE
+		 WHERE CD_DIV     = #{cd_div}
+		   AND CD_CODE    = #{cd_code}
+	</update>
+	
+	<delete id="deleteTopMenu">
+		DELETE FROM ES00
+		WHERE CD_DIV  = #{cd_div}
+		AND CD_CODE = #{cd_code}
+	</delete>
+	
+	<update id="margeMenu">
+		MERGE INTO ES00 A
+		USING ( SELECT #{cd_div}             CD_DIV   
+		             , #{cd_code}            CD_CODE  
+		             , #{cd_desc}            CD_DESC  
+		             , TO_NUMBER(#{cd_code}) ORDER_SEQ
+		             , #{use_yn}             USE_YN   
+		             , 'DIV'||#{cd_code}     ATTR_00  
+		             , #{attr_01}            ATTR_01  
+		             , SYSDATE               ENT_DATE 
+		          FROM DUAL
+		       ) B
+		   ON (A.CD_DIV = B.CD_DIV AND A.CD_CODE = B.CD_CODE)
+		WHEN MATCHED THEN 
+		UPDATE SET A.CD_DESC  = B.CD_DESC
+		         , A.USE_YN   = B.USE_YN
+		         , A.ATTR_01  = B.ATTR_01
+		         , A.ENT_DATE = B.ENT_DATE
+		WHEN NOT MATCHED THEN 
+			INSERT (A.CD_DIV,A.CD_CODE,A.CD_DESC,A.ORDER_SEQ,A.USE_YN,A.ATTR_00,A.ATTR_01,A.ENT_DATE)
+			VALUES (B.CD_DIV,B.CD_CODE,B.CD_DESC,B.ORDER_SEQ,B.USE_YN,B.ATTR_00,B.ATTR_01,B.ENT_DATE)
+	</update>
+	
+	<delete id = "deleteMenu">
+		DELETE FROM ES00
+		WHERE CD_DIV  = #{cd_div}
+		AND CD_CODE = #{cd_code}
+	</delete>
+	
+	<update id="margeGroup">
+		MERGE INTO ES90 A
+		USING ( SELECT #{user_r}             USER_R
+		             , #{menu_id}            MENU_ID
+		             , #{use_yn}             USE_YN
+		             , #{init_yn}            INIT_YN
+		             , SYSDATE               ENT_DATE
+		          FROM DUAL
+		       ) B
+		   ON (A.USER_R = B.USER_R AND A.MENU_ID = B.MENU_ID)
+		
+		WHEN MATCHED THEN 
+		UPDATE SET A.USE_YN   = B.USE_YN
+		         , A.INIT_YN  = B.INIT_YN
+		         , A.ENT_DATE = B.ENT_DATE
+		WHEN NOT MATCHED THEN 
+		INSERT (A.USER_R, A.MENU_ID, A.USE_YN, A.ENT_DATE, A.INIT_YN)
+		VALUES (B.USER_R, B.MENU_ID, B.USE_YN, B.ENT_DATE, B.INIT_YN)
+	</update>
+	
+</mapper>

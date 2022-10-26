@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.mapper.ProcedureMapper">
+    <resultMap id="outMap" type="hashmap"/>
+
+    <select id="callProcedure1" statementType="CALLABLE" resultType="java.util.HashMap">
+        <![CDATA[
+        {
+            CALL SPESU_MULTI_COMPUTE(
+                #{IN_YYYY},
+                #{IN_SEQ},
+                #{OUT_YN, jdbcType=VARCHAR, javaType=String, mode=OUT}
+            )
+        }
+        ]]>
+    </select>
+
+    <select id="callProcedure2" statementType="CALLABLE" resultType="java.util.HashMap">
+        <![CDATA[
+        {
+            CALL SPESU_SINGLE_COMPUTE(
+                #{IN_YYYY},
+                #{IN_SEQ},
+                #{OUT_YN, jdbcType=VARCHAR, javaType=String, mode=OUT}
+            )
+        }
+        ]]>
+    </select>
+
+    <select id="callProcedure3" statementType="CALLABLE" resultType="java.util.HashMap">
+        <![CDATA[
+        {
+            CALL SPESU_RIGHT_PERSON_CLEAR_00(
+                #{IN_YYYY},
+                #{IN_SEQ},
+                #{OUT_YN, jdbcType=VARCHAR, javaType=String, mode=OUT}
+            )
+        }
+        ]]>
+    </select>
+
+    <select id="callProcedure4" statementType="CALLABLE" resultType="java.util.HashMap">
+        <![CDATA[
+        {
+            CALL SPESU_CLOB_MERGE(
+                #{IN_YYYY},
+                #{IN_SEQ},
+                #{IN_REPO_DIV},
+                #{IN_MENT_ITEMS},
+                #{O_RESULTMSG, jdbcType=VARCHAR, javaType=String, mode=OUT}
+            )
+        }
+        ]]>
+    </select>
+</mapper>

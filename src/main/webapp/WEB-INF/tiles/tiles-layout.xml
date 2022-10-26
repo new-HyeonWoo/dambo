@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+    <!-- 메뉴 탭 타일즈 -->
+    <definition name="main-layouts-tiles"  template="/WEB-INF/jsp/include/layout/layout.jsp">
+        <put-attribute name="loadFile" value="/WEB-INF/jsp/include/loadFile.jsp" />
+        <put-attribute name="header" value="/WEB-INF/jsp/include/header.jsp" />
+        <put-attribute name="left" value="/WEB-INF/jsp/include/left.jsp" />
+        <put-attribute name="body" value=""/>
+        <put-attribute name="foot" value="/WEB-INF/jsp/include/foot.jsp"/>
+    </definition>
+
+    <definition name="detail-layouts-tiles"  template="/WEB-INF/jsp/include/layout/detail_layout.jsp">
+        <put-attribute name="loadFile" value="/WEB-INF/jsp/include/loadFile.jsp" />
+        <put-attribute name="body" value=""/>
+        <put-attribute name="foot" value="/WEB-INF/jsp/include/foot.jsp"/>
+    </definition>
+
+    <definition name="popup-layouts-tiles"  template="/WEB-INF/jsp/include/layout/popup_layout.jsp">
+        <put-attribute name="loadFile" value="/WEB-INF/jsp/include/loadFile.jsp" />
+        <put-attribute name="body" value=""/>
+        <put-attribute name="foot" value="/WEB-INF/jsp/include/foot.jsp"/>
+    </definition>
+
+    <definition name="print-layouts-tiles"  template="/WEB-INF/jsp/include/layout/print_layout.jsp">
+        <put-attribute name="body" value=""/>
+    </definition>
+
+	<!-- 메인 레이아웃 -->
+    <definition name="*/*_w01" extends="main-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}_w01.jsp" />
+    </definition>
+    <definition name="*/es03_*" extends="main-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/es03_{2}.jsp" />
+    </definition>
+    <!-- 네임 별칠  설정 (To-be Db 변경시  통합으로 변경) -->
+    <definition name="es00/*" extends="main-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/es00/{1}.jsp" />
+    </definition>
+    <definition name="*/*_w06" extends="main-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}_w06.jsp" />
+    </definition>
+
+
+
+    <definition name="es01/*" extends="detail-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/es01/{1}.jsp" />
+    </definition>
+    <definition name="common/*" extends="detail-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/common/{1}.jsp" />
+    </definition>
+
+    <definition name="*/w02/w02" extends="detail-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}//w02/w02.jsp" />
+    </definition>
+
+    <!-- popup 레이아웃 -->
+    <definition name="view/files/*" extends="popup-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/common/file_{1}.jsp" />
+    </definition>
+    <definition name="*/*_new" extends="popup-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}_new.jsp" />
+    </definition>
+    <definition name="view/*.do" extends="print-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/es83_{2}.jsp" />
+    </definition>
+    <definition name="*/*_account" extends="popup-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}_account.jsp" />
+    </definition>
+    <definition name="es03/es03_account" extends="popup-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/es03/es03_account.jsp" />
+    </definition>
+    <definition name="*/*_appraisal" extends="popup-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}_appraisal.jsp" />
+    </definition>
+    <definition name="es02/es02_w01" extends="popup-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/es02/es02_w01.jsp" />
+    </definition>
+    <definition name="es82/es82_w01" extends="popup-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/es82/es82_w01.jsp" />
+    </definition>
+
+    <!-- 양식 출력 -->
+    <definition name="*/es81_*" extends="print-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/es81_{2}.jsp" />
+    </definition>
+    <definition name="*/es83_*" extends="print-layouts-tiles">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}/es83_{2}.jsp" />
+    </definition>
+</tiles-definitions>

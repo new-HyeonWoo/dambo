@@ -1,0 +1,74 @@
+server:
+  port: 443
+  ssl:
+    enabled: true
+    key-store: D:/ssl/keystore.jks
+    key-store-password: HJadmin12!@
+    key-password: HJadmin12!@
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+    context-path: /
+
+spring:
+  application:
+    name: hitejinro-dambo
+
+  devtools:
+    livereload:
+      enabled: true
+  mvc.view:
+    prefix: /WEB-INF/jsp/
+    suffix: .jsp
+
+  datasource:
+    url: jdbc:oracle:thin:@192.168.101.141:1521:DEVDW
+    username: 'xxes'
+    password: 'es_t'
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    # Spring 2.x 이후로 기본 데이터소스는 hikari
+    hikari:
+      connection-timeout: 3000
+      validation-timeout: 3000
+      minimum-idle: 5
+      maximum-pool-size: 5
+      idle-timeout: 200000
+
+  transaction:
+    rollback-on-commit-failure: false
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      location: c:\\upload\\
+
+mybatis:
+  configuration:
+    cache-enabled: false
+    aggressive-lazy-loading: false
+    default-executor-type: reuse
+    map-underscore-to-camel-case: true
+    use-generated-keys: true
+    return-instance-for-empty-row: true
+    jdbc-type-for-null: varchar
+
+  mapper-locations: classpath:mybatis/mapper/**/*.xml
+  type-handlers-package: com.hitejinro.configuration.typehandler
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+        exclude: threaddump, heapdump
+
+external:
+  eap:
+    url: https://epdev.hitejinro.com
+
+logging.level:
+  org.springframework.web: debug
+  com.hitejinro.mapper: debug
+  com.hitejinro.configuration.filter: debug

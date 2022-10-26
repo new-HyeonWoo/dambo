@@ -1,0 +1,3356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.mapper.Es01W02_4Mapper">
+    <!-- PRT_00_담보마스타 -->
+    <select id="selectList1" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY                AS 년도                      ,
+               SEQ                 AS 일련번호                  ,
+               SEC_CODE            AS 담보종류                  ,
+               JUM_CODE            AS 지점코드                  , (SELECT SMALLNAME
+                                                               FROM V_IA03
+                                                               WHERE BUSEO = JUM_CODE) AS 지점명,
+               REQ_JUM             AS 의뢰한지점코드            , (SELECT SMALLNAME
+                                                            FROM V_IA03
+                                                            WHERE BUSEO = REQ_JUM) AS 의뢰지점명,
+               ESTI_DATE           AS 담보감정일자              ,
+               GEO_CODE            AS 거래처코드                ,
+               SANGHO              AS 거래처명                  ,
+               DAEPYO_NAME         AS 거래처대표자              ,
+               MARKET_DIV          AS 업소구분                  ,
+               MARKET_NAME         AS 업소명                    ,
+               MARKET_CEO          AS 업소대표자                ,
+               DEBTOR              AS 채무자                    ,
+               POSS_OWNER          AS 소유자                    ,
+               GUARANTOR           AS 담보제공자                ,
+               DEBTOR_RELATION     AS 채무자와담보제공자와의관계,
+               B_USE_CODE          AS 건축물의용도              ,
+               B_USE_DESC          AS 건축물의용도비고          ,
+               B_NAME              AS 건물의명칭및호수          ,
+               JUSO1               AS 부동산표시_주소1          ,
+               JUSO2               AS 부동산표시_주소2          ,
+               L_SIZE              AS 지점_토지면적             ,
+               L_SIZE_PY           AS 지점_토지면적_평          ,
+               B_SIZE              AS 지점_건물면적             ,
+               B_SIZE_PY           AS 지점_건물면적_평          ,
+               CURR_AMT            AS 지점_시가                 ,
+               PLMIN_BID_AMT       AS 지점_예상1차최저입찰가    ,
+               PL_BID_AMT          AS 지점_예상낙찰가           ,
+               C_CL_AMT            AS 지점_동시설정한도액       ,
+               L_CL_AMT            AS 지점_토지설정한도액       ,
+               B_CL_AMT            AS 지점_건물설정한도액       ,
+               C_PL_RANK           AS 지점_동시설정예정액_순위  ,
+               C_PL_AMT            AS 지점_동시설정예정액_금액  ,
+               L_PL_RANK           AS 지점_토지설정예정액_순위  ,
+               L_PL_AMT            AS 지점_토지설정예정액_금액  ,
+               B_PL_RANK           AS 지점_건물설정예정액_순위  ,
+               B_PL_AMT            AS 지점_건물설정예정액_금액  ,
+               MANA_L_SIZE         AS 관재_토지면적             ,
+               MANA_L_SIZE_PY      AS 관재_토지면적_평          ,
+               MANA_B_SIZE         AS 관재_건물면적             ,
+               MANA_B_SIZE_PY      AS 관재_건물면적_평          ,
+               MANA_CURR_AMT       AS 관재_시가                 ,
+               MANA_PL_MIN_BID_AMT AS 관재_예상1차최저입찰가    ,
+               MANA_PL_BID_AMT     AS 관재_예상낙찰가           ,
+               MANA_C_CL_AMT       AS 관재_동시설정한도액       ,
+               MANA_L_CL_AMT       AS 관재_토지설정한도액       ,
+               MANA_B_CL_AMT       AS 관재_건물설정한도액       ,
+               MANA_C_PL_RANK      AS 관재_동시설정예정액_순위  ,
+               MANA_C_PL_AMT       AS 관재_동시설정예정액_금액  ,
+               MANA_L_PL_RANK      AS 관재_토지설정예정액_순위  ,
+               MANA_L_PL_AMT       AS 관재_토지설정예정액_금액  ,
+               MANA_B_PL_RANK      AS 관재_건물설정예정액_순위  ,
+               MANA_B_PL_AMT       AS 관재_건물설정예정액_금액  ,
+               JUM_COMP_DATE       AS 지점_결재완료일자         ,
+               JUM_TRAN_DATE       AS 지점_전송일자             ,
+               MANA_RECE_DATE      AS 관재_접수일자             ,
+               MANA_RECE_SABUN     AS 관재_접수자사번           ,
+               MANA_COMP_DATE      AS 관재_결재완료일자         ,
+               PROC_DIV            AS 작업진행상태              ,
+               DECODE(SUBSTRB(SEQ,5,2), '00', '최초감정', '재감정 ('||TO_NUMBER(SUBSTRB(SEQ,5,2))||'번째)') AS 임시_재감정여부
+        FROM ES10
+        WHERE YYYY  = #{년도}
+          AND SEQ   = #{감정순번}
+
+        ]]>
+                </select>
+
+    <!-- PRT_01_입력표_집합건물 -->
+    <select id="selectList2" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY             AS 년도                        ,
+               SEQ              AS 일련번호                    ,
+               JUSO1            AS 부동산표시_주소1            ,
+               JUSO2            AS 부동산표시_주소2            ,
+               LOT_NUM          AS 지번                        ,
+               CB_NAME          AS 집합건물의명칭              ,
+               DONG             AS 동수                        ,
+               HO               AS 호수                        ,
+               LCATEGORY        AS 지목_코드                   , (SELECT CD_DESC
+                                                              FROM ES00
+                                                              WHERE ATTR_00 = 'DIV112'
+                                                                AND CD_CODE = LCATEGORY) AS 지목,
+               LG_OWNER_YN      AS 대지권소유권보유여부        ,
+               LG_OWNER         AS 대지권소유권                ,
+               LG_SIZE          AS 대지권의목적인일단의토지전체, ROUND(LG_SIZE*0.3025, 2) AS 대지권의목적인일단의토지_평,
+               POSS_A_AREA      AS 가임대보증금적용지역_코드   , (SELECT CD_DESC
+                                                      FROM ES00
+                                                      WHERE ATTR_00 = 'DIV106'
+                                                        AND CD_CODE = POSS_A_AREA) AS 가임대보증금적용지역,
+               CB_STRUC         AS 집합건물_구조               ,
+               CB_ROOF          AS 집합건물_지붕               ,
+               CB_UPFLOOR       AS 집합건물_지상               ,
+               CB_DNFLOOR       AS 집합건물_지하               ,
+               CB_FLOOR         AS 집합건물_해당층             ,
+               CB_YYYY          AS 집합건물_건축년도           ,
+               ELAP_YEAR        AS 집합건물_경과년도           ,
+               NUM_HOUSEHOLD    AS 집합건물_세대수             ,
+               NUM_YEAR         AS 집합건물_내용년수           ,
+               CB_EXM_SIZE      AS 집합건물_전유면적           ,
+               CB_EXM_SIZE_PY   AS 집합건물_전유면적_평        ,
+               CB_PUB_SIZE      AS 집합건물_공유면적           ,
+               CB_PUB_SIZE_PY   AS 집합건물_공유면적_평        ,
+               CB_TOT_SIZE      AS 집합건물_면적합계           ,
+               CB_TOT_SIZE_PY   AS 집합건물_면적합계_평        ,
+               OF_GU            AS 오피스텔_용도               ,
+               OF_HEATER_YN     AS 오피스텔_바닥난방           ,
+               OF_FLOOR         AS 오피스텔_상가_층수          ,
+               OF_FLOOR_IDX     AS 오피스텔_상가_층별지수      ,
+               OF_PLACE         AS 오피스텔_상가_위치          ,
+               OF_PLACE_IDX     AS 오피스텔_상가_위치지수      ,
+               OF_JANGA_RATE    AS 오피스텔_상가_잔가율        ,
+               OF_ROAD_CODE     AS 오피스텔_상가_도로조건      ,
+--     OF_ROAD_IDX      AS 오피스텔_상가_도로조건지수  ,
+               OF_ACCESS_CODE   AS 오피스텔_상가_접근조건      ,
+--     OF_ACCESS_IDX    AS 오피스텔_상가_접근조건지수  ,
+               OF_ETC           AS 오피스텔_상가_기타조건      ,
+               OF_ETC_IDX       AS 오피스텔_상가_기타조건지수  ,
+               REGI_AMT         AS 실거래가격_총액             ,
+               REGI_DAN         AS 실거래가격_단가             ,
+               REGI_DAN_PY      AS 실거래가격_단가_평          ,
+               BASE_AMT         AS 기준시가_총액               ,
+               BASE_DAN         AS 기준시가_단가               ,
+               BASE_DAN_PY      AS 기준시가_단가_평            ,
+               SEC_REGI_SIZE    AS 담보제공비율_전용면적       ,
+               SEC_NUME         AS 담보제공비율_분자           ,
+               SEC_DENO         AS 담보제공비율_분모           ,
+               SEC_RATE         AS 담보제공비율_비율           ,
+               SEC_OFFER_SIZE   AS 담보제공비율_담보제공면적   ,
+               SEC_DESC         AS 담보제공비율_사유           ,
+--     INC_AMT          AS 담보제공비율_평가가액       ,
+--     FNL_INC_AMT      AS 담보제공비율_최종평가가격
+               CB_NAME||' '||DONG||'동 '||HO||'호' AS 임시_단지명칭및동호수,
+               '감정대상 물건은 '||SUBSTRB(CB_YYYY,1,4)||'에 사용승인되어 '|| ELAP_YEAR||'년 경과되었으며, 지하 '||CB_DNFLOOR||'층, 지상 '||CB_UPFLOOR||'층중의 '||CB_FLOOR||'층에 專有部分이 위치함' AS 임시_전유부분위치
+        FROM ES2011
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+
+        ]]>
+                </select>
+
+    <!-- PRT_03_입력표_규제사항개관 -->
+    <select id="selectList3" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY           AS 년도        ,
+               SEQ            AS 일련번호    ,
+               REST_PL_USE    AS 국토계획    ,
+               REST_OT_LAW    AS 다른법률    ,
+               REST_EN_RULE   AS 시행령부칙  ,
+               REST_FU_LAW    AS 토지이용규제,
+               REST_MAIN_USE  AS 주변부동산
+        FROM ES2017
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_00_가격동향 -->
+    <select id="selectList4" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV186'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_가임대보증금적용지역 -->
+    <select id="selectList5" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               ATTR_02 AS 가임대한도,
+               ATTR_03 AS 지역별한도,
+               ATTR_04 AS 최우선한도,
+               DECODE(ATTR_01, '00', '1', '10', '2') AS 이용상황
+        FROM ES00
+        WHERE ATTR_00 = 'DIV106'
+          AND USE_YN  = 'Y'
+        ORDER BY LPAD(CD_CODE, 2, '0')
+        ]]>
+                </select>
+
+    <!-- Q_00_건축물의경과년도 -->
+    <select id="selectList6" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV152'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_건축물의경과년도_코드찾기 -->
+    <select id="selectList7" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE
+        FROM ES00
+        WHERE ATTR_00          = 'DIV152'
+          AND #{경과년도} BETWEEN TO_NUMBER(ATTR_01) AND TO_NUMBER(ATTR_02)
+          AND USE_YN           = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_결재진행현황 -->
+    <select id="selectList8" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '%' cd_code, '전체' cd_desc
+        FROM DUAL
+        UNION ALL
+        SELECT cd_code, cd_desc
+        FROM es00
+        WHERE cd_div = '172'
+        ]]>
+                </select>
+
+    <!-- Q_00_공공시설접근성 -->
+    <select id="selectList9" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV180'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_구조 -->
+    <select id="selectList10" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE, CD_DESC,
+               TO_NUMBER(ATTR_02) AS NUM_YEAR
+        FROM ES00
+        WHERE ATTR_00    = 'DIV301'
+          AND CD_CODE LIKE '21%'
+          AND USE_YN  = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_00_내용년수 -->
+    <select id="selectList11" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE, SUBSTRB(ATTR_07,4,30)||'_'||SUBSTRB(ATTR_08,3,30) AS CD_DESC, TO_NUMBER(ATTR_02) AS NUM_YEAR
+        FROM ES00
+        WHERE ATTR_00    = 'DIV301'
+          AND CD_CODE LIKE '21%'
+          AND '105'      = #{담보종류}
+
+        ]]>
+                </select>
+
+    <!-- Q_00_담보종류 -->
+    <select id="selectList12" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '%' cd_code, '전체' cd_desc
+        FROM DUAL
+        UNION ALL
+        SELECT cd_code, cd_desc
+        FROM es00
+        WHERE attr_00 = 'DIV100'
+          AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_00_도로계통성 -->
+    <select id="selectList13" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV178'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_도로조건 -->
+    <select id="selectList14" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV127'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_사진구분 -->
+    <select id="selectList15" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc
+        FROM es00
+        WHERE attr_00 = 'DIV163'
+          AND cd_code != '4'
+          AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_00_상업시설접근성 -->
+    <select id="selectList16" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV179'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_용도지역 -->
+    <select id="selectList17" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV114'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_위치별 -->
+    <select id="selectList18" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV181'
+          AND ATTR_01 = '4'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_인테리어비용 -->
+    <select id="selectList19" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_07) AS RATE,
+               TO_NUMBER(ATTR_08) AS AMT
+        FROM ES00
+        WHERE ATTR_00 = 'DIV191'
+          AND ATTR_01 = '2'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_일련번호 -->
+    <select id="selectList20" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               ATTR_01 AS ALPHABET,
+               '2'   AS 경매구분
+        FROM ES00
+        WHERE ATTR_00 = 'DIV999'
+          AND USE_YN  = 'Y'
+          AND CD_CODE < 27
+        ]]>
+                </select>
+
+    <!-- Q_00_입지조건 -->
+    <select id="selectList21" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV150'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_전유부분의면적 -->
+    <select id="selectList22" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV104'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_전유부분의면적_코드찾기 -->
+    <select id="selectList23" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE
+        FROM ES00
+        WHERE ATTR_00 = 'DIV104'
+          AND #{전유면적} BETWEEN TO_NUMBER(ATTR_01) AND TO_NUMBER(ATTR_02)
+
+        ]]>
+                </select>
+
+    <!-- Q_00_전유부분의위치 -->
+    <select id="selectList24" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE, CD_DESC,
+               DECODE(CD_CODE, '000000', NULL, ATTR_01||' 등급') AS GRADE, ATTR_02,
+               (SELECT TO_NUMBER(ATTR_08)
+                FROM ES00
+                WHERE ATTR_00 = 'DIV108'
+                  AND CD_CODE = A.ATTR_01
+                  AND USE_YN = 'Y'
+               ) AS IDX
+        FROM ES00 A
+        WHERE ATTR_00 = 'DIV107'
+          AND USE_YN = 'Y'
+        ORDER BY CD_CODE
+
+        ]]>
+                </select>
+
+    <!-- Q_00_전유부분의위치_총층수만 -->
+    <select id="selectList25" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               '전체 '|| CD_CODE ||'층 중 ' AS CD_DESC,
+               '전체 '|| CD_CODE ||'층' AS CD_DESC_가격사례
+        FROM (
+                 SELECT DISTINCT ATTR_02 AS CD_CODE
+                 FROM ES00
+                 WHERE ATTR_00 = 'DIV107'
+                   AND USE_YN  = 'Y'
+                 ORDER BY LPAD(ATTR_02, 2, '0')
+             )
+
+        ]]>
+                </select>
+
+    <!-- Q_00_전유부분의위치_총층수중해당층 -->
+    <select id="selectList26" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               ATTR_02 AS ATTR_02,
+               DECODE(INSTR(CD_DESC, '중'), 0, TRIM(SUBSTR(CD_DESC,9,5)), NVL(TRIM(SUBSTR(CD_DESC,INSTR(CD_DESC, '중')+1,5)), ATTR_02))  CD_DESC,
+               DECODE(CD_CODE, '000000', CD_DESC, '전체 '|| ATTR_02||'층중 지상 '|| TRIM(SUBSTRB(CD_DESC,12,5))||'에 위치') AS CD_DESC1,
+               -- 등급에 따른 지수 Find
+               (SELECT TO_NUMBER(ATTR_08)
+                FROM ES00
+                WHERE ATTR_00 = 'DIV108'
+                  AND CD_CODE = A.ATTR_01
+                  AND USE_YN = 'Y'
+               ) AS IDX
+        FROM ES00 A
+        WHERE ATTR_00 = 'DIV107'
+          AND ATTR_02 = #{총층수}
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_점유자의형태 -->
+    <select id="selectList27" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE, CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV101'
+          AND USE_YN  = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_00_접근조건 -->
+    <select id="selectList28" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV182'
+          AND ATTR_01 = '4'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_접한도로의폭 -->
+    <select id="selectList29" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV154'
+          AND ATTR_01 = 'Y'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_지목 -->
+    <select id="selectList30" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC,
+               ATTR_01 AS BUHO
+        FROM ES00
+        WHERE ATTR_00 = 'DIV112'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_지붕 -->
+    <select id="selectList31" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc
+        FROM es00
+        WHERE cd_div = '157' AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_00_집합건물종류 -->
+    <select id="selectList32" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC
+        FROM ES00
+        WHERE ATTR_00 = 'DIV100'
+          AND ATTR_02 = '100'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_00_층별비교 -->
+    <select id="selectList33" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC||': '||ATTR_08 AS CD_DESC,
+               TO_NUMBER(ATTR_08) AS IDX
+        FROM ES00
+        WHERE ATTR_00 = 'DIV177'
+          AND ATTR_01 = '0'
+          AND USE_YN  = 'Y'
+
+        ]]>
+                </select>
+
+    <!-- Q_01_부서목록 -->
+    <select id="selectList34" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '%' buseo, '전체' buseo_name
+        FROM DUAL
+        UNION ALL
+        SELECT buseo, smallname buseo_name
+        FROM v_ia03
+        WHERE uses = '0' AND SEARCH_COMBO_USE = 'Y'
+        ORDER BY BUSEO
+
+        ]]>
+                </select>
+
+    <!-- Q_09_감정순번생성 -->
+    <select id="selectList35" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT LPAD(ES_SEQ.NEXTVAL, 6, '0')  AS SEQ
+        FROM DUAL
+
+        ]]>
+                </select>
+
+    <!-- Q_09_감정순번생성_20100618 -->
+    <select id="selectList36" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT LPAD(SEQ, 4, '0') || '00'  AS SEQ
+        FROM (SELECT NVL((SELECT /*+INDEX_DESC(ES10 ES10_PK)*/
+                              NVL(SUBSTRB(SEQ, 1, 4),0)
+                          FROM ES10
+                          WHERE YYYY   = #{년도}
+                            AND ROWNUM = 1), 0)+1 AS SEQ
+              FROM DUAL
+             ) A
+
+        ]]>
+                </select>
+
+    <!-- Q_10_입력표_담보마스타 -->
+    <select id="selectList37" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY                AS 년도                      ,
+               SEQ                 AS 일련번호                  ,
+               SEC_CODE            AS 담보종류                  ,
+               JUM_CODE            AS 지점코드                  ,
+               REQ_JUM             AS 의뢰한지점코드            ,
+               ESTI_DATE           AS 담보감정일자              ,
+               GEO_CODE            AS 거래처코드                ,
+               SANGHO              AS 거래처명                  ,
+               DAEPYO_NAME         AS 거래처대표자              ,
+               MARKET_DIV          AS 업소구분                  ,
+               MARKET_NAME         AS 업소명                    ,
+               MARKET_CEO          AS 업소대표자                ,
+               DEBTOR              AS 채무자                    ,
+               POSS_OWNER          AS 소유자                    ,
+               GUARANTOR           AS 담보제공자                ,
+               DEBTOR_RELATION     AS 채무자와담보제공자와의관계,
+               B_USE_CODE          AS 건축물의용도              ,
+               B_USE_DESC          AS 건축물의용도비고          ,
+               B_NAME              AS 건물의명칭및호수          ,
+               JUSO1               AS 부동산표시_주소1          ,
+               JUSO2               AS 부동산표시_주소2          ,
+               L_SIZE              AS 지점_토지면적             ,
+               L_SIZE_PY           AS 지점_토지면적_평          ,
+               B_SIZE              AS 지점_건물면적             ,
+               B_SIZE_PY           AS 지점_건물면적_평          ,
+               CURR_AMT            AS 지점_시가                 ,
+               PLMIN_BID_AMT       AS 지점_예상1차최저입찰가    ,
+               PL_BID_AMT          AS 지점_예상낙찰가           ,
+               C_CL_AMT            AS 지점_동시설정한도액       ,
+               L_CL_AMT            AS 지점_토지설정한도액       ,
+               B_CL_AMT            AS 지점_건물설정한도액       ,
+               C_PL_RANK           AS 지점_동시설정예정액_순위  ,
+               C_PL_AMT            AS 지점_동시설정예정액_금액  ,
+               L_PL_RANK           AS 지점_토지설정예정액_순위  ,
+               L_PL_AMT            AS 지점_토지설정예정액_금액  ,
+               B_PL_RANK           AS 지점_건물설정예정액_순위  ,
+               B_PL_AMT            AS 지점_건물설정예정액_금액  ,
+               MANA_L_SIZE         AS 관재_토지면적             ,
+               MANA_L_SIZE_PY      AS 관재_토지면적_평          ,
+               MANA_B_SIZE         AS 관재_건물면적             ,
+               MANA_B_SIZE_PY      AS 관재_건물면적_평          ,
+               MANA_CURR_AMT       AS 관재_시가                 ,
+               MANA_PL_MIN_BID_AMT AS 관재_예상1차최저입찰가    ,
+               MANA_PL_BID_AMT     AS 관재_예상낙찰가           ,
+               MANA_C_CL_AMT       AS 관재_동시설정한도액       ,
+               MANA_L_CL_AMT       AS 관재_토지설정한도액       ,
+               MANA_B_CL_AMT       AS 관재_건물설정한도액       ,
+               MANA_C_PL_RANK      AS 관재_동시설정예정액_순위  ,
+               MANA_C_PL_AMT       AS 관재_동시설정예정액_금액  ,
+               MANA_L_PL_RANK      AS 관재_토지설정예정액_순위  ,
+               MANA_L_PL_AMT       AS 관재_토지설정예정액_금액  ,
+               MANA_B_PL_RANK      AS 관재_건물설정예정액_순위  ,
+               MANA_B_PL_AMT       AS 관재_건물설정예정액_금액  ,
+               JUM_COMP_DATE       AS 지점_결재완료일자         ,
+               JUM_TRAN_DATE       AS 지점_전송일자             ,
+               MANA_RECE_DATE      AS 관재_접수일자             ,
+               MANA_RECE_SABUN     AS 관재_접수자사번           ,
+               MANA_COMP_DATE      AS 관재_결재완료일자         ,
+               PROC_DIV            AS 작업진행상태              ,
+               jum_sabun           AS 지점_감정자               ,
+               doc_key,
+               NVL(APPRAISE_GU, '0') AS 평가구분                ,SHARE_YN,
+               RPAD (buseo_name, 20, ' ')
+                   || RPAD (leader_name, 20, ' ')
+                   || NAME             AS 지점_감정자명,
+               DECODE (doc_key,
+                       TRIM (LPAD (' ', 27, '0')), '대상자료없음',
+                       (SELECT MIN (doc_name) AS doc_name
+                        FROM es05
+                        WHERE doc_key = a.doc_key)
+                   ) AS doc_name
+        FROM es10 a, v_ia01_leader b
+        WHERE a.jum_sabun = b.sabun(+)
+          AND YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_11_입력표_집합건물 -->
+    <select id="selectList38" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY                              AS  년도                         ,
+               SEQ                               AS  일련번호                     ,
+               JUSO1                             AS  부동산표시_주소1             ,
+               JUSO2                             AS  부동산표시_주소2             ,
+               LOT_NUM                           AS  지번                         ,
+               CB_NAME                           AS  집합건물의명칭               ,
+               DONG                              AS  동수                         ,
+               HO                                AS  호수                         ,
+               LCATEGORY                         AS  지목                         ,
+               LG_OWNER_YN                       AS  대지권소유권보유여부         ,
+               LG_OWNER                          AS  대지권소유권                 ,
+               LG_SIZE                           AS  대지권의목적                 ,
+               POSS_A_AREA                       AS  가임대보증금적용지역         ,
+               CB_STRUC                          AS  집합건물_구조                ,
+               CB_ROOF                           AS  집합건물_지붕                ,
+               CB_UPFLOOR                        AS  집합건물_지상                ,
+               CB_DNFLOOR                        AS  집합건물_지하                ,
+               CB_FLOOR                          AS  집합건물_해당층              ,
+               CB_YYYY                           AS  집합건물_건축년도            ,
+               ELAP_YEAR                         AS  집합건물_경과년도            ,
+               NUM_HOUSEHOLD                     AS  집합건물_세대수              ,
+               NUM_YEAR                          AS  집합건물_내용년수            ,
+               CB_EXM_SIZE                       AS  집합건물_전유면적_M2         ,
+               CB_EXM_SIZE_PY                    AS  집합건물_전유면적_평         ,
+               CB_PUB_SIZE                       AS  집합건물_공유면적_M2         ,
+               CB_PUB_SIZE_PY                    AS  집합건물_공유면적_평         ,
+               CB_TOT_SIZE                       AS  집합건물_면적합계_M2         ,
+               CB_TOT_SIZE_PY                    AS  집합건물_면적합계_평         ,
+               OF_GU                             AS  오피스텔_용도                ,
+               OF_HEATER_YN                      AS  오피스텔_바닥난방            ,
+               TO_CHAR(TO_NUMBER(SUBSTRB(OF_FLOOR,1,3)))  AS  오피스텔_상가_총층수         ,
+               OF_FLOOR                          AS  오피스텔_상가_층수           ,
+               OF_FLOOR_IDX                      AS  오피스텔_상가_층별지수       ,
+               OF_PLACE                          AS  오피스텔_상가_위치           ,
+               OF_PLACE_IDX                      AS  오피스텔_상가_위치지수       ,
+               OF_JANGA_RATE                     AS  오피스텔_상가_잔가율         ,
+               OF_ROAD_CODE                      AS  오피스텔_상가_도로조건       ,
+               OF_ROAD_IDX                       AS  오피스텔_상가_도로조건지수   ,
+               OF_ACCESS_CODE                    AS  오피스텔_상가_접근조건       ,
+               OF_ACCESS_IDX                     AS  오피스텔_상가_접근조건지수   ,
+               OF_ETC                            AS  오피스텔_상가_기타조건       ,
+               OF_ETC_IDX                        AS  오피스텔_상가_기타조건지수   ,
+               REGI_AMT                          AS  실거래가격_총액              ,
+               REGI_DAN                          AS  실거래가격_단가_M2           ,
+               REGI_DAN_PY                       AS  실거래가격_단가_평           ,
+               BASE_AMT                          AS  기준시가_총액                ,
+               BASE_DAN                          AS  기준시가_단가_M2             ,
+               BASE_DAN_PY                       AS  기준시가_단가_평             ,
+               SEC_REGI_SIZE                     AS  담보제공비율_등기부상전용면적,
+               SEC_NUME                          AS  담보제공비율_분자            ,
+               SEC_DENO                          AS  담보제공비율_분모            ,
+               SEC_RATE                          AS  담보제공비율_비율            ,
+               SEC_OFFER_SIZE                    AS  담보제공비율_담보제공면적    ,
+               SEC_DESC                          AS  담보제공비율_사유
+        FROM ES2011
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+
+
+
+
+        ]]>
+                </select>
+
+    <!-- Q_12_입력표_규제의표시 -->
+    <select id="selectList39" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY           AS 년도        ,
+               SEQ            AS 일련번호    ,
+               REST_PL_USE    AS 국토계획    ,
+               REST_OT_LAW    AS 다른법률    ,
+               REST_EN_RULE   AS 시행령부칙  ,
+               REST_FU_LAW    AS 토지이용규제,
+               REST_MAIN_USE  AS 주변부동산
+        FROM ES2017
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+
+
+        ]]>
+                </select>
+
+    <!-- Q_20_입력표_낙찰가율보정표 -->
+    <select id="selectList40" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY             AS 년도                      ,
+               SEQ              AS 일련번호                  ,
+               P_BID_RATE       AS 당해지역낙찰가율          ,
+               K_BID_RATE       AS 유사부동산낙찰가율        ,
+               B_BID_RATE       AS 기준낙찰가율              ,
+               APPL_RATE        AS 적용할낙찰가율            ,
+               RIGHTS_CODE      AS 점유자의권리형태          ,
+               RIGHTS_RATE      AS 점유자의권리형태_적용률   ,
+               INCREASE_AMT     AS 평가가격                  ,
+               PL_MIN_BID_AMT   AS 제1차예상최저입찰가       ,
+               PL_BID_AMT       AS 예상낙찰가                ,
+               APT_SCALE        AS 아파트_규모               ,
+               APT_SCALE_RATE   AS 아파트_규모_적용률        ,
+               APT_EXM_SIZE     AS 아파트_면적               ,
+               APT_EXM_RATE     AS 아파트_면적_적용률        ,
+               APT_FLOOR_CODE   AS 아파트_위치               ,
+               APT_FLOOR_RATE   AS 아파트_위치_적용률        ,
+               APT_ELAP_CODE    AS 아파트_경과년도           ,
+               APT_ELAP_RATE    AS 아파트_경과년도_적용률    ,
+               MUL_ADJ_ROAD     AS 다세대연립_폭             ,
+               MUL_ADJ_RATE     AS 다세대연립_폭_적용률      ,
+               MUL_EXM_SIZE     AS 다세대연립_면적           ,
+               MUL_EXM_RATE     AS 다세대연립_면적_적용률    ,
+               MUL_FLOOR_CODE   AS 다세대연립_위치           ,
+               MUL_FLOOR_RATE   AS 다세대연립_위치_적용률    ,
+               MUL_ELAP_CODE    AS 다세대연립_경과년도       ,
+               MUL_ELAP_RATE    AS 다세대연립_경과년도_적용률,
+               OFF_EXM_SIZE     AS 오피스텔_면적             ,
+               OFF_EXM_RATE     AS 오피스텔_면적_적용률      ,
+               OFF_CONV_LOCATED AS 오피스텔_입지조건         ,
+               OFF_CONV_RATE    AS 오피스텔_입지조건_적용률  ,
+               OFF_FLOOR_CODE   AS 오피스텔_위치             ,
+               OFF_FLOOR_RATE   AS 오피스텔_위치_적용률      ,
+               OFF_ELAP_CODE    AS 오피스텔_경과년도         ,
+               OFF_ELAP_RATE    AS 오피스텔_경과년도_적용률  ,
+               BUS_APPRO_CODE   AS 상업용_접근성             ,
+               BUS_APPRO_RATE   AS 상업용_접근성_적용률      ,
+               BUS_FLOOR_LOC    AS 상업용_층별위치           ,
+               BUS_FLOOR_RATE   AS 상업용_층별위치_적용률    ,
+               BUS_COMM_DEV     AS 상업용_발달정도           ,
+               BUS_COMM_RATE    AS 상업용_발달정도_적용률    ,
+               BUS_ELAP_CODE    AS 상업용_경과년도           ,
+               BUS_ELAP_RATE    AS 상업용_경과년도_적용률
+        FROM ES2301
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_40_응찰입력표_마스타 -->
+    <select id="selectList41" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY                AS 기본_년도                           ,
+               SEQ                 AS 기본_일련번호                       ,
+               AUC_NO              AS 사항_사건번호                       ,
+               COMPETENT_COURT     AS 사항_관할법원                       ,
+               AUC_GU              AS 사항_경매구분                       ,
+               AUC_DEPT            AS 사항_경매계                         ,
+               AUC_TELNO           AS 사항_전화번호                       ,
+               AUC_DEMUR           AS 사항_경매신청채권자                 ,
+               AUC_CHARGE_AMT      AS 사항_청구금액                       ,
+               AUC_START_DATE      AS 사항_경매개시등기일                 ,
+               AUC_DESC            AS 사항_유입시특이사항                 ,
+               BID_L_AMT           AS 내용_법원감정가_토지_가격총액       ,
+               BID_L_DAN           AS 내용_법원감정가_토지_단가           ,
+               BID_L_PY_DAN        AS 내용_법원감정가_토지_평당가격       ,
+               BID_B_AMT           AS 내용_법원감정가_건물_가격총액       ,
+               BID_B_DAN           AS 내용_법원감정가_건물_단가           ,
+               BID_B_PY_AMT        AS 내용_법원감정가_건물_평당가격       ,
+               BID_TOT_AMT         AS 내용_법원감정가_합계_가격총액       ,
+               BID_PL_AMT          AS 내용_입찰예정가_금액                ,
+               BID_APPL_RATE       AS 내용_낙찰가율                       ,
+               DIV_CRED_MAX_AMT    AS 집계표_경매비용개산_채권액          ,
+               DIV_POSS_A_CASE     AS 집계표_경매비용개산_적용대상        ,
+               DIV_POSS_A_AMT      AS 집계표_경매비용개산_적용금액        ,
+               DIV_PRIOR_MAX_AMT   AS 집계표_선순위자채권최고액합계       ,
+               DIV_PRIOR_SHARE_AMT AS 집계표_선순위자배당금합계           ,
+               DIV_COMP_MAX_AMT    AS 집계표_당사채권최고액합계           ,
+               DIV_COMP_SHARE_AMT  AS 집계표_당사배당금합계               ,
+               DIV_COMP_UNR_AMT    AS 집계표_당사의미회수채권액           ,
+               RIGHT_ALLOT_AMT     AS 수지1_경락후_부담비용합계           ,
+               OBT_AMT             AS 수지2_실제취득가                    ,
+               TENURE_YEAR         AS 수지3_예정보유기간                  ,
+               STD_PRICE_RATE      AS 수지3_기준시가상승률                ,
+               PLAN_SALE_AMT       AS 수지3_추정예상매각금액              ,
+               SALE_AMT            AS 수지3_매각확신금액                  ,
+               SALE_DESC           AS 수지3_매각확신금액을적용한사유      ,
+               IN_OBT_TAX_RATE     AS 수지4_취득비용_취득세율             ,
+               IN_OBT_TAX          AS 수지4_취득비용_취득세               ,
+               IN_OBT_REG_TAX_RATE AS 수지4_취득비용_등록세율             ,
+               IN_OBT_REG_TAX      AS 수지4_취득비용_등록세               ,
+               IN_OBT_EXEU_AMT     AS 수지4_취득비용_강제집행비용         ,
+               IN_OBT_LOSS_AMT     AS 수지4_취득비용_손실액               ,
+               IN_OBT_ETC_AMT      AS 수지4_취득비용_기타부대비용         ,
+               IN_OBT_EXEU_TOT     AS 수지4_취득비용합계                  ,
+               IN_OBT_WONGA_TOT    AS 수지4_취득원가합계                  ,
+               IN_OBT_TOTAL_AMT    AS 수지4_총취득원가합계                ,
+               IN_EAR_RENT_AMT     AS 수지5_보유수익_임대수익             ,
+               IN_EAR_RENT_SEC_AMT AS 수지5_보유수익_임대보증금           ,
+               IN_EAR_RENT_MON_AMT AS 수지5_보유수익_월임대수입           ,
+               IN_EAR_RENT_ETC_AMT AS 수지5_보유수익_기타의수익           ,
+               IN_EAR_TOT_AMT      AS 수지5_보유수익합계                  ,
+               IN_EXP_OPP_AMT      AS 수지6_보유비용_기회비용             ,
+               IN_EXP_VAT_AMT      AS 수지6_보유비용_부가세               ,
+               IN_EXP_CORP_TAX     AS 수지6_보유비용_법인세               ,
+               IN_EXP_PROP_TAX     AS 수지6_보유비용_재산세               ,
+               IN_EXP_ESTA_GU      AS 수지6_보유비용_종부세구분           ,
+               IN_EXP_ESTA_AMT     AS 수지6_보유비용_종부세금액           ,
+               IN_EXP_ETC_AMT      AS 수지6_보유비용_기타유지보수비       ,
+               IN_EXP_TOT_AMT      AS 수지6_보유비용합계                  ,
+               IN_DIS_GU           AS 수지7_처분비용_구분                 ,
+               IN_DIS_AMT          AS 수지7_처분비용_금액                 ,
+               IN_DIS_ETC_AMT      AS 수지7_처분비용_기타처분비용         ,
+               IN_DIS_TOT_AMT      AS 수지7_처분비용합계                  ,
+               ITOT_EXPENSE_AMT    AS 수지8_각항목별합계_비용합계         ,
+               ITOT_EARNING_AMT    AS 수지8_각항목별합계_수익합계         ,
+               ITOT_PROFIT_AMT     AS 수지8_각항목별합계_예상손익         ,
+               FNL_PROFIT_AMT      AS 수지8_최종적인전체손익              ,
+               BID_YN              AS 수지8_응찰여부결정
+        FROM ES4110
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_41_응찰입력표_경매기일내역 -->
+    <select id="selectList42" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY       AS 년도    ,
+               SEQ        AS 일련번호,
+               LN_SEQ     AS 회차    ,
+               GIIL_DATE  AS 일자    ,
+               GIIL_AMT   AS 금액    ,
+               YUCHAL_YN  AS 유찰여부
+        FROM ES4111
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_42_응찰입력표_전감정개요 -->
+    <select id="selectList43" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY                 AS 년도                   ,
+               SEQ                  AS 일련번호               ,
+               JUM_ESTI_DATE        AS 지점_감정일            ,
+               JUM_SABUN1           AS 지점_감정자_담당자     ,
+               JUM_SABUN2           AS 지점_감정자_파트장     ,
+               JUM_SABUN3           AS 지점_감정자_팀장       ,
+               JUM_SABUN4           AS 지점_감정자_지점장     ,
+               JUM_PL_MIN_BID_AMT   AS 지점_제1차예상입찰가   ,
+               JUM_PL_BID_AMT       AS 지점_예상낙찰가        ,
+               JUM_PL_BID_RATE      AS 지점_예상낙찰가율      ,
+               JUM_SEC_AMT          AS 지점_담보여력          ,
+               JUM_COMP_AMT         AS 지점_당사채권금액      ,
+               JUM_COMP_RIGHT       AS 지점_당사순위및등기권리,
+               ESTI_DATE            AS 본사_감정일            ,
+               SABUN1               AS 본사_감정자_1차결재    ,
+               SABUN2               AS 본사_감정자_2차결재    ,
+               SABUN3               AS 본사_감정자_3차결재    ,
+               SABUN4               AS 본사_감정자_관재파트장 ,
+               SABUN5               AS 본사_감정자_팀장       ,
+               PL_MIN_BID_AMT       AS 본사_제1차예상입찰가   ,
+               PL_BID_AMT           AS 본사_예상낙찰가        ,
+               PL_BID_RATE          AS 본사_예상낙찰가율      ,
+               SEC_AMT              AS 본사_담보여력          ,
+               COMP_AMT             AS 본사_당사채권금액      ,
+               COMP_RIGHT           AS 본사_당사순위및등기권리
+        FROM ES4112
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+
+        ]]>
+                </select>
+
+    <!-- Q_43_응찰입력표_선순위권리내역 -->
+    <select id="selectList44" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY          AS 년도    ,
+               SEQ           AS 일련번호,
+               LN_SEQ        AS 순번    ,
+               CRED_AMT      AS 금액    ,
+               RIGHT_PERSON  AS 권리자  ,
+               RIGHT_DESC    AS 권리내역
+        FROM ES4113
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+
+
+        ]]>
+                </select>
+
+    <!-- Q_44_응찰입력표_선순위부담금액 -->
+    <select id="selectList45" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY          AS 년도    ,
+               SEQ           AS 일련번호,
+               LN_SEQ        AS 순번    ,
+               CRED_AMT      AS 금액    ,
+               RIGHT_PERSON  AS 권리자  ,
+               RIGHT_DESC    AS 권리내역
+        FROM ES4114
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+
+
+        ]]>
+                </select>
+
+    <!-- Q_49_DUAL_등록세 -->
+    <select id="selectList46" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT 2.2 AS CD_CODE, '2.2%' AS CD_DESC FROM DUAL
+        UNION ALL
+        SELECT 1.2 AS CD_CODE, '1.2%' AS CD_DESC FROM DUAL
+
+        ]]>
+                </select>
+
+    <!-- Q_49_DUAL_종합부동산세 -->
+    <select id="selectList47" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT *
+        FROM (
+                 SELECT '4' AS GU, '1' AS GU_CODE, '종합합산' AS GU_DESC, 119   AS GU_VAL FROM DUAL
+                 UNION ALL
+                 SELECT '4' AS GU, '2' AS GU_CODE, '별도합산' AS GU_DESC, 2800  AS GU_VAL FROM DUAL
+                 UNION ALL
+                 SELECT '5' AS GU, '1' AS GU_CODE, '종합합산' AS GU_DESC, 119   AS GU_VAL FROM DUAL
+                 UNION ALL
+                 SELECT '5' AS GU, '2' AS GU_CODE, '별도합산' AS GU_DESC, 2800  AS GU_VAL FROM DUAL
+                 UNION ALL
+                 SELECT '1' AS GU, '9' AS GU_CODE, '집합건물' AS GU_DESC, 0.005  AS GU_VAL FROM DUAL
+             )
+        WHERE GU = SUBSTRB(#{담보종류} ,1,1)
+
+        ]]>
+                </select>
+
+    <!-- Q_49_DUAL_처분비용 -->
+    <select id="selectList48" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT 25 AS 처분비율, '1' AS 처분구분, '사업용 처분에 따른 법인세' AS 처분비용 FROM DUAL
+        UNION ALL
+        SELECT 55 AS 처분비율, '2' AS 처분구분, '비사업용 처분에 따른 법인세' AS 처분비용 FROM DUAL
+
+        ]]>
+                </select>
+
+    <!-- Q_49_DUAL_취득세 -->
+    <select id="selectList49" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT 2.1 AS CD_CODE, '2.1%' AS CD_DESC FROM DUAL
+        UNION ALL
+        SELECT 1.1 AS CD_CODE, '1.1%' AS CD_DESC FROM DUAL
+
+        ]]>
+                </select>
+
+    <!-- Q_99_평가구분 -->
+    <select id="selectList50" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE, CD_DESC
+        FROM ES00
+        WHERE ATTR_00 = 'DIV194'
+          AND USE_YN  = 'Y'
+        ORDER BY ORDER_SEQ, CD_CODE
+
+        ]]>
+                </select>
+
+    <!-- Q_DUAL_경과일수구하기 -->
+    <select id="selectList51" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT DECODE(Y_CNT, 0, DECODE(M_CNT, 0, '', M_CNT||'개월 경과'),
+                      DECODE(M_CNT, 0, Y_CNT||'년 경과', Y_CNT||'년 '||M_CNT||'개월 경과')) AS ELAP_YYMM
+        FROM (
+                 SELECT NVL(TRUNC(MON_CNT/12),0) AS Y_CNT,
+                        NVL(MOD(MON_CNT, 12), 0) AS M_CNT
+                 FROM (
+                          SELECT TRUNC(MONTHS_BETWEEN(TO_DATE(#{10_경과년도_감정일자} , 'YYYYMMDD'), TO_DATE(#{10_경과년도_변수일자} ,'YYYYMMDD'))) AS MON_CNT
+                          FROM DUAL
+                      )
+             )
+
+        ]]>
+                </select>
+
+    <!-- Q_DUAL_비준_사례구분 -->
+    <select id="selectList52" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '1' AS CD_CODE, '가격사례' AS CD_DESC FROM DUAL
+        UNION ALL
+        SELECT '2' AS CD_CODE, '경매사례' AS CD_DESC FROM DUAL
+
+        ]]>
+                </select>
+
+    <!-- Q_DUAL_여부 -->
+    <select id="selectList53" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT 'Y' AS CD_CODE, '예'     AS CD_DESC FROM DUAL
+        UNION ALL
+        SELECT 'N' AS CD_CODE, '아니오' AS CD_DESC FROM DUAL
+
+        ]]>
+                </select>
+
+    <!-- Q_DUAL_유무 -->
+    <select id="selectList54" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT 'Y' AS CD_CODE, '유' AS CD_DESC FROM DUAL
+        UNION ALL
+        SELECT 'N' AS CD_CODE, '무' AS CD_DESC FROM DUAL
+
+        ]]>
+                </select>
+
+    <!-- Q_DUAL_이용상황 -->
+    <select id="selectList55" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '1' AS CD_CODE, '주거용' AS CD_DESC FROM DUAL
+        UNION ALL
+        SELECT '2' AS CD_CODE, '업무용' AS CD_DESC FROM DUAL
+
+        ]]>
+                </select>
+
+    <!-- Q_POPUP_거래처목록 -->
+    <select id="selectList56" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT GEO_CODE, YAKHO AS SANGHO,
+               SAUP_NO, DAEPYO_NAME, UPTAE, JONGMOK
+        FROM V_CO01
+        WHERE YAKHO LIKE '%'||#{거래처명} ||'%'
+
+        ORDER BY YAKHO
+        ]]>
+                </select>
+
+    <!-- Q_POPUP_주소목록 -->
+    <select id="selectList57" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT ZIP_CODE, JUSO_FULL,
+               SIDO||' '||GUGUN||' '||DONG||' '||RI AS JUSO_FULL1
+        FROM V_TCO26
+        WHERE DONG LIKE '%' || #{읍면동}  || '%'
+        ORDER BY ZIP_CODE
+        ]]>
+                </select>
+
+    <!-- Q_감정가_00_본건 -->
+    <select id="selectList58" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT B.YYYY                         AS 년도       ,
+               B.SEQ                          AS 일련번호   ,
+               A.LN_SEQ                       AS 사례번호   ,
+               DECODE(A.LN_SEQ, 1, '저층',
+                      2, '로얄층',
+                      3, '고층') AS 해당층     ,
+               B.CHECK_YN                     AS 선택여부   ,
+               B.ONLY_SIZE                    AS 전용면적   ,
+               B.FLOOR_CODE                   AS 층수       ,
+               B.FLOOR_RATE                   AS 층수_비준율,
+               B.OF_PLACE                     AS 위치       ,
+               B.USE_AREA                     AS 용도지역   ,
+               B.CURR_MIN_AMT                 AS 최저가     ,
+               B.CURR_MAX_AMT                 AS 최고가     ,
+               B.CURR_AVG_AMT                 AS 평균가격   ,
+               B.EXAMPLE_PRICE                AS M2당단가   ,
+               B.RENT_M_AMT                   AS 월임대료   ,
+               B.SEC_AMT                      AS 보증금
+        FROM (SELECT LEVEL AS LN_SEQ
+              FROM DUAL CONNECT BY  LEVEL < 4
+             ) A,
+             (-- 감정가산정액_본건
+                 SELECT YYYY         ,
+                        SEQ          ,
+                        LN_SEQ       ,
+                        CHECK_YN     ,
+                        ONLY_SIZE    ,
+                        FLOOR_CODE   ,
+                        FLOOR_RATE   ,
+                        OF_PLACE     ,
+                        USE_AREA     ,
+                        CURR_MIN_AMT ,
+                        CURR_MAX_AMT ,
+                        CURR_AVG_AMT ,
+                        EXAMPLE_PRICE,
+                        RENT_M_AMT   ,
+                        SEC_AMT
+                 FROM ES2154
+                 WHERE YYYY = NVL(#{년도},'0')
+                   AND SEQ  = NVL(#{감정순번},'0')
+             ) B
+        WHERE A.LN_SEQ = B.LN_SEQ(+)
+        ORDER BY A.LN_SEQ
+        ]]>
+                </select>
+
+    <!-- Q_감정가_00_본건_입지특성 -->
+    <select id="selectList59" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY                  ,      -- 년도
+               SEQ                   ,      -- 일련번호
+               LOC_ROAD_SYSTEM       ,      -- 도로계통성(CD_DIV: DIV178)
+               LOC_BUSI_ACCESS       ,      -- 상업시설접근성(CD_DIV: DIV179)
+               LOC_PUB_ACCESS        ,      -- 공공시설접근성(CD_DIV: DIV180)
+               LOC_HATE_FACILITY_YN  ,      -- 주요혐오시설소재여부
+               LOC_DEVELOP           ,      -- 인근개발계획
+               MARKETABLE_PRICE             -- 시장성판단_가격동향
+        FROM ES2184
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+
+        ]]>
+                </select>
+
+    <!-- Q_감정가_01_가격사례 -->
+    <select id="selectList60" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY                               AS 년도       ,
+               SEQ                                AS 일련번호   ,
+               LN_SEQ                             AS 사례번호   ,
+               JUSO                               AS 소재지     ,
+               ''                                 AS 주소팝업   ,
+               SURVEY_AMT                         AS 조사금액   ,
+               BUSI_YN                            AS 업무용여부 ,
+               OF_GU                              AS 이용상황   ,
+               ONLY_SIZE                          AS 전용면적   ,
+               FLOOR_CODE                         AS 층수_코드  ,
+               FLOOR_RATE                         AS 층수_비준율,
+               OF_PLACE                           AS 위치       ,
+               USE_AREA                           AS 용도지역   ,
+               B_YEAR                             AS 건축년도   ,
+               ELAP_YEAR                          AS 경과년도   ,
+               CB_STRUC                           AS 구조       ,
+               NUM_YEAR                           AS 내용년수   ,
+               OF_ROAD_CODE                       AS 도로조건   ,
+               OF_ACCESS_CODE                     AS 접근조건   ,
+               EXPENCE_M_AMT                      AS 월관리비   ,
+               RENT_M_AMT                         AS 월임대료   ,
+               SEC_AMT                            AS 보증금     ,
+               EXAMPLE_PRICE                      AS 사례가격
+        FROM ES2144
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_감정가_02_경매사례 -->
+    <select id="selectList61" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY                               AS 년도       ,
+               SEQ                                AS 일련번호   ,
+               LN_SEQ                             AS 사례번호   , (SELECT ATTR_01
+                                                               FROM ES00
+                                                               WHERE ATTR_00 ='DIV999'
+                                                                 AND CD_CODE = LN_SEQ) AS 사례번호명,
+               AU_NO                              AS 경매사건번호,
+               JUSO                               AS 소재지     ,
+               ''                                 AS 주소팝업   ,
+               BUSI_YN                            AS 업무용여부 ,
+               OF_GU                              AS 이용상황   ,
+               ONLY_SIZE                          AS 전용면적   ,
+               FLOOR_CODE                         AS 층수_코드  ,
+               FLOOR_RATE                         AS 층수_비준율,
+               OF_PLACE                           AS 위치       ,
+               USE_AREA                           AS 용도지역   ,
+               B_YEAR                             AS 건축년도   ,
+               ELAP_YEAR                          AS 경과년도   ,
+               CB_STRUC                           AS 구조       ,
+               NUM_YEAR                           AS 내용년수   ,
+               OF_ROAD_CODE                       AS 도로조건   ,
+               OF_ACCESS_CODE                     AS 접근조건   ,
+               LAW_AMT                            AS 법원감정가 ,
+               EXAMPLE_PRICE                      AS 사례가격   ,
+               BID_AMT                            AS 낙찰가격   ,
+               BID_RATE                           AS 낙찰가율
+        FROM ES2114
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+
+        ]]>
+                </select>
+
+    <!-- Q_감정가_03_비준가격 -->
+    <select id="selectList62" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY              AS 년도                  ,    -- 년도
+               SEQ               AS 일련번호              ,    -- 일련번호
+               EXAMPLE_GU        AS 사례구분              ,    -- 사례구분(1-가격,2-경매)
+               LN_SEQ            AS 사례번호              , (SELECT DECODE(EXAMPLE_GU, '1', CD_CODE, '2', ATTR_01)
+                                                         FROM ES00
+                                                         WHERE ATTR_00 = 'DIV999'
+                                                           AND CD_CODE = LN_SEQ) AS 사례번호명,
+               DECODE(EXAMPLE_GU, '1', '가격사례', '2', '경매사례') AS 사례구분명,
+               PRICE_DATE_M      AS 가격_본건_일자        ,
+               PRICE_RATE_M      AS 가격_본건_적용율      ,
+               PRICE_DATE_S      AS 가격_사례_일자        ,
+               PRICE_RATE_S      AS 가격_사례_적용율      ,
+               PRICE_RATE_C      AS 가격_비교치           ,
+               ONLY_SIZE         AS 전용면적              ,
+               EXAMPLE_PRICE     AS 사례가격              ,
+               JUSO_C            AS 소재지_비교치         ,    -- 소재지_비교치
+               FLOOR_CODE_M      AS 층별비교_본건         ,    -- 층별비교_본건_적용율
+               FLOOR_RATE_M      AS 층별비교_본건_적용율  ,    -- 층별비교_본건_적용율
+               FLOOR_CODE_S      AS 층별비교_사례         ,    -- 층별비교_사례_적용율
+               FLOOR_RATE_S      AS 층별비교_사례_적용율  ,    -- 층별비교_사례_적용율
+               FLOOR_C           AS 층별비교_비교치       ,    -- 층별비교_비교치
+               LOCATE_RATE_M     AS 위치별비교_본건_적용율,    -- 위치별비교_본건_적용율
+               LOCATE_RATE_S     AS 위치별비교_사례_적용율,    -- 위치별비교_사례_적용율
+               LOCATE_C          AS 위치별비교_비교치     ,    -- 위치별비교_비교치
+               OF_JANGA_RATE_C   AS 잔가율비교_비교치     ,    -- 잔가율비교_비교치
+               OF_ROAD_RATE_C    AS 도로조건_비교치       ,    -- 도로조건_비교치
+               OF_ACCESS_RATE_M  AS 접근조건_본건_적용율  ,    -- 접근조건_본건_적용율
+               OF_ACCESS_RATE_S  AS 접근조건_사례_적용율  ,    -- 접근조건_사례_적용율
+               OF_ACCESS_RATE_C  AS 접근조건_비교치       ,    -- 접근조건_비교치
+               OF_ETC_RATE_M     AS 기타조건_본건_적용율  ,    -- 기타조건_본건_적용율
+               OF_ETC_DESC_S     AS 기타조건_사례_내용    ,    -- 기타조건_사례_내용
+               OF_ETC_RATE_S     AS 기타조건_사례_적용율  ,    -- 기타조건_사례_적용율
+               OF_ETC_RATE_C     AS 기타조건_비교치       ,    -- 기타조건_비교치
+               FACTOR_TOT        AS 요인합계              ,    -- 요인합계
+               APAS_DAN          AS 산정단가              ,    -- 산정단가
+               APPL_DAN          AS 적용단가              ,    -- 적용단가
+               HWANSAN_AMT       AS 환산금액
+        FROM ES2124
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+
+        ]]>
+                </select>
+
+    <!-- Q_감정가_03_비준가격_집계표 -->
+    <select id="selectList63" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT EXAMPLE_GU        AS 사례구분              ,
+               DECODE(EXAMPLE_GU, '1', '가격사례', '2', '경매사례') AS 사례구분명,
+               LN_SEQ            AS 사례번호              , (SELECT DECODE(EXAMPLE_GU, '1', CD_CODE, '2', ATTR_01)
+                                                         FROM ES00
+                                                         WHERE ATTR_00 = 'DIV999'
+                                                           AND CD_CODE = LN_SEQ) AS 사례번호명,
+               (SELECT JUSO
+                FROM (SELECT 1 AS GUBUN, YYYY, SEQ, LN_SEQ, JUSO FROM ES2144 UNION ALL
+                      SELECT 2 AS GUBUN, YYYY, SEQ, LN_SEQ, JUSO FROM ES2114
+                     ) B
+                WHERE B.YYYY   = A.YYYY
+                  AND B.SEQ    = A.SEQ
+                  AND B.LN_SEQ = A.LN_SEQ
+                  AND B.GUBUN  = A.EXAMPLE_GU) AS 소재지,
+               ONLY_SIZE          AS 전용면적              ,
+               EXAMPLE_PRICE      AS 사례가격              ,
+               JUSO_C             AS 소재지_비교치         ,
+               PRICE_RATE_C       AS 가격_비교치           ,
+               FLOOR_C            AS 층별비교_비교치       ,
+               LOCATE_C           AS 위치별비교_비교치     ,
+               OF_JANGA_RATE_C    AS 잔가율비교_비교치     ,
+               OF_ROAD_RATE_C     AS 도로조건_비교치       ,
+               OF_ACCESS_RATE_C   AS 접근조건_비교치       ,
+               OF_ETC_RATE_C      AS 기타조건_비교치       ,
+               FACTOR_TOT         AS 요인합계              ,
+               APAS_DAN           AS 산정단가              ,
+               APPL_DAN           AS 적용단가              ,
+               HWANSAN_AMT        AS 환산금액
+        FROM ES2124 A
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+        ORDER BY EXAMPLE_GU, LN_SEQ
+
+
+
+
+        ]]>
+                </select>
+
+    <!-- Q_감정가_09_감정평가 -->
+    <select id="selectList64" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT YYYY             AS 년도              ,
+               SEQ              AS 일련번호          ,
+               MA_MIN_AMT       AS 본건_최저가격     ,
+               MA_MIN_SIZE_DAN  AS 본건_최저가격_단가,
+               MA_MAX_AMT       AS 본건_최고가격     ,
+               MA_MAX_SIZE_DAN  AS 본건_최고가격_단가,
+               MA_RATE          AS 본건_비율         ,
+               PR_MIN_AMT       AS 가격_최저가격     ,
+               PR_MIN_SIZE_DAN  AS 가격_최저가격_단가,
+               PR_MAX_AMT       AS 가격_최고가격     ,
+               PR_MAX_SIZE_DAN  AS 가격_최고가격_단가,
+               PR_RATE          AS 가격_비율         ,
+               AU_MIN_AMT       AS 경매_최저가격     ,
+               AU_MIN_SIZE_DAN  AS 경매_최저가격_단가,
+               AU_MAX_AMT       AS 경매_최고가격     ,
+               AU_MAX_SIZE_DAN  AS 경매_최고가격_단가,
+               AU_RATE          AS 경매_비율         ,
+               APPL_AMT         AS 결정가격          ,
+               APPL_SIZE_DAN    AS 결정가격_단가     ,
+               INT_REP_SIZE     AS 인테리어_면적     ,
+               INT_REP_SIZE_PY  AS 인테리어_면적_평  ,
+               INT_REP_DAN_CODE AS 인테리어_단가_코드,
+               INT_REP_DAN      AS 인테리어_단가     ,
+               INT_REP_AMT      AS 인테리어_금액     ,
+               INC_AMT          AS 평가가격          ,
+               INC_SIZE_DAN     AS 평가가격_단가     ,
+               FNL_INC_AMT      AS 최종평가가격
+        FROM ES2104
+        WHERE YYYY = #{년도}
+          AND SEQ  = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_당사설정액 -->
+    <select id="selectList65" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT MAX(RANK_LAST) AS 최종순위,
+               SUM(AMT) AS 채권금액
+        FROM (
+                 SELECT DISTINCT RANK,
+                                 (SELECT CNT
+                                  FROM (SELECT COUNT(*) CNT
+                                        FROM ES2404
+                                        WHERE YYYY   = #{년도}
+                                          AND SEQ    = #{감정순번}
+                                          AND RANK   > 6
+                                        GROUP BY SHA_GU,LN_SEQ
+                                        ORDER BY 1 DESC
+                                       )
+                                  WHERE ROWNUM = 1) AS RANK_LAST,
+                                 DISP_RANK         , (SELECT CD_DESC
+                                                      FROM ES00
+                                                      WHERE ATTR_00 = 'DIV511'
+                                                        AND CD_CODE = DISP_RANK) AS DISP_RANK_NAME,
+                                 NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0)   AS AMT
+                 FROM ES2404 A
+                 WHERE YYYY   = #{년도}
+                   AND SEQ    = #{감정순번}
+                   AND NVL(HITE_YN,'N') = 'Y'
+             )
+
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_당사설정액JB -->
+    <select id="selectList66" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT MAX(RANK_LAST) AS 최종순위,
+               SUM(AMT) AS 채권금액
+        FROM (
+                 SELECT DISTINCT RANK,
+                                 (SELECT CNT
+                                  FROM (SELECT COUNT(*) CNT
+                                        FROM JB2404
+                                        WHERE YYYY   = #{년도}
+                                          AND SEQ    = #{감정순번}
+                                          AND RANK   > 6
+                                        GROUP BY SHA_GU,LN_SEQ
+                                        ORDER BY 1 DESC
+                                       )
+                                  WHERE ROWNUM = 1) AS RANK_LAST,
+                                 DISP_RANK         , (SELECT CD_DESC
+                                                      FROM ES00
+                                                      WHERE ATTR_00 = 'DIV511'
+                                                        AND CD_CODE = DISP_RANK) AS DISP_RANK_NAME,
+                                 NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0)   AS AMT
+                 FROM JB2404 A
+                 WHERE YYYY   = #{년도}
+                   AND SEQ    = #{감정순번}
+                   AND NVL(HITE_YN,'N') = 'Y'
+             )
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_보정표 -->
+    <select id="selectList67" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT INCREASE_AMT                        AS 평가가격                   ,
+               ROUND(INCREASE_AMT/CB_SIZE     , 0) AS 평가가격_단가              ,
+               ROUND(INCREASE_AMT/CB_SIZE_PY  , 0) AS 평가가격_단가_평           ,
+               PL_MIN_BID_AMT                      AS 제1차예상최저입찰가        ,
+               ROUND(PL_MIN_BID_AMT/CB_SIZE   , 0) AS 제1차예상최저입찰가_단가   ,
+               ROUND(PL_MIN_BID_AMT/CB_SIZE_PY, 0) AS 제1차예상최저입찰가_단가_평,
+               PL_BID_AMT                          AS 예상낙찰가                 ,
+               ROUND(PL_BID_AMT/CB_SIZE       , 0) AS 예상낙찰가_단가            ,
+               ROUND(PL_BID_AMT/CB_SIZE_PY    , 0) AS 예상낙찰가_단가_평         ,
+               APPL_RATE                           AS 예상낙찰가율
+        FROM (
+                 SELECT DECODE(SEC_CODE, '101', CB_TOT_SIZE   , CB_EXM_SIZE   ) AS CB_SIZE    ,
+                        DECODE(SEC_CODE, '101', CB_TOT_SIZE_PY, CB_EXM_SIZE_PY) AS CB_SIZE_PY ,
+                        C.APPL_RATE        ,
+                        C.INCREASE_AMT     ,
+                        C.PL_MIN_BID_AMT ,
+                        C.PL_BID_AMT
+                 FROM ES10 A, ES2011 B, ES2301 C
+                 WHERE A.YYYY = #{년도}
+                   AND A.SEQ  = #{감정순번}
+                   AND A.YYYY = B.YYYY
+                   AND A.SEQ  = B.SEQ
+                   AND A.YYYY = C.YYYY
+                   AND A.SEQ  = C.SEQ
+             )
+
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_보정표JB -->
+    <select id="selectList68" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT INCREASE_AMT                        AS 평가가격                   ,
+               ROUND(INCREASE_AMT/CB_SIZE     , 0) AS 평가가격_단가              ,
+               ROUND(INCREASE_AMT/CB_SIZE_PY  , 0) AS 평가가격_단가_평           ,
+               PL_MIN_BID_AMT                      AS 제1차예상최저입찰가        ,
+               ROUND(PL_MIN_BID_AMT/CB_SIZE   , 0) AS 제1차예상최저입찰가_단가   ,
+               ROUND(PL_MIN_BID_AMT/CB_SIZE_PY, 0) AS 제1차예상최저입찰가_단가_평,
+               PL_BID_AMT                          AS 예상낙찰가                 ,
+               ROUND(PL_BID_AMT/CB_SIZE       , 0) AS 예상낙찰가_단가            ,
+               ROUND(PL_BID_AMT/CB_SIZE_PY    , 0) AS 예상낙찰가_단가_평         ,
+               APPL_RATE                           AS 예상낙찰가율
+        FROM (
+                 SELECT DECODE(SEC_CODE, '101', CB_TOT_SIZE   , CB_EXM_SIZE   ) AS CB_SIZE    ,
+                        DECODE(SEC_CODE, '101', CB_TOT_SIZE_PY, CB_EXM_SIZE_PY) AS CB_SIZE_PY ,
+                        C.APPL_RATE      ,
+                        C.INCREASE_AMT   ,
+                        C.PL_MIN_BID_AMT ,
+                        C.PL_BID_AMT
+                 FROM JB10 A, JB2011 B, JB2301 C
+                 WHERE A.YYYY = #{년도}
+                   AND A.SEQ  = #{감정순번}
+                   AND A.YYYY = B.YYYY
+                   AND A.SEQ  = B.SEQ
+                   AND A.YYYY = C.YYYY
+                   AND A.SEQ  = C.SEQ
+             )
+
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_초과부족설정액 -->
+    <select id="selectList69" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT 담보여력_설정전         AS 담보여력,
+               초과_부족설정액_문자 AS 초과_부족설정액
+        FROM V_ES10_01
+        WHERE YYYY = #{년도}
+          AND SEQ = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_초과부족설정액JB -->
+    <select id="selectList70" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT 담보여력_설정전         AS 담보여력,
+               초과_부족설정액_문자 AS 초과_부족설정액
+        FROM V_JB10_01
+        WHERE YYYY = #{년도}
+          AND SEQ = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_초과부족설정액JB_20081219 -->
+    <select id="selectList71" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT PL_BID_AMT, SAMT,
+               (CASE WHEN AMT <= 0 THEN 0 ELSE AMT END) AS 담보여력,
+               (CASE WHEN AMT  = HITE_AMT THEN '없음'
+                     WHEN AMT  > HITE_AMT THEN TO_CHAR(AMT-HITE_AMT, 'FM999,999,999,999') ||' 부족설정'
+                     WHEN AMT  < HITE_AMT THEN TO_CHAR(ABS((CASE WHEN AMT <= 0 THEN 0 ELSE AMT END)-HITE_AMT),'FM999,999,999,999')||' 초과설정'
+                   END) AS 초과_부족설정액
+        FROM (
+                 SELECT PL_BID_AMT, SAMT, NVL(PL_BID_AMT,0) - NVL(SAMT,0) AS AMT,
+                        NVL(HITE_AMT,0) AS HITE_AMT
+                 FROM JB10 A,
+                      (
+                          SELECT YYYY, SEQ,
+                                 SUM(DECODE(ERA_YN||NVL(HITE_YN,'N'), 'NN', AMT)) AS SAMT,
+                                 SUM(DECODE(NVL(HITE_YN,'N'), 'Y', AMT)) AS HITE_AMT
+                          FROM (SELECT DISTINCT YYYY, SEQ, RIGHT_DATE, RIGHT_PERSON, RIGHT_CODE, ERA_YN, NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0) AS AMT, HITE_YN
+                                FROM JB2404 A
+--                         WHERE YYYY   = '2008'
+--                           AND SEQ    = '001900'
+                               )
+                          GROUP BY YYYY, SEQ
+                      ) B
+                 WHERE A.YYYY = #{년도}
+                   AND A.SEQ  = #{감정순번}
+                   AND A.YYYY = B.YYYY
+                   AND A.SEQ  = B.SEQ
+             )
+
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_초과부족설정액_20081219 -->
+    <select id="selectList72" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT PL_BID_AMT, SAMT,
+               (CASE WHEN AMT <= 0 THEN 0 ELSE AMT END) AS 담보여력,
+               (CASE WHEN AMT  = HITE_AMT THEN '없음'
+                     WHEN AMT  > HITE_AMT THEN TO_CHAR(AMT-HITE_AMT, 'FM999,999,999,999') ||' 부족설정'
+                     WHEN AMT  < HITE_AMT THEN TO_CHAR(ABS((CASE WHEN AMT <= 0 THEN 0 ELSE AMT END)-HITE_AMT),'FM999,999,999,999')||' 초과설정'
+                   END) AS 초과_부족설정액
+        FROM (
+                 SELECT PL_BID_AMT, SAMT, NVL(PL_BID_AMT,0) - NVL(SAMT,0) AS AMT,
+                        NVL(HITE_AMT,0) AS HITE_AMT
+                 FROM ES10 A,
+                      (
+                          SELECT YYYY, SEQ,
+                                 SUM(DECODE(ERA_YN||NVL(HITE_YN,'N'), 'NN', AMT)) AS SAMT,
+                                 SUM(DECODE(NVL(HITE_YN,'N'), 'Y', AMT)) AS HITE_AMT
+                          FROM (SELECT DISTINCT YYYY, SEQ, RIGHT_DATE, RIGHT_PERSON, RIGHT_CODE, ERA_YN, NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0) AS AMT, HITE_YN
+                                FROM ES2404 A
+--                         WHERE YYYY   = '2008'
+--                           AND SEQ    = '001900'
+                               )
+                          GROUP BY YYYY, SEQ
+                      ) B
+                 WHERE A.YYYY = #{년도}
+                   AND A.SEQ  = #{감정순번}
+                   AND A.YYYY = B.YYYY
+                   AND A.SEQ  = B.SEQ
+             )
+
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_최고최저 -->
+    <select id="selectList73" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT MIN_AMT,
+               --// 아파트일경우만 면적합계로 나머지는 전유면적으로 계산함
+               ROUND(MIN_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE   , CB_EXM_SIZE   ), 0) AS MIN_DAN,
+               ROUND(MIN_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE_PY, CB_EXM_SIZE_PY), 0) AS MIN_DAN_PY,
+               MAX_AMT,
+               ROUND(MAX_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE   , CB_EXM_SIZE   ), 0) AS MAN_DAN,
+               ROUND(MAX_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE_PY, CB_EXM_SIZE_PY), 0) AS MAN_DAN_PY
+        FROM ES10 A,
+             ES2011 B,
+             (--// 감정평가_아파트
+                 SELECT YYYY, SEQ,
+                        LEAST(DECODE(MA_MIN_AMT,0,999999999999999999,MA_MIN_AMT),
+                              DECODE(PR_MIN_AMT,0,999999999999999999,PR_MIN_AMT),
+                              DECODE(AU_MIN_AMT,0,999999999999999999,AU_MIN_AMT)) AS MIN_AMT,
+                        GREATEST(MA_MAX_AMT, PR_MAX_AMT, AU_MAX_AMT) AS MAX_AMT
+                 FROM ES2101
+                 WHERE YYYY = #{년도}
+                   AND SEQ  = #{감정순번}
+                 UNION ALL
+                 --// 감정평가_연립,다세대
+                 SELECT YYYY, SEQ,
+                        LEAST(DECODE(MA_MIN_AMT,0,999999999999999999,MA_MIN_AMT),
+                              DECODE(PR_MIN_AMT,0,999999999999999999,PR_MIN_AMT),
+                              DECODE(AU_MIN_AMT,0,999999999999999999,AU_MIN_AMT)) AS MIN_AMT,
+                        GREATEST(MA_MAX_AMT, PR_MAX_AMT, AU_MAX_AMT) AS MAX_AMT
+                 FROM ES2102
+                 WHERE YYYY = #{년도}
+                   AND SEQ  = #{감정순번}
+                 UNION ALL
+                 --// 감정평가 상업용
+                 SELECT A.YYYY, A.SEQ,
+                        LEAST(DECODE(CO_MIN_AMT,0,999999999999999999,CO_MIN_AMT),
+                              DECODE(EA_MIN_AMT,0,999999999999999999,EA_MIN_AMT)) AS MIN_AMT,
+                        GREATEST(CO_MAX_AMT, CURR_MAX_AMT) AS MAX_AMT
+                 FROM ES2103 A, ES2153 B
+                 WHERE A.YYYY = #{년도}
+                   AND A.SEQ  = #{감정순번}
+                   AND A.YYYY = B.YYYY
+                   AND A.SEQ  = B.SEQ
+                   AND B.CHECK_YN = 'Y'
+                 UNION ALL
+                 --// 감정평가_오피스텔
+                 SELECT YYYY, SEQ,
+                        LEAST(DECODE(MA_MIN_AMT,0,999999999999999999,MA_MIN_AMT),
+                              DECODE(PR_MIN_AMT,0,999999999999999999,PR_MIN_AMT),
+                              DECODE(AU_MIN_AMT,0,999999999999999999,AU_MIN_AMT)) AS MIN_AMT,
+                        GREATEST(MA_MAX_AMT, PR_MAX_AMT, AU_MAX_AMT) AS MAX_AMT
+                 FROM ES2104
+                 WHERE YYYY = #{년도}
+                   AND SEQ  = #{감정순번}
+             ) C
+        WHERE A.YYYY = #{년도}
+          AND A.SEQ  = #{감정순번}
+          AND A.YYYY = B.YYYY
+          AND A.SEQ  = B.SEQ
+          AND A.YYYY = C.YYYY
+          AND A.SEQ  = C.SEQ
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_최고최저JB -->
+    <select id="selectList74" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT MIN_AMT,
+               --// 아파트일경우만 면적합계로 나머지는 전유면적으로 계산함
+               ROUND(MIN_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE   , CB_EXM_SIZE   ), 0) AS MIN_DAN,
+               ROUND(MIN_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE_PY, CB_EXM_SIZE_PY), 0) AS MIN_DAN_PY,
+               MAX_AMT,
+               ROUND(MAX_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE   , CB_EXM_SIZE   ), 0) AS MAN_DAN,
+               ROUND(MAX_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE_PY, CB_EXM_SIZE_PY), 0) AS MAN_DAN_PY
+        FROM JB10 A,
+             JB2011 B,
+             (--// 감정평가_아파트
+                 SELECT YYYY, SEQ,
+                        LEAST(DECODE(MA_MIN_AMT,0,999999999999999999,MA_MIN_AMT),
+                              DECODE(PR_MIN_AMT,0,999999999999999999,PR_MIN_AMT),
+                              DECODE(AU_MIN_AMT,0,999999999999999999,AU_MIN_AMT)) AS MIN_AMT,
+                        GREATEST(MA_MAX_AMT, PR_MAX_AMT, AU_MAX_AMT) AS MAX_AMT
+                 FROM JB2101
+                 WHERE YYYY = #{년도}
+                   AND SEQ  = #{감정순번}
+                 UNION ALL
+                 --// 감정평가_연립,다세대
+                 SELECT YYYY, SEQ,
+                        LEAST(DECODE(MA_MIN_AMT,0,999999999999999999,MA_MIN_AMT),
+                              DECODE(PR_MIN_AMT,0,999999999999999999,PR_MIN_AMT),
+                              DECODE(AU_MIN_AMT,0,999999999999999999,AU_MIN_AMT)) AS MIN_AMT,
+                        GREATEST(MA_MAX_AMT, PR_MAX_AMT, AU_MAX_AMT) AS MAX_AMT
+                 FROM JB2102
+                 WHERE YYYY = #{년도}
+                   AND SEQ  = #{감정순번}
+                 UNION ALL
+                 --// 감정평가 상업용
+                 SELECT A.YYYY, A.SEQ,
+                        LEAST(DECODE(CO_MIN_AMT,0,999999999999999999,CO_MIN_AMT),
+                              DECODE(EA_MIN_AMT,0,999999999999999999,EA_MIN_AMT)) AS MIN_AMT,
+                        GREATEST(CO_MAX_AMT, CURR_MAX_AMT) AS MAX_AMT
+                 FROM JB2103 A, JB2153 B
+                 WHERE A.YYYY = #{년도}
+                   AND A.SEQ  = #{감정순번}
+                   AND A.YYYY = B.YYYY
+                   AND A.SEQ  = B.SEQ
+                   AND B.CHECK_YN = 'Y'
+                 UNION ALL
+                 --// 감정평가_오피스텔
+                 SELECT YYYY, SEQ,
+                        LEAST(DECODE(MA_MIN_AMT,0,999999999999999999,MA_MIN_AMT),
+                              DECODE(PR_MIN_AMT,0,999999999999999999,PR_MIN_AMT),
+                              DECODE(AU_MIN_AMT,0,999999999999999999,AU_MIN_AMT)) AS MIN_AMT,
+                        GREATEST(MA_MAX_AMT, PR_MAX_AMT, AU_MAX_AMT) AS MAX_AMT
+                 FROM JB2104
+                 WHERE YYYY = #{년도}
+                   AND SEQ  = #{감정순번}
+             ) C
+        WHERE A.YYYY = #{년도}
+          AND A.SEQ  = #{감정순번}
+          AND A.YYYY = B.YYYY
+          AND A.SEQ  = B.SEQ
+          AND A.YYYY = C.YYYY
+          AND A.SEQ  = C.SEQ
+
+        ]]>
+                </select>
+
+    <!-- Q_공통보고서_트리 -->
+    <select id="selectList75" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT     cd_code, cd_desc, SYS_CONNECT_BY_PATH ((cd_desc), '/') AS cd_view,
+                   REPLACE (SYS_CONNECT_BY_PATH (DECODE (LEVEL, 1, cd_desc), '/'),
+                            '/',
+                            ''
+                       ) level1,
+                   REPLACE (SYS_CONNECT_BY_PATH (DECODE (LEVEL, 2, cd_desc), '/'),
+                            '/',
+                            ''
+                       ) level2,
+                   REPLACE (SYS_CONNECT_BY_PATH (DECODE (LEVEL, 3, cd_desc), '/'),
+                            '/',
+                            ''
+                       ) level3,
+                   REPLACE (SYS_CONNECT_BY_PATH (DECODE (LEVEL, 4, cd_desc), '/'),
+                            '/',
+                            ''
+                       ) level4,
+                   REPLACE (SYS_CONNECT_BY_PATH (DECODE (LEVEL, 5, cd_desc), '/'),
+                            '/',
+                            ''
+                       ) level5,
+                   REPLACE (SYS_CONNECT_BY_PATH (DECODE (LEVEL, 1, cd_desc), '/'),
+                            '/',
+                            ''
+                       ) cd_level1,
+                   REPLACE (SYS_CONNECT_BY_PATH (DECODE (LEVEL, 2, cd_code), '/'),
+                            '/',
+                            ''
+                       ) cd_level2,
+                   REPLACE (SYS_CONNECT_BY_PATH (DECODE (LEVEL, 3, cd_code), '/'),
+                            '/',
+                            ''
+                       ) cd_level3,
+                   REPLACE (SYS_CONNECT_BY_PATH (DECODE (LEVEL, 4, cd_code), '/'),
+                            '/',
+                            ''
+                       ) cd_level4,
+                   REPLACE (SYS_CONNECT_BY_PATH (DECODE (LEVEL, 5, cd_code), '/'),
+                            '/',
+                            ''
+                       ) cd_level5
+        FROM es00
+        WHERE cd_div = '164'
+        START WITH cd_code = '9999'
+        CONNECT BY PRIOR cd_code = attr_01
+        ORDER SIBLINGS BY cd_code
+        ]]>
+                </select>
+
+    <!-- Q_관리부서확인 -->
+    <select id="selectList76" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT MANAGE_FLAG
+        FROM V_IA03
+        WHERE BUSEO   = #{_부서코드}
+        ]]>
+                </select>
+
+    <!-- Q_담당자메일조회 -->
+    <select id="selectList77" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT sabun, NAME, email, DECODE (phone, '--', '', phone) AS phone
+        FROM (SELECT sabun, NAME, email || '@hite.com' AS email,
+                     phone
+              FROM v_ia01)
+        WHERE sabun = #{_사원번호}
+        ]]>
+                </select>
+
+    <!-- Q_담보마스터 -->
+    <select id="selectList78" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT yyyy, seq, sec_code, jum_code, req_jum, esti_date, geo_code, sangho,
+               daepyo_name, market_div, market_name, market_ceo, debtor, poss_owner,
+               guarantor, debtor_relation, b_use_code, b_use_desc, b_name, juso1,
+               juso2, l_size, l_size_py, b_size, b_size_py, curr_amt, plmin_bid_amt,
+               pl_bid_amt, c_cl_amt, l_cl_amt, b_cl_amt, c_pl_rank, c_pl_amt,
+               l_pl_rank, l_pl_amt, b_pl_rank, b_pl_amt, mana_l_size, mana_l_size_py,
+               mana_b_size, mana_b_size_py, mana_curr_amt, mana_pl_min_bid_amt,
+               mana_pl_bid_amt, mana_c_cl_amt, mana_l_cl_amt, mana_b_cl_amt,
+               mana_c_pl_rank, mana_c_pl_amt, mana_l_pl_rank, mana_l_pl_amt,
+               mana_b_pl_rank, mana_b_pl_amt, jum_comp_date, jum_tran_date,
+               mana_rece_date, mana_rece_sabun, mana_comp_date, proc_div, doc_key,NVL(APPRAISE_GU, '0') AS APPRAISE_GU,SHARE_YN,
+               jum_sabun,
+               RPAD (buseo_name, 20, ' ')
+                   || RPAD (leader_name, 20, ' ')
+                   || NAME AS jum_sabun_name,
+               DECODE (doc_key,
+                       TRIM (LPAD (' ', 27, '0')), '대상자료없음',
+                       (SELECT MIN (doc_name) AS doc_name
+                        FROM es05
+                        WHERE doc_key = a.doc_key)
+                   ) AS doc_name
+        FROM es10 a, v_ia01_leader b
+        WHERE a.jum_sabun = b.sabun(+)
+          AND yyyy = #{년도}  AND seq = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_도로명주소_시군구 -->
+    <select id="selectList79" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT	'전체' AS "TEXT",
+                  '*ALL' AS "CODE",
+                  '*' AS "SEQ"
+        FROM	DUAL
+        UNION
+        SELECT	DISTINCT CITYGU AS "TEXT",
+                           CITYGU AS "CODE",
+                           CITYGU AS "SEQ"
+        FROM	V_T_ZIP_ROAD_MAP
+        WHERE	CITY = #{CITY}
+          AND CITYGU IS NOT NULL
+        ORDER BY SEQ ASC
+        ]]>
+                </select>
+
+    <!-- Q_도로명주소_시도 -->
+    <select id="selectList80" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT	'전체' AS "TEXT",
+                  '*ALL' AS "CODE",
+                  -1 AS "SEQ"
+        FROM	DUAL
+        UNION
+        SELECT	CD_DESC AS "TEXT",
+                  CD_DESC AS "CODE",
+                  ORDER_SEQ AS "SEQ"
+        FROM	ES00
+        WHERE CD_DIV = '610'
+        ORDER BY SEQ
+        ]]>
+                </select>
+
+    <!-- Q_도로명주소목록 -->
+    <select id="selectList81" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT	DISTINCT ZIP_CD,
+                           CITY,
+                           CITYGU,
+                           EUPDONG,
+                           RI,
+                           ROAD_NM,
+                           BUDG_RNUM,
+                           BUDG_SNUM
+        FROM	V_T_ZIP_ROAD_MAP
+        WHERE	1 = 1
+          AND		(CITY = #{CITY} OR #{CITY} = '*ALL')
+          AND		(CITYGU = #{CITYGU} OR #{CITYGU} = '*ALL')
+          AND		ROAD_NM || BUDG_RNUM || BUDG_SNUM LIKE REPLACE(REPLACE(#{ROAD_NM},' ',''),'-','') || '%'
+        ORDER BY ZIP_CD,
+                 CITY,
+                 CITYGU,
+                 RI,
+                 ROAD_NM,
+                 BUDG_RNUM,
+                 BUDG_SNUM
+        ]]>
+                </select>
+
+    <!-- Q_링크사이트 -->
+    <select id="selectList82" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_desc, attr_01
+        FROM es00
+        WHERE cd_div = '400' AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_문서관리_관련문서 -->
+    <select id="selectList83" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT yyyy, seq, photo_div, ln_seq, photo_name, file_name, remark, upload_file, file_name AS file_name_tmp
+        FROM es2311
+        WHERE yyyy = #{년도}  AND seq = #{감정순번}
+          AND photo_div = '4'
+        ]]>
+                </select>
+
+    <!-- Q_문서관리_사진 -->
+    <select id="selectList84" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT yyyy, seq, photo_div, ln_seq, photo_name, file_name, remark, NULL AS btn, file_name AS file_name_tmp
+        FROM es2311
+        WHERE yyyy = #{년도}  AND seq = #{감정순번}
+          AND photo_div != '4'
+        ]]>
+                </select>
+
+    <!-- Q_배당표M -->
+    <select id="selectList85" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT yyyy, seq, auction_code, auction_amt, cred_max_amt, h_pl_bid_amt, h_poss_amt,
+               h_poss_a_area, h_poss_a_amt, b_pl_bid_amt, b_poss_amt, b_lease_area,
+               b_lease_amt, b_poss_a_area, b_poss_a_amt
+        FROM es2401
+        WHERE yyyy = #{년도}  AND seq = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_배당표_배당금_계산 -->
+    <select id="selectList86" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT yyyy, seq, sha_gu, ln_seq, RANK, disp_rank, right_date, right_person, right_code,
+               era_yn, cred_self_amt, cred_comb_amt, hite_yn, pro_rate_code,
+               pro_rate_gu, pro_rate_div, pro_rate_step, pro_rate_cycle, 'U' AS flag,
+               cred_self_amt AS cred_self_amt_org, cred_comb_amt AS cred_comb_amt_org,
+               CASE
+                   WHEN TO_NUMBER (disp_rank) < 100
+                       THEN 0
+                   WHEN TO_NUMBER (disp_rank) >= 100
+                       THEN 1
+                   END AS is_enable
+        FROM es2404
+        WHERE yyyy = #{년도}  AND seq = #{감정순번}
+        UNION ALL
+        SELECT yyyy, seq, sha_gu, ln_seq, RANK, disp_rank, right_date, right_person, right_code,
+               era_yn, cred_self_amt, cred_comb_amt, hite_yn, pro_rate_code,
+               pro_rate_gu, pro_rate_div, pro_rate_step, pro_rate_cycle, 'I' AS flag,
+               cred_self_amt AS cred_self_amt_org, cred_comb_amt AS cred_comb_amt_org, 0 AS is_enable
+        FROM es2404
+        WHERE yyyy = '0000'
+          AND seq = '000000'
+          AND sha_gu = '0'
+          AND NOT EXISTS (SELECT 1
+                          FROM es2404
+                          WHERE yyyy = #{년도}  AND seq = #{감정순번}  AND sha_gu = '1' AND RANK <= 6)
+        ]]>
+                </select>
+
+    <!-- Q_배당표_상가임차보증금_계산 -->
+    <select id="selectList87" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT yyyy, seq, rno, c_desc, poss_yn, hir_name, sto_lsec_amt, fxdate_yn,
+               mrent_amt, lease_amt, rep_be_sec_amt, rep_af_sec_amt, fxlea_amt,
+               fxlea_no_amt
+        FROM es2403
+        WHERE yyyy = #{년도}  AND seq = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_배당표_주택임차보증금_계산 -->
+    <select id="selectList88" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT yyyy, seq, rno, resi_name, resi_rm_cnt, fxdate_yn, poss_a_rm_cnt,
+               lease_amt, rep_be_sec_amt, rep_af_sec_amt, fxlea_amt, fxlea_no_amt,
+               fxdate_yn AS fxdate_yn_org, poss_a_rm_cnt AS poss_a_rm_cnt_org, lease_amt AS lease_amt_org
+        FROM es2402
+        WHERE yyyy = #{년도}  AND seq = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_사업부문 -->
+    <select id="selectList89" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT
+            CD_CODE AS 사업부문
+             ,CD_DESC AS 사업부문명
+        FROM ES00
+        WHERE CD_DIV = '600'
+          AND USE_YN = 'Y'
+        ORDER BY CD_DIV
+        ]]>
+    </select>
+
+    <!-- Q_영업감정요청자료 -->
+    <select id="selectList90" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT TRIM (LPAD (' ', 26, '0')) AS doc_key, NULL AS appr_datetime,
+               NULL AS esti_date, '대상자료없음' AS doc_name, NULL AS jum_code,
+               NULL AS appr_sabun, NULL AS proc_div, NULL AS yyyy, NULL AS seq,
+               NULL AS NAME
+        FROM DUAL
+        UNION
+        SELECT doc_key, appr_datetime, esti_date, doc_name, jum_code, appr_sabun,
+               proc_div, yyyy, seq, NAME
+        FROM (SELECT doc_key, appr_datetime, esti_date, doc_name, jum_code,
+                     appr_sabun, proc_div, yyyy, seq,
+                     RANK () OVER (PARTITION BY doc_key ORDER BY doc_key,
+                         appr_datetime) rnk
+              FROM es05) a,
+             v_ia01 b
+        WHERE a.appr_sabun = b.sabun AND rnk = 1
+        ]]>
+        <if test='condition1 != "A"'>
+            AND seq IS NULL
+        </if>
+        ORDER BY esti_date desc
+    </select>
+
+    <!-- Q_코드_가임대보증금적용범위_상가 -->
+    <select id="selectList91" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc, attr_02, attr_03, attr_04
+        FROM es00
+        WHERE attr_00 = 'DIV106'
+          AND attr_01 = '10'
+          AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_코드_가임대보증금적용지역 -->
+    <select id="selectList92" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc, attr_02, attr_03
+        FROM es00
+        WHERE attr_00 = 'DIV106'
+          AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_코드_각구의일련번호 -->
+    <select id="selectList93" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc
+        FROM es00
+        WHERE attr_00 = 'DIV512'
+          AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_코드_권리의내용 -->
+    <select id="selectList94" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc, attr_08, attr_10
+        FROM es00
+        WHERE attr_00 = 'DIV509'
+          AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_코드_순위 -->
+    <select id="selectList95" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc, attr_01
+        FROM es00
+        WHERE attr_00 = 'DIV511'
+          AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_코드_최고채권액 -->
+    <select id="selectList96" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc, attr_02
+        FROM es00
+        WHERE attr_00 = 'DIV110'
+          AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_탁상감정 -->
+    <select id="selectList97" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT yyyy, seq, req_date, res_date, res_pl_bid_amt, esti_opi
+        FROM es01
+        WHERE yyyy = #{년도}  AND seq = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_탁상감정EMail주소조회 -->
+    <select id="selectList98" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_desc, attr_01
+        FROM es00
+        WHERE cd_div = '401' AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_탁상감정진행상황 -->
+    <select id="selectList99" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CASE
+                   WHEN req_date IS NOT NULL AND res_date IS NOT NULL
+                       THEN 1                                -- 탁상감정 완료
+                   WHEN req_date IS NOT NULL AND res_date IS NULL
+                       THEN 2                             -- 탁상감정 진행 중
+                   END AS stat
+        FROM es01
+        WHERE yyyy = #{년도}  AND seq = #{감정순번}
+        ]]>
+                </select>
+
+    <!-- Q_탁상감정파일명 -->
+    <select id="selectList100" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT    jum_name
+                      || '_'
+                      || sangho
+                      || '_'
+                      || market_name
+                      || '_'
+                      || SUBSTR (esti_date, 3)
+                      || '('
+                      || DECODE (reesti_yn, '00', '初', '再')
+                      || ')' AS file_name
+        FROM (SELECT (SELECT REPLACE (smallname, '지점', '')
+                      FROM v_ia03
+                      WHERE buseo = a.jum_code) AS jum_name, sangho, market_name,
+                     esti_date, SUBSTR (seq, 5, 2) AS reesti_yn
+              FROM es10 a
+              WHERE yyyy = #{년도}  AND seq = #{감정순번} )
+        ]]>
+                </select>
+
+    <!-- 저장_00_담보마스터 -->
+    <update id="save101">
+                    <![CDATA[
+        MERGE INTO ES10 A
+        USING (SELECT  #{YYYY} AS YYYY,  #{SEQ} AS SEQ
+               FROM DUAL) B
+        ON (A.YYYY = B.YYYY AND A.SEQ = B.SEQ)
+        WHEN MATCHED THEN
+            UPDATE
+            SET GEO_CODE            = #{GEO_CODE}           ,    -- 거래처코드
+                SANGHO              = #{SANGHO}             ,    -- 거래처명
+                DAEPYO_NAME         = #{DAEPYO_NAME}        ,    -- 거래처대표자
+                MARKET_DIV          = #{MARKET_DIV}         ,    -- 업소구분
+                MARKET_NAME         = #{MARKET_NAME}        ,    -- 업소명
+                MARKET_CEO          = #{MARKET_CEO}         ,    -- 업소대표자
+                DEBTOR              = #{DEBTOR}             ,    -- 채무자
+                POSS_OWNER          = #{POSS_OWNER}         ,    -- 소유자
+                GUARANTOR           = #{GUARANTOR}          ,    -- 담보제공자
+                DEBTOR_RELATION     = #{DEBTOR_RELATION}    ,    -- 채무자와담보제공자와의관계
+                B_USE_CODE          = #{B_USE_CODE}         ,    -- 건축물의용도
+                B_USE_DESC          = #{B_USE_DESC}         ,    -- 건축물의용도비고
+                B_NAME              = #{B_NAME}             ,    -- 건물의명칭및호수
+                JUSO1               = #{JUSO1}              ,    -- 부동산표시_주소1
+                JUSO2               = #{JUSO2}              ,    -- 부동산표시_주소2
+                L_SIZE              = #{L_SIZE}             ,    -- 토지면적
+                L_SIZE_PY           = #{L_SIZE_PY}          ,    -- 토지면적_평
+                B_SIZE              = #{B_SIZE}             ,    -- 건물면적
+                B_SIZE_PY           = #{B_SIZE_PY}          ,    -- 건물면적_평
+                CURR_AMT            = #{CURR_AMT}           ,    -- 시가
+                INCREASE_AMT        = #{INCREASE_AMT}       ,    -- 평가가격
+                PLMIN_BID_AMT       = #{PLMIN_BID_AMT}      ,    -- 예상1차최저입찰가
+                PL_BID_AMT          = #{PL_BID_AMT}         ,    -- 예상낙찰가
+                APPL_RATE           = #{APPL_RATE}          ,    -- 적용할낙찰가율
+                C_CL_AMT            = #{C_CL_AMT}           ,    -- 동시설정한도액
+                L_CL_AMT            = #{L_CL_AMT}           ,    -- 토지설정한도액
+                B_CL_AMT            = #{B_CL_AMT}           ,    -- 건물설정한도액
+                C_PL_RANK           = #{C_PL_RANK}          ,    -- 동시설정예정액_순위
+                C_PL_AMT            = #{C_PL_AMT}           ,    -- 동시설정예정액_금액
+                L_PL_RANK           = #{L_PL_RANK}          ,    -- 토지설정예정액_순위
+                L_PL_AMT            = #{L_PL_AMT}           ,    -- 토지설정예정액_금액
+                B_PL_RANK           = #{B_PL_RANK}          ,    -- 건물설정예정액_순위
+                B_PL_AMT            = #{B_PL_AMT}           ,    -- 건물설정예정액_금액
+                MANA_L_SIZE         = #{MANA_L_SIZE}        ,    -- 관재_토지면적
+                MANA_L_SIZE_PY      = #{MANA_L_SIZE_PY}     ,    -- 관재_토지면적_평
+                MANA_B_SIZE         = #{MANA_B_SIZE}        ,    -- 관재_건물면적
+                MANA_B_SIZE_PY      = #{MANA_B_SIZE_PY}     ,    -- 관재_건물면적_평
+                MANA_CURR_AMT       = #{MANA_CURR_AMT}      ,    -- 관재_시가
+                MANA_PL_MIN_BID_AMT = #{MANA_PL_MIN_BID_AMT},    -- 관재_예상1차최저입찰가
+                MANA_PL_BID_AMT     = #{MANA_PL_BID_AMT}    ,    -- 관재_예상낙찰가
+                MANA_C_CL_AMT       = #{MANA_C_CL_AMT}      ,    -- 관재_동시설정한도액
+                MANA_L_CL_AMT       = #{MANA_L_CL_AMT}      ,    -- 관재_토지설정한도액
+                MANA_B_CL_AMT       = #{MANA_B_CL_AMT}      ,    -- 관재_건물설정한도액
+                MANA_C_PL_RANK      = #{MANA_C_PL_RANK}     ,    -- 관재_동시설정예정액_순위
+                MANA_C_PL_AMT       = #{MANA_C_PL_AMT}      ,    -- 관재_동시설정예정액_금액
+                MANA_L_PL_RANK      = #{MANA_L_PL_RANK}     ,    -- 관재_토지설정예정액_순위
+                MANA_L_PL_AMT       = #{MANA_L_PL_AMT}      ,    -- 관재_토지설정예정액_금액
+                MANA_B_PL_RANK      = #{MANA_B_PL_RANK}     ,    -- 관재_건물설정예정액_순위
+                MANA_B_PL_AMT       = #{MANA_B_PL_AMT}      ,    -- 관재_건물설정예정액_금액
+                JUM_SABUN           = #{JUM_SABUN}          ,    -- 지점_최초감정자사번
+                JUM_COMP_DATE       = #{JUM_COMP_DATE}      ,    -- 지점_결재완료일자
+                JUM_TRAN_DATE       = #{JUM_TRAN_DATE}      ,    -- 지점_전송일자
+                JUM_TRAN_SABUN      = #{JUM_TRAN_SABUN}     ,    -- 지점_전송자사번
+                MANA_RECE_DATE      = #{MANA_RECE_DATE}     ,    -- 관재_접수일자
+                MANA_RECE_SABUN     = #{MANA_RECE_SABUN}    ,    -- 관재_접수자사번
+                MANA_COMP_DATE      = #{MANA_COMP_DATE}     ,    -- 관재_결재완료일자
+                PROC_DIV            = #{PROC_DIV}           ,    -- 작업진행상태
+                DOC_KEY             = #{DOC_KEY}            ,    -- 문서번호
+                APPRAISE_GU         = #{APPRAISE_GU}   ,             -- 평가구분
+                PRE_YYYY               = #{PRE_YYYY}        ,  -- 이전년도
+                PRE_SEQ               = #{PRE_SEQ}
+        WHEN NOT MATCHED THEN
+            INSERT (
+                YYYY                ,    -- 년도
+                SEQ                 ,    -- 일련번호
+                SEC_CODE            ,    -- 담보종류
+                JUM_CODE            ,    -- 지점코드
+                REQ_JUM             ,    -- 의뢰한지점코드
+                ESTI_DATE           ,    -- 담보감정일자
+                GEO_CODE            ,    -- 거래처코드
+                SANGHO              ,    -- 거래처명
+                DAEPYO_NAME         ,    -- 거래처대표자
+                MARKET_DIV          ,    -- 업소구분
+                MARKET_NAME         ,    -- 업소명
+                MARKET_CEO          ,    -- 업소대표자
+                DEBTOR              ,    -- 채무자
+                POSS_OWNER          ,    -- 소유자
+                GUARANTOR           ,    -- 담보제공자
+                DEBTOR_RELATION     ,    -- 채무자와담보제공자와의관계
+                B_USE_CODE          ,    -- 건축물의용도
+                B_USE_DESC          ,    -- 건축물의용도비고
+                B_NAME              ,    -- 건물의명칭및호수
+                JUSO1               ,    -- 부동산표시_주소1
+                JUSO2               ,    -- 부동산표시_주소2
+                L_SIZE              ,    -- 토지면적
+                L_SIZE_PY           ,    -- 토지면적_평
+                B_SIZE              ,    -- 건물면적
+                B_SIZE_PY           ,    -- 건물면적_평
+                CURR_AMT            ,    -- 시가
+                INCREASE_AMT        ,    -- 평가가격
+                PLMIN_BID_AMT       ,    -- 예상1차최저입찰가
+                PL_BID_AMT          ,    -- 예상낙찰가
+                APPL_RATE           ,    -- 적용할낙찰가율
+                PRE_BOND_AMT        ,    -- 선순위채권액
+                SPARE_SEC_AMT       ,    -- 담보여력
+                EXCEED_YN           ,    -- 초과/부족구분
+                EXCEED_AMT          ,    -- 초과/부족금액
+                C_CL_AMT            ,    -- 동시설정한도액
+                L_CL_AMT            ,    -- 토지설정한도액
+                B_CL_AMT            ,    -- 건물설정한도액
+                C_PL_RANK           ,    -- 동시설정예정액_순위
+                C_PL_AMT            ,    -- 동시설정예정액_금액
+                L_PL_RANK           ,    -- 토지설정예정액_순위
+                L_PL_AMT            ,    -- 토지설정예정액_금액
+                B_PL_RANK           ,    -- 건물설정예정액_순위
+                B_PL_AMT            ,    -- 건물설정예정액_금액
+                MANA_L_SIZE         ,    -- 관재_토지면적
+                MANA_L_SIZE_PY      ,    -- 관재_토지면적_평
+                MANA_B_SIZE         ,    -- 관재_건물면적
+                MANA_B_SIZE_PY      ,    -- 관재_건물면적_평
+                MANA_CURR_AMT       ,    -- 관재_시가
+                MANA_PL_MIN_BID_AMT ,    -- 관재_예상1차최저입찰가
+                MANA_PL_BID_AMT     ,    -- 관재_예상낙찰가
+                MANA_C_CL_AMT       ,    -- 관재_동시설정한도액
+                MANA_L_CL_AMT       ,    -- 관재_토지설정한도액
+                MANA_B_CL_AMT       ,    -- 관재_건물설정한도액
+                MANA_C_PL_RANK      ,    -- 관재_동시설정예정액_순위
+                MANA_C_PL_AMT       ,    -- 관재_동시설정예정액_금액
+                MANA_L_PL_RANK      ,    -- 관재_토지설정예정액_순위
+                MANA_L_PL_AMT       ,    -- 관재_토지설정예정액_금액
+                MANA_B_PL_RANK      ,    -- 관재_건물설정예정액_순위
+                MANA_B_PL_AMT       ,    -- 관재_건물설정예정액_금액
+                JUM_SABUN           ,    -- 지점_최초감정자사번
+                JUM_COMP_DATE       ,    -- 지점_결재완료일자
+                JUM_TRAN_DATE       ,    -- 지점_전송일자
+                JUM_TRAN_SABUN      ,    -- 지점_전송자사번
+                MANA_RECE_DATE      ,    -- 관재_접수일자
+                MANA_RECE_SABUN     ,    -- 관재_접수자사번
+                MANA_COMP_DATE      ,    -- 관재_결재완료일자
+                PROC_DIV            ,    -- 작업진행상태
+                RES_PL_BID_AMT      ,    -- 탁상감정가
+                DOC_KEY             ,    -- 문서번호
+                BID_USE_YN          ,
+                APPRAISE_GU       ,
+                PRE_YYYY              ,
+                PRE_SEQ				,
+                LIQUOR_TYPE				--사업부문
+            )
+            VALUES (
+                       #{YYYY}               ,   -- 년도
+                       #{SEQ}                ,   -- 일련번호
+                       #{SEC_CODE}           ,   -- 담보종류
+                       #{JUM_CODE}           ,   -- 지점코드
+                       #{REQ_JUM}            ,   -- 의뢰한지점코드
+                       #{ESTI_DATE}          ,   -- 담보감정일자
+                       #{GEO_CODE}           ,   -- 거래처코드
+                       #{SANGHO}             ,   -- 거래처명
+                       #{DAEPYO_NAME}        ,   -- 거래처대표자
+                       #{MARKET_DIV}         ,   -- 업소구분
+                       #{MARKET_NAME}        ,   -- 업소명
+                       #{MARKET_CEO}         ,   -- 업소대표자
+                       #{DEBTOR}             ,   -- 채무자
+                       #{POSS_OWNER}         ,   -- 소유자
+                       #{GUARANTOR}          ,   -- 담보제공자
+                       #{DEBTOR_RELATION}    ,   -- 채무자와담보제공자와의관계
+                       #{B_USE_CODE}         ,   -- 건축물의용도
+                       #{B_USE_DESC}         ,   -- 건축물의용도비고
+                       #{B_NAME}             ,   -- 건물의명칭및호수
+                       #{JUSO1}              ,   -- 부동산표시_주소1
+                       #{JUSO2}              ,   -- 부동산표시_주소2
+                       #{L_SIZE}             ,   -- 토지면적
+                       #{L_SIZE_PY}          ,   -- 토지면적_평
+                       #{B_SIZE}             ,   -- 건물면적
+                       #{B_SIZE_PY}          ,   -- 건물면적_평
+                       #{CURR_AMT}           ,   -- 시가
+                       #{INCREASE_AMT}       ,   -- 평가가격
+                       #{PLMIN_BID_AMT}      ,   -- 예상1차최저입찰가
+                       #{PL_BID_AMT}         ,   -- 예상낙찰가
+                       #{APPL_RATE}          ,   -- 적용할낙찰가율
+                       #{PRE_BOND_AMT}       ,   -- 선순위채권액
+                       #{SPARE_SEC_AMT}      ,   -- 담보여력
+                       #{EXCEED_YN}          ,   -- 초과/부족구분
+                       #{EXCEED_AMT}         ,   -- 초과/부족금액
+                       #{C_CL_AMT}           ,   -- 동시설정한도액
+                       #{L_CL_AMT}           ,   -- 토지설정한도액
+                       #{B_CL_AMT}           ,   -- 건물설정한도액
+                       #{C_PL_RANK}          ,   -- 동시설정예정액_순위
+                       #{C_PL_AMT}           ,   -- 동시설정예정액_금액
+                       #{L_PL_RANK}          ,   -- 토지설정예정액_순위
+                       #{L_PL_AMT}           ,   -- 토지설정예정액_금액
+                       #{B_PL_RANK}          ,   -- 건물설정예정액_순위
+                       #{B_PL_AMT}           ,   -- 건물설정예정액_금액
+                       #{MANA_L_SIZE}        ,   -- 관재_토지면적
+                       #{MANA_L_SIZE_PY}     ,   -- 관재_토지면적_평
+                       #{MANA_B_SIZE}        ,   -- 관재_건물면적
+                       #{MANA_B_SIZE_PY}     ,   -- 관재_건물면적_평
+                       #{MANA_CURR_AMT}      ,   -- 관재_시가
+                       #{MANA_PL_MIN_BID_AMT},   -- 관재_예상1차최저입찰가
+                       #{MANA_PL_BID_AMT}    ,   -- 관재_예상낙찰가
+                       #{MANA_C_CL_AMT}      ,   -- 관재_동시설정한도액
+                       #{MANA_L_CL_AMT}      ,   -- 관재_토지설정한도액
+                       #{MANA_B_CL_AMT}      ,   -- 관재_건물설정한도액
+                       #{MANA_C_PL_RANK}     ,   -- 관재_동시설정예정액_순위
+                       #{MANA_C_PL_AMT}      ,   -- 관재_동시설정예정액_금액
+                       #{MANA_L_PL_RANK}     ,   -- 관재_토지설정예정액_순위
+                       #{MANA_L_PL_AMT}      ,   -- 관재_토지설정예정액_금액
+                       #{MANA_B_PL_RANK}     ,   -- 관재_건물설정예정액_순위
+                       #{MANA_B_PL_AMT}      ,   -- 관재_건물설정예정액_금액
+                       #{JUM_SABUN}          ,   -- 지점_최초감정자사번
+                       #{JUM_COMP_DATE}      ,   -- 지점_결재완료일자
+                       #{JUM_TRAN_DATE}      ,   -- 지점_전송일자
+                       #{JUM_TRAN_SABUN}     ,   -- 지점_전송자사번
+                       #{MANA_RECE_DATE}     ,   -- 관재_접수일자
+                       #{MANA_RECE_SABUN}    ,   -- 관재_접수자사번
+                       #{MANA_COMP_DATE}     ,   -- 관재_결재완료일자
+                       #{PROC_DIV}           ,   -- 작업진행상태
+                       #{RES_PL_BID_AMT}     ,   -- 탁상감정가
+                       #{DOC_KEY}            ,   -- 문서번호
+                       #{BID_USE_YN}         ,
+                       #{APPRAISE_GU}       ,
+                       #{PRE_YYYY}            ,
+                       #{PRE_SEQ}             ,
+                       #{LIQUOR_TYPE} 			-- 사업부문
+                   )
+
+        ]]>
+                </update>
+
+    <!-- 저장_01_규제의표시 -->
+    <update id="save102">
+                    <![CDATA[
+        MERGE INTO es2017 a
+        USING (SELECT  #{YYYY} AS yyyy,  #{SEQ} AS seq
+               FROM DUAL) b
+        ON (a.yyyy = b.yyyy AND a.seq = b.seq)
+        WHEN MATCHED THEN
+            UPDATE
+            SET REST_PL_USE=#{REST_PL_USE},REST_OT_LAW=#{REST_OT_LAW},REST_EN_RULE=#{REST_EN_RULE},REST_FU_LAW=#{REST_FU_LAW}
+        WHEN NOT MATCHED THEN
+            INSERT(YYYY,SEQ,REST_PL_USE,REST_OT_LAW,REST_EN_RULE,REST_FU_LAW)
+            VALUES(#{YYYY},#{SEQ},#{REST_PL_USE},#{REST_OT_LAW},#{REST_EN_RULE},#{REST_FU_LAW})
+        ]]>
+                </update>
+
+    <!-- 저장_02_입력표 -->
+    <update id="save103">
+                    <![CDATA[
+        MERGE INTO ES2011 A
+        USING (SELECT  #{YYYY} AS YYYY,
+                       #{SEQ}  AS SEQ
+               FROM DUAL) B
+        ON (A.YYYY = B.YYYY AND A.SEQ = B.SEQ)
+        WHEN MATCHED THEN
+            UPDATE
+            SET JUSO1          = #{JUSO1}         ,  -- 부동산표시_주소1
+                JUSO2          = #{JUSO2}         ,  -- 부동산표시_주소2
+                LOT_NUM        = #{LOT_NUM}       ,  -- 지번
+                CB_NAME        = #{CB_NAME}       ,  -- 집합건물의명칭
+                DONG           = #{DONG}          ,  -- 동수
+                HO             = #{HO}            ,  -- 호수
+                LCATEGORY      = #{LCATEGORY}     ,  -- 지목(CD_DIV: DIV112)
+                LG_OWNER_YN    = #{LG_OWNER_YN}   ,  -- 대지권소유권보유여부
+                LG_OWNER       = #{LG_OWNER}      ,  -- 대지권소유권(면적기재)
+                LG_SIZE        = #{LG_SIZE}       ,  -- 대지권의목적인일단의토지전체의면적
+                POSS_A_AREA    = #{POSS_A_AREA}   ,  -- 가임대보증금적용지역(CD_DIV: DIV106)
+                CB_STRUC       = #{CB_STRUC}      ,  -- 집합건물_구조(CD_DIV: DIV156)
+                CB_ROOF        = #{CB_ROOF}       ,  -- 집합건물_지붕(CD_DIV: DIV157)
+                CB_UPFLOOR     = #{CB_UPFLOOR}    ,  -- 집합건물_지상
+                CB_DNFLOOR     = #{CB_DNFLOOR}    ,  -- 집합건물_지하
+                CB_FLOOR       = #{CB_FLOOR}      ,  -- 집합건물_해당층
+                CB_YYYY        = #{CB_YYYY}       ,  -- 집합건물_건축년도
+                ELAP_YEAR      = #{ELAP_YEAR}     ,  -- 집합건물_경과년도
+                NUM_HOUSEHOLD  = #{NUM_HOUSEHOLD} ,  -- 집합건물_세대수
+                NUM_YEAR       = #{NUM_YEAR}      ,  -- 집합건물_내용년수
+                CB_EXM_SIZE    = #{CB_EXM_SIZE}   ,  -- 집합건물_전유면적_㎡
+                CB_EXM_SIZE_PY = #{CB_EXM_SIZE_PY},  -- 집합건물_전유면적_평
+                CB_PUB_SIZE    = #{CB_PUB_SIZE}   ,  -- 집합건물_공유면적_㎡
+                CB_PUB_SIZE_PY = #{CB_PUB_SIZE_PY},  -- 집합건물_공유면적_평
+                CB_TOT_SIZE    = #{CB_TOT_SIZE}   ,  -- 집합건물_면적합계_㎡
+                CB_TOT_SIZE_PY = #{CB_TOT_SIZE_PY},  -- 집합건물_면적합계_평
+                OF_GU          = #{OF_GU}         ,  -- 오피스텔_용도(1-주거,2-업무용)
+                OF_HEATER_YN   = #{OF_HEATER_YN}  ,  -- 오피스텔_바닥난방(Y-유,N-무)
+                OF_FLOOR       = #{OF_FLOOR}      ,  -- 오피스텔/상가_층수
+                OF_FLOOR_IDX   = #{OF_FLOOR_IDX}  ,  -- 오피스텔/상가_층별지수
+                OF_PLACE       = #{OF_PLACE}      ,  -- 오피스텔/상가_위치(1-상,2-중,3-하)
+                OF_PLACE_IDX   = #{OF_PLACE_IDX}  ,  -- 오피스텔/상가_위치지수
+                OF_JANGA_RATE  = #{OF_JANGA_RATE} ,  -- 오피스텔/상가_잔가율(경과년수/내용년수)
+                OF_ROAD_CODE   = #{OF_ROAD_CODE}  ,  -- 오피스텔/상가_도로조건
+                OF_ROAD_IDX    = #{OF_ROAD_IDX}   ,  -- 오피스텔/상가_도로조건지수
+                OF_ACCESS_CODE = #{OF_ACCESS_CODE},  -- 오피스텔/상가_접근조건(1-상,2-중,3-하)
+                OF_ACCESS_IDX  = #{OF_ACCESS_IDX} ,  -- 오피스텔/상가_접근조건지수
+                OF_ETC         = #{OF_ETC}        ,  -- 오피스텔/상가_기타조건
+                OF_ETC_IDX     = #{OF_ETC_IDX}    ,  -- 오피스텔/상가_기타조건지수
+                REGI_AMT       = #{REGI_AMT}      ,  -- 실거래가격(등기부등본상의시세)_총액
+                REGI_DAN       = #{REGI_DAN}      ,  -- 실거래가격(등기부등본상의시세)_단가_㎡
+                REGI_DAN_PY    = #{REGI_DAN_PY}   ,  -- 실거래가격(등기부등본상의시세)_단가_평
+                BASE_AMT       = #{BASE_AMT}      ,  -- 기준시가_총액
+                BASE_DAN       = #{BASE_DAN}      ,  -- 기준시가_단가_㎡
+                BASE_DAN_PY    = #{BASE_DAN_PY}   ,  -- 기준시가_단가_평
+                SEC_REGI_SIZE  = #{SEC_REGI_SIZE} ,  -- 담보제공비율_등기부상전용면적
+                SEC_NUME       = #{SEC_NUME}      ,  -- 담보제공비율_분자
+                SEC_DENO       = #{SEC_DENO}      ,  -- 담보제공비율_분모
+                SEC_RATE       = #{SEC_RATE}      ,  -- 담보제공비율_비율
+                SEC_OFFER_SIZE = #{SEC_OFFER_SIZE},  -- 담보제공비율_담보제공면적
+                SEC_DESC       = #{SEC_DESC}      ,  -- 담보제공비율_사유
+                INC_AMT        = #{INC_AMT}       ,  -- 담보제공비율_평가가액
+                FNL_INC_AMT    = #{FNL_INC_AMT}      -- 담보제공비율_최종평가가격
+        WHEN NOT MATCHED THEN
+            INSERT (YYYY            ,SEQ             ,JUSO1           ,JUSO2           ,LOT_NUM         ,CB_NAME         ,
+                    DONG            ,HO              ,LCATEGORY       ,LG_OWNER_YN     ,LG_OWNER        ,LG_SIZE         ,
+                    POSS_A_AREA     ,CB_STRUC        ,CB_ROOF         ,CB_UPFLOOR      ,CB_DNFLOOR      ,CB_FLOOR        ,
+                    CB_YYYY         ,ELAP_YEAR       ,NUM_HOUSEHOLD   ,NUM_YEAR        ,CB_EXM_SIZE     ,CB_EXM_SIZE_PY  ,
+                    CB_PUB_SIZE     ,CB_PUB_SIZE_PY  ,CB_TOT_SIZE     ,CB_TOT_SIZE_PY  ,OF_GU           ,OF_HEATER_YN    ,
+                    OF_FLOOR        ,OF_FLOOR_IDX    ,OF_PLACE        ,OF_PLACE_IDX    ,OF_JANGA_RATE   ,OF_ROAD_CODE    , OF_ROAD_IDX     ,
+                    OF_ACCESS_CODE  ,OF_ACCESS_IDX   ,OF_ETC          ,OF_ETC_IDX      ,REGI_AMT        ,REGI_DAN        , REGI_DAN_PY     ,
+                    BASE_AMT        ,BASE_DAN        ,BASE_DAN_PY     ,SEC_REGI_SIZE   ,SEC_NUME        ,SEC_DENO        ,
+                    SEC_RATE        ,SEC_OFFER_SIZE  ,SEC_DESC        ,INC_AMT         ,FNL_INC_AMT      )
+            VALUES (#{YYYY}          ,#{SEQ}           ,#{JUSO1}         ,#{JUSO2}         ,#{LOT_NUM}       ,#{CB_NAME}       ,
+                    #{DONG}          ,#{HO}            ,#{LCATEGORY}     ,#{LG_OWNER_YN}   ,#{LG_OWNER}      ,#{LG_SIZE}       ,
+                    #{POSS_A_AREA}   ,#{CB_STRUC}      ,#{CB_ROOF}       ,#{CB_UPFLOOR}    ,#{CB_DNFLOOR}    ,#{CB_FLOOR}      ,
+                    #{CB_YYYY}       ,#{ELAP_YEAR}     ,#{NUM_HOUSEHOLD} ,#{NUM_YEAR}      ,#{CB_EXM_SIZE}   ,#{CB_EXM_SIZE_PY},
+                    #{CB_PUB_SIZE}   ,#{CB_PUB_SIZE_PY},#{CB_TOT_SIZE}   ,#{CB_TOT_SIZE_PY},#{OF_GU}         ,#{OF_HEATER_YN}  ,
+                    #{OF_FLOOR}      ,#{OF_FLOOR_IDX}  ,#{OF_PLACE}      ,#{OF_PLACE_IDX}  ,#{OF_JANGA_RATE} ,#{OF_ROAD_CODE}  , #{OF_ROAD_IDX}   ,
+                    #{OF_ACCESS_CODE},#{OF_ACCESS_IDX} ,#{OF_ETC}        ,#{OF_ETC_IDX}    ,#{REGI_AMT}      ,#{REGI_DAN}      , #{REGI_DAN_PY}   ,
+                    #{BASE_AMT}      ,#{BASE_DAN}      ,#{BASE_DAN_PY}   ,#{SEC_REGI_SIZE} ,#{SEC_NUME}      ,#{SEC_DENO}      ,
+                    #{SEC_RATE}      ,#{SEC_OFFER_SIZE},#{SEC_DESC}      ,#{INC_AMT}       ,#{FNL_INC_AMT}   )
+        ]]>
+    </update>
+
+    <!-- 저장_10_감정가_본건 -->
+    <delete id="delete104">
+        DELETE
+        FROM ES2154
+        WHERE YYYY           = #{년도}
+          AND SEQ            = #{감정순번}
+    </delete>
+    <insert id="insert104">
+        INSERT INTO ES2154
+        (
+            YYYY          ,
+            SEQ           ,
+            LN_SEQ        ,
+            CHECK_YN      ,
+            ONLY_SIZE     ,
+            FLOOR_CODE    ,
+            FLOOR_RATE    ,
+            OF_PLACE      ,
+            USE_AREA      ,
+            CURR_MIN_AMT  ,
+            CURR_MAX_AMT  ,
+            CURR_AVG_AMT  ,
+            EXAMPLE_PRICE ,
+            SEC_AMT       ,
+            RENT_M_AMT
+        )
+        VALUES (
+               #{저장_본건_년도}       ,
+             #{저장_본건_일련번호}   ,
+             #{저장_본건_사례번호}   ,
+             #{저장_본건_선택여부}   ,
+             #{저장_본건_전용면적}   ,
+             #{저장_본건_층수}       ,
+             #{저장_본건_층수_비준율},
+             #{저장_본건_위치}       ,
+             #{저장_본건_용도지역}   ,
+             #{저장_본건_최저가}     ,
+             #{저장_본건_최고가}     ,
+             #{저장_본건_평균가격}   ,
+             #{저장_본건_M2당가격}   ,
+             #{저장_본건_보증금}     ,
+             #{저장_본건_임대료}
+            )
+    </insert>
+
+    <!-- 저장_10_감정가_본건_입지특성 -->
+    <update id="save105">
+                    <![CDATA[
+        MERGE INTO ES2184 A
+        USING (SELECT  #{YYYY} AS YYYY,
+                       #{SEQ}  AS SEQ
+               FROM DUAL) B
+        ON (A.YYYY = B.YYYY AND A.SEQ = B.SEQ)
+        WHEN MATCHED THEN
+            UPDATE
+            SET LOC_ROAD_SYSTEM      = #{LOC_ROAD_SYSTEM}     ,  -- 도로계통성(CD_DIV: DIV178)
+                LOC_BUSI_ACCESS      = #{LOC_BUSI_ACCESS}     ,  -- 상업시설접근성(CD_DIV: DIV179)
+                LOC_PUB_ACCESS       = #{LOC_PUB_ACCESS}      ,  -- 공공시설접근성(CD_DIV: DIV180)
+                LOC_HATE_FACILITY_YN = #{LOC_HATE_FACILITY_YN},  -- 주요혐오시설소재여부
+                LOC_DEVELOP          = #{LOC_DEVELOP}         ,  -- 인근개발계획
+                MARKETABLE_PRICE     = #{MARKETABLE_PRICE}       -- 시장성판단_가격동향
+        WHEN NOT MATCHED THEN
+            INSERT (YYYY            ,  SEQ                  , LOC_ROAD_SYSTEM  , LOC_BUSI_ACCESS   ,
+                    LOC_PUB_ACCESS  ,  LOC_HATE_FACILITY_YN , LOC_DEVELOP      , MARKETABLE_PRICE  )
+            VALUES (#{YYYY}          , #{SEQ}                 , #{LOC_ROAD_SYSTEM}, #{LOC_BUSI_ACCESS} ,
+                    #{LOC_PUB_ACCESS}, #{LOC_HATE_FACILITY_YN}, #{LOC_DEVELOP}    , #{MARKETABLE_PRICE})
+        ]]>
+                </update>
+
+    <!-- 저장_11_감정가_가격사례 -->
+    <delete id="delete106">
+        DELETE
+        FROM ES2144
+        WHERE YYYY           = #{년도}
+          AND SEQ            = #{감정순번}
+    </delete>
+    <insert id="insert106">
+        INSERT INTO ES2144
+        (
+            YYYY          ,
+            SEQ           ,
+            LN_SEQ        ,
+            JUSO          ,
+            SURVEY_AMT    ,
+            BUSI_YN       ,
+            OF_GU         ,
+            ONLY_SIZE     ,
+            FLOOR_CODE    ,
+            FLOOR_RATE    ,
+            OF_PLACE      ,
+            USE_AREA      ,
+            B_YEAR        ,
+            ELAP_YEAR     ,
+            CB_STRUC      ,
+            NUM_YEAR      ,
+            OF_ROAD_CODE  ,
+            OF_ACCESS_CODE,
+            EXPENCE_M_AMT ,
+            RENT_M_AMT    ,
+            SEC_AMT       ,
+            EXAMPLE_PRICE
+        )
+        VALUES (
+               #{저장_가격_년도}       ,
+             #{저장_가격_일련번호}   ,
+             #{저장_가격_사례번호}   ,
+             #{저장_가격_소재지}     ,
+             #{저장_가격_조사금액}   ,
+             #{저장_가격_업무용여부} ,
+             #{저장_가격_이용상황}   ,
+             #{저장_가격_전용면적}   ,
+             #{저장_가격_층수}       ,
+             #{저장_가격_층수_비준율},
+             #{저장_가격_위치}       ,
+             #{저장_가격_용도지역}   ,
+             #{저장_가격_건축년도}   ,
+             #{저장_가격_경과년도}   ,
+             #{저장_가격_구조}       ,
+             #{저장_가격_내용년수}   ,
+             #{저장_가격_도로조건}   ,
+             #{저장_가격_접근조건}   ,
+             #{저장_가격_월관리비}   ,
+             #{저장_가격_월임대료}   ,
+             #{저장_가격_보증금}     ,
+             #{저장_가격_사례가격}
+            )
+    </insert>
+
+    <!-- 저장_12_감정가_경매사례 -->
+    <delete id="delete107">
+        DELETE
+        FROM ES2114
+        WHERE YYYY           = #{년도}
+          AND SEQ            = #{감정순번}
+
+    </delete>
+    <insert id="insert107">
+        INSERT INTO ES2114
+        (
+            YYYY          ,
+            SEQ           ,
+            LN_SEQ        ,
+            AU_NO         ,
+            JUSO          ,
+            BUSI_YN       ,
+            OF_GU         ,
+            ONLY_SIZE     ,
+            FLOOR_CODE    ,
+            FLOOR_RATE    ,
+            OF_PLACE      ,
+            USE_AREA      ,
+            B_YEAR        ,
+            ELAP_YEAR     ,
+            CB_STRUC      ,
+            NUM_YEAR      ,
+            OF_ROAD_CODE  ,
+            OF_ACCESS_CODE,
+            LAW_AMT       ,
+            EXAMPLE_PRICE ,
+            BID_AMT       ,
+            BID_RATE
+        )
+        VALUES (
+               #{저장_경매_년도}        ,
+             #{저장_경매_일련번호}    ,
+             #{저장_경매_사례번호}    ,
+             #{저장_경매_경매사건번호},
+             #{저장_경매_소재지}      ,
+             #{저장_경매_업무용여부}  ,
+             #{저장_경매_이용상황}    ,
+             #{저장_경매_전용면적}    ,
+             #{저장_경매_층수}        ,
+             #{저장_경매_층수_비준율} ,
+             #{저장_경매_위치}        ,
+             #{저장_경매_용도지역}    ,
+             #{저장_경매_건축년도}    ,
+             #{저장_경매_경과년도}    ,
+             #{저장_경매_구조}        ,
+             #{저장_경매_내용년수}    ,
+             #{저장_경매_도로조건}    ,
+             #{저장_경매_접근조건}    ,
+             #{저장_경매_법원감정가}  ,
+             #{저장_경매_사례가격}    ,
+             #{저장_경매_낙찰가격}    ,
+             #{저장_경매_낙찰가율}
+            )
+
+    </insert>
+
+    <!-- 저장_13_감정가_비준가격 -->
+    <delete id="delete108">
+        DELETE
+        FROM ES2124
+        WHERE YYYY             = #{년도}
+          AND SEQ               = #{감정순번}
+
+    </delete>
+    <insert id="insert108">
+        INSERT INTO ES2124
+        (
+            YYYY            ,
+            SEQ             ,
+            EXAMPLE_GU      ,
+            LN_SEQ          ,
+            PRICE_DATE_M    ,
+            PRICE_RATE_M    ,
+            PRICE_DATE_S    ,
+            PRICE_RATE_S    ,
+            PRICE_RATE_C    ,
+            ONLY_SIZE       ,
+            EXAMPLE_PRICE   ,
+            JUSO_C          ,
+            FLOOR_CODE_M    ,
+            FLOOR_RATE_M    ,
+            FLOOR_CODE_S    ,
+            FLOOR_RATE_S    ,
+            FLOOR_C         ,
+            LOCATE_RATE_M   ,
+            LOCATE_RATE_S   ,
+            LOCATE_C        ,
+            OF_JANGA_RATE_C ,
+            OF_ROAD_RATE_C  ,
+            OF_ACCESS_RATE_M,
+            OF_ACCESS_RATE_S,
+            OF_ACCESS_RATE_C,
+            OF_ETC_RATE_M   ,
+            OF_ETC_DESC_S   ,
+            OF_ETC_RATE_S   ,
+            OF_ETC_RATE_C   ,
+            FACTOR_TOT      ,
+            APAS_DAN        ,
+            APPL_DAN        ,
+            HWANSAN_AMT
+        )
+        VALUES (
+               #{저장_비준_년도}                  ,
+             #{저장_비준_일련번호}              ,
+             #{저장_비준_사례구분}              ,
+             #{저장_비준_사례번호}              ,
+             #{저장_비준_가격_본건_일자}        ,
+             #{저장_비준_가격_본건_적용율}      ,
+             #{저장_비준_가격_사례_일자}        ,
+             #{저장_비준_가격_사례_적용율}      ,
+             #{저장_비준_가격_비교치}           ,
+             #{저장_비준_전용면적_사례}         ,
+             #{저장_비준_사례가격}              ,
+             #{저장_비준_소재지_비교치}         ,
+             #{저장_비준_층별비교_본건}         ,
+             #{저장_비준_층별비교_본건_적용율}  ,
+             #{저장_비준_층별비교_사례}         ,
+             #{저장_비준_층별비교_사례_적용율}  ,
+             #{저장_비준_층별비교_비교치}       ,
+             #{저장_비준_위치별비교_본건_적용율},
+             #{저장_비준_위치별비교_사례_적용율},
+             #{저장_비준_위치별비교_비교치}     ,
+             #{저장_비준_잔가율비교_비교치}     ,
+             #{저장_비준_도로조건_비교치}       ,
+             #{저장_비준_접근조건_본건_적용율}  ,
+             #{저장_비준_접근조건_사례_적용율}  ,
+             #{저장_비준_접근조건_비교치}       ,
+             #{저장_비준_기타조건_본건_적용율}  ,
+             #{저장_비준_기타조건_사례_내용}    ,
+             #{저장_비준_기타조건_사례_적용율}  ,
+             #{저장_비준_기타조건_비교치}       ,
+             #{저장_비준_요인합계}              ,
+             #{저장_비준_산정단가}              ,
+             #{저장_비준_적용단가}              ,
+             #{저장_비준_환산금액}
+            )
+
+    </insert>
+
+    <!-- 저장_19_감정가_평가액산정 -->
+    <update id="save109">
+                    <![CDATA[
+        MERGE INTO ES2104 A
+        USING (SELECT  #{YYYY} AS YYYY,
+                       #{SEQ}  AS SEQ
+               FROM DUAL) B
+        ON (A.YYYY = B.YYYY AND A.SEQ = B.SEQ)
+        WHEN MATCHED THEN
+            UPDATE
+            SET MA_MIN_AMT       = #{MA_MIN_AMT}     ,   -- 가격사례_최저가격
+                MA_MIN_SIZE_DAN  = #{MA_MIN_SIZE_DAN},   -- 가격사례_최저가격_전용면적단가
+                MA_MAX_AMT       = #{MA_MAX_AMT}     ,   -- 가격사례_최고가격
+                MA_MAX_SIZE_DAN  = #{MA_MAX_SIZE_DAN},   -- 가격사례_최고가격_전용면적단가
+                MA_RATE          = #{MA_RATE}        ,   -- 가격사례_최저/최고비율
+                PR_MIN_AMT       = #{PR_MIN_AMT}     ,   -- 가격사례_최저가격
+                PR_MIN_SIZE_DAN  = #{PR_MIN_SIZE_DAN},   -- 가격사례_최저가격_전용면적단가
+                PR_MAX_AMT       = #{PR_MAX_AMT}     ,   -- 가격사례_최고가격
+                PR_MAX_SIZE_DAN  = #{PR_MAX_SIZE_DAN},   -- 가격사례_최고가격_전용면적단가
+                PR_RATE          = #{PR_RATE}        ,   -- 가격사례_최저/최고비율
+                AU_MIN_AMT       = #{AU_MIN_AMT}     ,   -- 경매사례_최저가격
+                AU_MIN_SIZE_DAN  = #{AU_MIN_SIZE_DAN},   -- 경매사례_최저가격_전용면적단가
+                AU_MAX_AMT       = #{AU_MAX_AMT}     ,   -- 경매사례_최고가격
+                AU_MAX_SIZE_DAN  = #{AU_MAX_SIZE_DAN},   -- 경매사례_최고가격_전용면적단가
+                AU_RATE          = #{AU_RATE}        ,   -- 경매사례_최저/최고비율
+                APPL_AMT         = #{APPL_AMT}       ,   -- 결정가격
+                APPL_SIZE_DAN    = #{APPL_SIZE_DAN}  ,   -- 결정가격_전용면적단가
+                INT_REP_SIZE     = #{INT_REP_SIZE}   ,   -- 인테리어_보수면적
+                INT_REP_SIZE_PY  = #{INT_REP_SIZE_PY},   -- 인테리어_보수면적_평
+                INT_REP_DAN_CODE = #{INT_REP_DAN_CODE},
+                INT_REP_DAN      = #{INT_REP_DAN}    ,   -- 인테리어_보수단가
+                INT_REP_AMT      = #{INT_REP_AMT}    ,   -- 인테리어_보수금액
+                INC_AMT          = #{INC_AMT}        ,   -- 평가가격
+                INC_SIZE_DAN     = #{INC_SIZE_DAN}   ,   -- 평가가격_전용면적단가
+                FNL_INC_AMT      = #{FNL_INC_AMT}        -- 최종평가가격
+        WHEN NOT MATCHED THEN
+            INSERT (YYYY             , SEQ              , MA_MIN_AMT       , MA_MIN_SIZE_DAN  , MA_MAX_AMT       ,
+                    MA_MAX_SIZE_DAN  , MA_RATE          , PR_MIN_AMT       , PR_MIN_SIZE_DAN  , PR_MAX_AMT       ,
+                    PR_MAX_SIZE_DAN  , PR_RATE          , AU_MIN_AMT       , AU_MIN_SIZE_DAN  , AU_MAX_AMT       ,
+                    AU_MAX_SIZE_DAN  , AU_RATE          , APPL_AMT         , APPL_SIZE_DAN    , INT_REP_SIZE     ,
+                    INT_REP_SIZE_PY  , INT_REP_DAN_CODE , INT_REP_DAN      , INT_REP_AMT      , INC_AMT          , INC_SIZE_DAN     ,
+                    FNL_INC_AMT
+            )
+            VALUES (#{YYYY}           , #{SEQ}             , #{MA_MIN_AMT}     , #{MA_MIN_SIZE_DAN}, #{MA_MAX_AMT}     ,
+                    #{MA_MAX_SIZE_DAN}, #{MA_RATE}         , #{PR_MIN_AMT}     , #{PR_MIN_SIZE_DAN}, #{PR_MAX_AMT}     ,
+                    #{PR_MAX_SIZE_DAN}, #{PR_RATE}         , #{AU_MIN_AMT}     , #{AU_MIN_SIZE_DAN}, #{AU_MAX_AMT}     ,
+                    #{AU_MAX_SIZE_DAN}, #{AU_RATE}         , #{APPL_AMT}       , #{APPL_SIZE_DAN}  , #{INT_REP_SIZE}   ,
+                    #{INT_REP_SIZE_PY}, #{INT_REP_DAN_CODE}, #{INT_REP_DAN}    , #{INT_REP_AMT}    , #{INC_AMT}        , #{INC_SIZE_DAN}   ,
+                    #{FNL_INC_AMT}
+                   )
+
+
+        ]]>
+                </update>
+
+    <!-- 저장_20_낙찰가율보정표 -->
+    <update id="save110">
+                    <![CDATA[
+        MERGE INTO ES2301 A
+        USING (SELECT  #{YYYY} AS YYYY,
+                       #{SEQ}  AS SEQ
+               FROM DUAL) B
+        ON (A.YYYY = B.YYYY AND A.SEQ = B.SEQ)
+        WHEN MATCHED THEN
+            UPDATE
+            SET P_BID_RATE       = #{P_BID_RATE}      ,   -- 당해지역낙찰가율
+                K_BID_RATE       = #{K_BID_RATE}      ,   -- 유사부동산낙찰가율
+                B_BID_RATE       = #{B_BID_RATE}      ,   -- 기준낙찰가율
+                APPL_RATE        = #{APPL_RATE}       ,   -- 적용할낙찰가율
+                RIGHTS_CODE      = #{RIGHTS_CODE}     ,   -- 점유자의권리형태
+                RIGHTS_RATE      = #{RIGHTS_RATE}     ,   -- 점유자의권리형태_적용률
+                INCREASE_AMT     = #{INCREASE_AMT}    ,   -- 평가가격
+                PL_MIN_BID_AMT   = #{PL_MIN_BID_AMT}  ,   -- 제1차예상최저입찰가
+                PL_BID_AMT       = #{PL_BID_AMT}      ,   -- 예상낙찰가
+                OFF_EXM_SIZE     = #{OFF_EXM_SIZE}    ,   -- 오피스텔_전유부분의면적
+                OFF_EXM_RATE     = #{OFF_EXM_RATE}    ,   -- 오피스텔_전유부분의면적_적용률
+                OFF_CONV_LOCATED = #{OFF_CONV_LOCATED},   -- 오피스텔_입지조건
+                OFF_CONV_RATE    = #{OFF_CONV_RATE}   ,   -- 오피스텔_입지조건_적용률
+                OFF_FLOOR_CODE   = #{OFF_FLOOR_CODE}  ,   -- 오피스텔_총층수중전유부분의위치
+                OFF_FLOOR_RATE   = #{OFF_FLOOR_RATE}  ,   -- 오피스텔_총층수중전유부분의위치_적용률
+                OFF_ELAP_CODE    = #{OFF_ELAP_CODE}   ,   -- 오피스텔_건축물의경과년도
+                OFF_ELAP_RATE    = #{OFF_ELAP_RATE}       -- 오피스텔_건축물의경과년도_적용률
+        WHEN NOT MATCHED THEN
+            INSERT (YYYY              ,SEQ               ,P_BID_RATE        ,K_BID_RATE        ,B_BID_RATE        ,
+                    APPL_RATE         ,RIGHTS_CODE       ,RIGHTS_RATE       ,INCREASE_AMT      ,PL_MIN_BID_AMT    ,
+                    PL_BID_AMT        ,OFF_EXM_SIZE      ,OFF_EXM_RATE      ,OFF_CONV_LOCATED  ,
+                    OFF_CONV_RATE     ,OFF_FLOOR_CODE    ,OFF_FLOOR_RATE    ,OFF_ELAP_CODE     ,OFF_ELAP_RATE
+            )
+            VALUES (#{YYYY}            ,#{SEQ}             ,#{P_BID_RATE}      ,#{K_BID_RATE}      ,#{B_BID_RATE}      ,
+                    #{APPL_RATE}       ,#{RIGHTS_CODE}     ,#{RIGHTS_RATE}     ,#{INCREASE_AMT}    ,#{PL_MIN_BID_AMT}  ,
+                    #{PL_BID_AMT}      ,#{OFF_EXM_SIZE}    ,#{OFF_EXM_RATE}    ,#{OFF_CONV_LOCATED},
+                    #{OFF_CONV_RATE}   ,#{OFF_FLOOR_CODE}  ,#{OFF_FLOOR_RATE}  ,#{OFF_ELAP_CODE}   ,#{OFF_ELAP_RATE}
+                   )
+
+
+
+
+
+        ]]>
+                </update>
+
+    <!-- 저장_40_응찰마스타 -->
+    <update id="save111">
+                    <![CDATA[
+        MERGE INTO ES4110 A
+        USING (SELECT  #{YYYY} AS YYYY,
+                       #{SEQ}  AS SEQ
+               FROM DUAL) B
+        ON (A.YYYY = B.YYYY AND A.SEQ = B.SEQ)
+        WHEN MATCHED THEN
+            UPDATE
+            SET AUC_NO              = #{AUC_NO}             ,  -- 사건번호
+                COMPETENT_COURT     = #{COMPETENT_COURT}    ,  -- 관할법원
+                AUC_GU              = #{AUC_GU}             ,  -- 경매구분
+                AUC_DEPT            = #{AUC_DEPT}           ,  -- 경매계
+                AUC_TELNO           = #{AUC_TELNO}          ,  -- 전화번호
+                AUC_DEMUR           = #{AUC_DEMUR}          ,  -- 경매신청채권자
+                AUC_CHARGE_AMT      = #{AUC_CHARGE_AMT}     ,  -- 청구금액
+                AUC_START_DATE      = #{AUC_START_DATE}     ,  -- 경매개시등기일
+                AUC_DESC            = #{AUC_DESC}           ,  -- 유입시 특이사항
+                BID_L_AMT           = #{BID_L_AMT}          ,  -- 법원감정가_토지_가격총액
+                BID_L_DAN           = #{BID_L_DAN}          ,  -- 법원감정가_토지_㎡_단가
+                BID_L_PY_DAN        = #{BID_L_PY_DAN}       ,  -- 법원감정가_토지_평당가격
+                BID_B_AMT           = #{BID_B_AMT}          ,  -- 법원감정가_건물_가격총액
+                BID_B_DAN           = #{BID_B_DAN}          ,  -- 법원감정가_건물_㎡_단가
+                BID_B_PY_AMT        = #{BID_B_PY_AMT}       ,  -- 법원감정가_건물_평당가격
+                BID_TOT_AMT         = #{BID_TOT_AMT}        ,  -- 법원감정가_합계_가격총액
+                BID_PL_AMT          = #{BID_PL_AMT}         ,  -- 입찰예정가_금액
+                BID_APPL_RATE       = #{BID_APPL_RATE}      ,  -- 낙찰가율
+                DIV_CRED_MAX_AMT    = #{DIV_CRED_MAX_AMT}   ,  -- 경매비용개산_채권자중최고채권액
+                DIV_POSS_A_CASE     = #{DIV_POSS_A_CASE}    ,  -- 경매비용개산_적용대상
+                DIV_POSS_A_AMT      = #{DIV_POSS_A_AMT}     ,  -- 경매비용개산_적용금액
+                DIV_PRIOR_MAX_AMT   = #{DIV_PRIOR_MAX_AMT}  ,  -- 선순위자 채권최고액합계
+                DIV_PRIOR_SHARE_AMT = #{DIV_PRIOR_SHARE_AMT},  -- 선순위자 배당금합계
+                DIV_COMP_MAX_AMT    = #{DIV_COMP_MAX_AMT}   ,  -- 당사 채권최고액합계
+                DIV_COMP_SHARE_AMT  = #{DIV_COMP_SHARE_AMT} ,  -- 당사 배당금합계
+                DIV_COMP_UNR_AMT    = #{DIV_COMP_UNR_AMT}   ,  -- 당사의 미회수채권액
+                RIGHT_ALLOT_AMT     = #{RIGHT_ALLOT_AMT}    ,  -- 경락후 말소되지 않는 선순위권리내역_부담비용합계
+                OBT_AMT             = #{OBT_AMT}            ,  -- 실제취득가
+                TENURE_YEAR         = #{TENURE_YEAR}        ,  -- 예정보유기간_낙찰후매각가능시점까지의기간
+                STD_PRICE_RATE      = #{STD_PRICE_RATE}     ,  -- 3년치기준시가상승률
+                PLAN_SALE_AMT       = #{PLAN_SALE_AMT}      ,  -- 추정예상매각금액]
+                SALE_AMT            = #{SALE_AMT}           ,  -- 매각확신금액
+                SALE_DESC           = #{SALE_DESC}          ,  -- 매각확신금액을적용한사유
+                IN_OBT_TAX_RATE     = #{IN_OBT_TAX_RATE}    ,  -- 취득비용_취득세율
+                IN_OBT_TAX          = #{IN_OBT_TAX}         ,  -- 취득비용_취득세
+                IN_OBT_REG_TAX_RATE = #{IN_OBT_REG_TAX_RATE},  -- 취득비용_등록세율
+                IN_OBT_REG_TAX      = #{IN_OBT_REG_TAX}     ,  -- 취득비용_등록세
+                IN_OBT_EXEU_AMT     = #{IN_OBT_EXEU_AMT}    ,  -- 취득비용_강제집행 예상비용
+                IN_OBT_LOSS_AMT     = #{IN_OBT_LOSS_AMT}    ,  -- 취득비용_채권매입에 따른 손실액
+                IN_OBT_ETC_AMT      = #{IN_OBT_ETC_AMT}     ,  -- 취득비용_기타취득부대비용
+                IN_OBT_EXEU_TOT     = #{IN_OBT_EXEU_TOT}    ,  -- 취득비용합계
+                IN_OBT_WONGA_TOT    = #{IN_OBT_WONGA_TOT}   ,  -- 취득원가합계
+                IN_OBT_TOTAL_AMT    = #{IN_OBT_TOTAL_AMT}   ,  -- 총취득원가합계
+                IN_EAR_RENT_AMT     = #{IN_EAR_RENT_AMT}    ,  -- 보유수익_임대수익
+                IN_EAR_RENT_SEC_AMT = #{IN_EAR_RENT_SEC_AMT},  -- 보유수익_임대보증금
+                IN_EAR_RENT_MON_AMT = #{IN_EAR_RENT_MON_AMT},  -- 보유수익_월임대수입
+                IN_EAR_RENT_ETC_AMT = #{IN_EAR_RENT_ETC_AMT},  -- 보유수익_기타의수익
+                IN_EAR_TOT_AMT      = #{IN_EAR_TOT_AMT}     ,  -- 보유수익합계
+                IN_EXP_OPP_AMT      = #{IN_EXP_OPP_AMT}     ,  -- 보유비용_기회비용
+                IN_EXP_VAT_AMT      = #{IN_EXP_VAT_AMT}     ,  -- 보유비용_임대수익등에대한부가세
+                IN_EXP_CORP_TAX     = #{IN_EXP_CORP_TAX}    ,  -- 보유비용_법인세
+                IN_EXP_PROP_TAX     = #{IN_EXP_PROP_TAX}    ,  -- 보유비용_재산세
+                IN_EXP_ESTA_GU      = #{IN_EXP_ESTA_GU}     ,  -- 보유비용_종합부동산세구분
+                IN_EXP_ESTA_AMT     = #{IN_EXP_ESTA_AMT}    ,  -- 보유비용_종합부동산세금액
+                IN_EXP_ETC_AMT      = #{IN_EXP_ETC_AMT}     ,  -- 보유비용_기타유지보수비용
+                IN_EXP_TOT_AMT      = #{IN_EXP_TOT_AMT}     ,  -- 보유비용합계
+                IN_DIS_GU           = #{IN_DIS_GU}          ,  -- 처분비용_구분
+                IN_DIS_AMT          = #{IN_DIS_AMT}         ,  -- 처분비용_금액
+                IN_DIS_ETC_AMT      = #{IN_DIS_ETC_AMT}     ,  -- 처분비용_기타처분비용
+                IN_DIS_TOT_AMT      = #{IN_DIS_TOT_AMT}     ,  -- 처분비용합계
+                ITOT_EXPENSE_AMT    = #{ITOT_EXPENSE_AMT}   ,  -- 각항목별합계_비용합계
+                ITOT_EARNING_AMT    = #{ITOT_EARNING_AMT}   ,  -- 각항목별합계_수익합계
+                ITOT_PROFIT_AMT     = #{ITOT_PROFIT_AMT}    ,  -- 각항목별합계_예상손익
+                FNL_PROFIT_AMT      = #{FNL_PROFIT_AMT}     ,  -- 최종적인전체손익
+                BID_YN              = #{BID_YN}                -- 응찰여부결정
+        WHEN NOT MATCHED THEN
+            INSERT (YYYY               ,
+                    SEQ                ,
+                    AUC_NO             ,
+                    COMPETENT_COURT    ,
+                    AUC_GU             ,
+                    AUC_DEPT           ,
+                    AUC_TELNO          ,
+                    AUC_DEMUR          ,
+                    AUC_CHARGE_AMT     ,
+                    AUC_START_DATE     ,
+                    AUC_DESC           ,
+                    BID_L_AMT          ,
+                    BID_L_DAN          ,
+                    BID_L_PY_DAN       ,
+                    BID_B_AMT          ,
+                    BID_B_DAN          ,
+                    BID_B_PY_AMT       ,
+                    BID_TOT_AMT        ,
+                    BID_PL_AMT         ,
+                    BID_APPL_RATE      ,
+                    DIV_CRED_MAX_AMT   ,
+                    DIV_POSS_A_CASE    ,
+                    DIV_POSS_A_AMT     ,
+                    DIV_PRIOR_MAX_AMT  ,
+                    DIV_PRIOR_SHARE_AMT,
+                    DIV_COMP_MAX_AMT   ,
+                    DIV_COMP_SHARE_AMT ,
+                    DIV_COMP_UNR_AMT   ,
+                    RIGHT_ALLOT_AMT    ,
+                    OBT_AMT            ,
+                    TENURE_YEAR        ,
+                    STD_PRICE_RATE     ,
+                    PLAN_SALE_AMT      ,
+                    SALE_AMT           ,
+                    SALE_DESC          ,
+                    IN_OBT_TAX_RATE    ,
+                    IN_OBT_TAX         ,
+                    IN_OBT_REG_TAX_RATE,
+                    IN_OBT_REG_TAX     ,
+                    IN_OBT_EXEU_AMT    ,
+                    IN_OBT_LOSS_AMT    ,
+                    IN_OBT_ETC_AMT     ,
+                    IN_OBT_EXEU_TOT    ,
+                    IN_OBT_WONGA_TOT   ,
+                    IN_OBT_TOTAL_AMT   ,
+                    IN_EAR_RENT_AMT    ,
+                    IN_EAR_RENT_SEC_AMT,
+                    IN_EAR_RENT_MON_AMT,
+                    IN_EAR_RENT_ETC_AMT,
+                    IN_EAR_TOT_AMT     ,
+                    IN_EXP_OPP_AMT     ,
+                    IN_EXP_VAT_AMT     ,
+                    IN_EXP_CORP_TAX    ,
+                    IN_EXP_PROP_TAX    ,
+                    IN_EXP_ESTA_GU     ,
+                    IN_EXP_ESTA_AMT    ,
+                    IN_EXP_ETC_AMT     ,
+                    IN_EXP_TOT_AMT     ,
+                    IN_DIS_GU          ,
+                    IN_DIS_AMT         ,
+                    IN_DIS_ETC_AMT     ,
+                    IN_DIS_TOT_AMT     ,
+                    ITOT_EXPENSE_AMT   ,
+                    ITOT_EARNING_AMT   ,
+                    ITOT_PROFIT_AMT    ,
+                    FNL_PROFIT_AMT     ,
+                    BID_YN
+            )
+            VALUES (#{YYYY}               ,
+                    #{SEQ}                ,
+                    #{AUC_NO}             ,
+                    #{COMPETENT_COURT}    ,
+                    #{AUC_GU}             ,
+                    #{AUC_DEPT}           ,
+                    #{AUC_TELNO}          ,
+                    #{AUC_DEMUR}          ,
+                    #{AUC_CHARGE_AMT}     ,
+                    #{AUC_START_DATE}     ,
+                    #{AUC_DESC}           ,
+                    #{BID_L_AMT}          ,
+                    #{BID_L_DAN}          ,
+                    #{BID_L_PY_DAN}       ,
+                    #{BID_B_AMT}          ,
+                    #{BID_B_DAN}          ,
+                    #{BID_B_PY_AMT}       ,
+                    #{BID_TOT_AMT}        ,
+                    #{BID_PL_AMT}         ,
+                    #{BID_APPL_RATE}      ,
+                    #{DIV_CRED_MAX_AMT}   ,
+                    #{DIV_POSS_A_CASE}    ,
+                    #{DIV_POSS_A_AMT}     ,
+                    #{DIV_PRIOR_MAX_AMT}  ,
+                    #{DIV_PRIOR_SHARE_AMT},
+                    #{DIV_COMP_MAX_AMT}   ,
+                    #{DIV_COMP_SHARE_AMT} ,
+                    #{DIV_COMP_UNR_AMT}   ,
+                    #{RIGHT_ALLOT_AMT}    ,
+                    #{OBT_AMT}            ,
+                    #{TENURE_YEAR}        ,
+                    #{STD_PRICE_RATE}     ,
+                    #{PLAN_SALE_AMT}      ,
+                    #{SALE_AMT}           ,
+                    #{SALE_DESC}          ,
+                    #{IN_OBT_TAX_RATE}    ,
+                    #{IN_OBT_TAX}         ,
+                    #{IN_OBT_REG_TAX_RATE},
+                    #{IN_OBT_REG_TAX}     ,
+                    #{IN_OBT_EXEU_AMT}    ,
+                    #{IN_OBT_LOSS_AMT}    ,
+                    #{IN_OBT_ETC_AMT}     ,
+                    #{IN_OBT_EXEU_TOT}    ,
+                    #{IN_OBT_WONGA_TOT}   ,
+                    #{IN_OBT_TOTAL_AMT}   ,
+                    #{IN_EAR_RENT_AMT}    ,
+                    #{IN_EAR_RENT_SEC_AMT},
+                    #{IN_EAR_RENT_MON_AMT},
+                    #{IN_EAR_RENT_ETC_AMT},
+                    #{IN_EAR_TOT_AMT}     ,
+                    #{IN_EXP_OPP_AMT}     ,
+                    #{IN_EXP_VAT_AMT}     ,
+                    #{IN_EXP_CORP_TAX}    ,
+                    #{IN_EXP_PROP_TAX}    ,
+                    #{IN_EXP_ESTA_GU}     ,
+                    #{IN_EXP_ESTA_AMT}    ,
+                    #{IN_EXP_ETC_AMT}     ,
+                    #{IN_EXP_TOT_AMT}     ,
+                    #{IN_DIS_GU}          ,
+                    #{IN_DIS_AMT}         ,
+                    #{IN_DIS_ETC_AMT}     ,
+                    #{IN_DIS_TOT_AMT}     ,
+                    #{ITOT_EXPENSE_AMT}   ,
+                    #{ITOT_EARNING_AMT}   ,
+                    #{ITOT_PROFIT_AMT}    ,
+                    #{FNL_PROFIT_AMT}     ,
+                    #{BID_YN}
+                   )
+        ]]>
+                </update>
+
+    <!-- 저장_41_응찰_기일내역 -->
+    <delete id="delete112">
+        DELETE
+        FROM ES4111
+        WHERE YYYY       =  #{년도}
+          AND SEQ        =  #{감정순번}
+
+    </delete>
+    <insert id="insert112">
+        INSERT INTO ES4111(YYYY       ,
+                           SEQ        ,
+                           LN_SEQ     ,
+                           GIIL_DATE  ,
+                           GIIL_AMT   ,
+                           YUCHAL_YN
+        )
+        VALUES(#{01_응찰_저장_11_년도}     ,
+                   #{01_응찰_저장_11_일련번호} ,
+                   #{01_응찰_저장_11_회차}     ,
+                   #{01_응찰_저장_11_일자}     ,
+                   #{01_응찰_저장_11_금액}     ,
+                   #{01_응찰_저장_11_유찰여부}
+                  )
+
+    </insert>
+
+    <!-- 저장_42_응찰_전감정개요 -->
+    <update id="save113">
+                    <![CDATA[
+        MERGE INTO ES4112 A
+        USING (SELECT  #{YYYY} AS YYYY,
+                       #{SEQ}  AS SEQ
+               FROM DUAL) B
+        ON (A.YYYY = B.YYYY AND A.SEQ = B.SEQ)
+        WHEN MATCHED THEN
+            UPDATE
+            SET JUM_ESTI_DATE       = #{JUM_ESTI_DATE}     ,    -- 지점_감정일
+                JUM_SABUN1          = #{JUM_SABUN1}        ,    -- 지점_감정자_담당자
+                JUM_SABUN2          = #{JUM_SABUN2}        ,    -- 지점_감정자_파트장
+                JUM_SABUN3          = #{JUM_SABUN3}        ,    -- 지점_감정자_팀장
+                JUM_SABUN4          = #{JUM_SABUN4}        ,    -- 지점_감정자_지점장
+                JUM_PL_MIN_BID_AMT  = #{JUM_PL_MIN_BID_AMT},    -- 지점_제1차예상입찰가
+                JUM_PL_BID_AMT      = #{JUM_PL_BID_AMT}    ,    -- 지점_예상낙찰가
+                JUM_PL_BID_RATE     = #{JUM_PL_BID_RATE}   ,    -- 지점_예상낙찰가율
+                JUM_SEC_AMT         = #{JUM_SEC_AMT}       ,    -- 지점_담보여력
+                JUM_COMP_AMT        = #{JUM_COMP_AMT}      ,    -- 지점_당사채권금액
+                JUM_COMP_RIGHT      = #{JUM_COMP_RIGHT}    ,    -- 지점_당사순위및등기권리
+                ESTI_DATE           = #{ESTI_DATE}         ,    -- 본사_감정일
+                SABUN1              = #{SABUN1}            ,    -- 본사_감정자_1차결재
+                SABUN2              = #{SABUN2}            ,    -- 본사_감정자_2차결재
+                SABUN3              = #{SABUN3}            ,    -- 본사_감정자_3차결재
+                SABUN4              = #{SABUN4}            ,    -- 본사_감정자_관재파트장
+                SABUN5              = #{SABUN5}            ,    -- 본사_감정자_팀장
+                PL_MIN_BID_AMT      = #{PL_MIN_BID_AMT}    ,    -- 본사_제1차예상입찰가
+                PL_BID_AMT          = #{PL_BID_AMT}        ,    -- 본사_예상낙찰가
+                PL_BID_RATE         = #{PL_BID_RATE}       ,    -- 본사_예상낙찰가율
+                SEC_AMT             = #{SEC_AMT}           ,    -- 본사_담보여력
+                COMP_AMT            = #{COMP_AMT}          ,    -- 본사_당사채권금액
+                COMP_RIGHT          = #{COMP_RIGHT}             -- 본사_당사순위및등기권리
+        WHEN NOT MATCHED THEN
+            INSERT (YYYY                ,
+                    SEQ                 ,
+                    JUM_ESTI_DATE       ,    -- 지점_감정일
+                    JUM_SABUN1          ,    -- 지점_감정자_담당자
+                    JUM_SABUN2          ,    -- 지점_감정자_파트장
+                    JUM_SABUN3          ,    -- 지점_감정자_팀장
+                    JUM_SABUN4          ,    -- 지점_감정자_지점장
+                    JUM_PL_MIN_BID_AMT  ,    -- 지점_제1차예상입찰가
+                    JUM_PL_BID_AMT      ,    -- 지점_예상낙찰가
+                    JUM_PL_BID_RATE     ,    -- 지점_예상낙찰가율
+                    JUM_SEC_AMT         ,    -- 지점_담보여력
+                    JUM_COMP_AMT        ,    -- 지점_당사채권금액
+                    JUM_COMP_RIGHT      ,    -- 지점_당사순위및등기권리
+                    ESTI_DATE           ,    -- 본사_감정일
+                    SABUN1              ,    -- 본사_감정자_1차결재
+                    SABUN2              ,    -- 본사_감정자_2차결재
+                    SABUN3              ,    -- 본사_감정자_3차결재
+                    SABUN4              ,    -- 본사_감정자_관재파트장
+                    SABUN5              ,    -- 본사_감정자_팀장
+                    PL_MIN_BID_AMT      ,    -- 본사_제1차예상입찰가
+                    PL_BID_AMT          ,    -- 본사_예상낙찰가
+                    PL_BID_RATE         ,    -- 본사_예상낙찰가율
+                    SEC_AMT             ,    -- 본사_담보여력
+                    COMP_AMT            ,    -- 본사_당사채권금액
+                    COMP_RIGHT               -- 본사_당사순위및등기권리
+            )
+            VALUES (#{YYYY}              ,
+                    #{SEQ}               ,
+                    #{JUM_ESTI_DATE}     ,    -- 지점_감정일
+                    #{JUM_SABUN1}        ,    -- 지점_감정자_담당자
+                    #{JUM_SABUN2}        ,    -- 지점_감정자_파트장
+                    #{JUM_SABUN3}        ,    -- 지점_감정자_팀장
+                    #{JUM_SABUN4}        ,    -- 지점_감정자_지점장
+                    #{JUM_PL_MIN_BID_AMT},    -- 지점_제1차예상입찰가
+                    #{JUM_PL_BID_AMT}    ,    -- 지점_예상낙찰가
+                    #{JUM_PL_BID_RATE}   ,    -- 지점_예상낙찰가율
+                    #{JUM_SEC_AMT}       ,    -- 지점_담보여력
+                    #{JUM_COMP_AMT}      ,    -- 지점_당사채권금액
+                    #{JUM_COMP_RIGHT}    ,    -- 지점_당사순위및등기권리
+                    #{ESTI_DATE}         ,    -- 본사_감정일
+                    #{SABUN1}            ,    -- 본사_감정자_1차결재
+                    #{SABUN2}            ,    -- 본사_감정자_2차결재
+                    #{SABUN3}            ,    -- 본사_감정자_3차결재
+                    #{SABUN4}            ,    -- 본사_감정자_관재파트장
+                    #{SABUN5}            ,    -- 본사_감정자_팀장
+                    #{PL_MIN_BID_AMT}    ,    -- 본사_제1차예상입찰가
+                    #{PL_BID_AMT}        ,    -- 본사_예상낙찰가
+                    #{PL_BID_RATE}       ,    -- 본사_예상낙찰가율
+                    #{SEC_AMT}           ,    -- 본사_담보여력
+                    #{COMP_AMT}          ,    -- 본사_당사채권금액
+                    #{COMP_RIGHT}             -- 본사_당사순위및등기권리
+                   )
+        ]]>
+                </update>
+
+    <!-- 저장_43_응찰_선순위권리내역 -->
+    <delete id="delete114">
+        DELETE
+        FROM ES4113
+        WHERE YYYY         =  #{년도}
+          AND SEQ          =  #{감정순번}
+
+    </delete>
+    <insert id="insert114">
+        INSERT INTO ES4113(YYYY         ,
+                           SEQ          ,
+                           LN_SEQ       ,
+                           CRED_AMT     ,
+                           RIGHT_PERSON ,
+                           RIGHT_DESC
+        )
+        VALUES( #{01_응찰_저장_13_년도}     ,
+                    #{01_응찰_저장_13_일련번호} ,
+                    #{01_응찰_저장_13_순번}     ,
+                    #{01_응찰_저장_13_금액}     ,
+                    #{01_응찰_저장_13_권리자}   ,
+                    #{01_응찰_저장_13_권리내역}
+                  )
+
+    </insert>
+
+    <!-- 저장_44_응찰_선순위부담내역 -->
+    <delete id="delete115">
+        DELETE
+        FROM ES4114
+        WHERE YYYY         =  #{년도}
+          AND SEQ          =  #{감정순번}
+
+    </delete>
+    <insert id="insert115">
+        INSERT INTO ES4114(YYYY         ,
+                           SEQ          ,
+                           LN_SEQ       ,
+                           CRED_AMT     ,
+                           RIGHT_PERSON ,
+                           RIGHT_DESC
+        )
+        VALUES( #{01_응찰_저장_14_년도}     ,
+                    #{01_응찰_저장_14_일련번호} ,
+                    #{01_응찰_저장_14_순번}     ,
+                    #{01_응찰_저장_14_금액}     ,
+                    #{01_응찰_저장_14_권리자}   ,
+                    #{01_응찰_저장_14_권리내역}
+                  )
+
+    </insert>
+
+    <!-- 저장_결재자현황_영업 -->
+    <update id="save116">
+                    <![CDATA[
+        UPDATE "ES05"
+        SET "YYYY"=#{YYYY},"SEQ"=#{SEQ}
+        WHERE "DOC_KEY"=#{DOC_KEY}
+        ]]>
+                </update>
+
+    <!-- 저장_결재자현황_영업_Clear -->
+    <update id="save117">
+                    <![CDATA[
+        UPDATE "ES05"
+        SET "YYYY"=NULL,"SEQ"=NULL
+        WHERE "YYYY"=#{YYYY} AND "SEQ"=#{SEQ}
+        ]]>
+                </update>
+
+    <!-- 저장_담보마스타_담보여력등 -->
+    <update id="save118">
+    <![CDATA[
+        UPDATE ES10
+        SET (SHARE_YN,
+             PRE_BOND_AMT,
+             SPARE_SEC_AMT,
+             EXCEED_AMT,
+             EXCEED_YN) = (
+            SELECT #{02_배당표수정여부},
+                   채권금액,
+                   담보여력_설정전,
+                   초과_부족설정액,
+                   초과_부족설정구분
+            FROM V_ES10_01
+            WHERE YYYY =  #{YYYY}
+              AND SEQ  =  #{SEQ}
+        )
+        WHERE YYYY =  #{YYYY}
+          AND SEQ  =  #{SEQ}
+
+    ]]>
+    </update>
+
+    <!-- 저장_문서관리 -->
+    <delete id="delete119">
+        DELETE FROM ES2311
+        WHERE YYYY= #{년도}  AND SEQ= #{감정순번}
+    </delete>
+    <insert id="insert119">
+        INSERT INTO ES2311(YYYY,SEQ,PHOTO_DIV,LN_SEQ,PHOTO_NAME,FILE_NAME,REMARK,UPLOAD_FILE)
+        VALUES( #{저장_문서관리_년도}  ,  #{저장_문서관리_일련번호}  ,  #{저장_문서관리_사진구분}  ,   #{저장_문서관리_순번}  ,  #{저장_문서관리_사진명}  ,  #{저장_문서관리_경로및파일명}  ,  #{저장_문서관리_비고},  #{저장_문서관리_전송된사진명}  )
+    </insert>
+
+    <!-- 저장_문서관리_문서 -->
+    <delete id="delete120">
+        DELETE FROM ES2311
+        WHERE YYYY= #{년도}  AND SEQ= #{감정순번}
+    </delete>
+    <insert id="insert120">
+        INSERT INTO ES2311(YYYY,SEQ,PHOTO_DIV,LN_SEQ,PHOTO_NAME,FILE_NAME,REMARK,UPLOAD_FILE)
+        VALUES( #{저장_문서관리_문서_년도}  ,  #{저장_문서관리_문서_일련번호}  ,  #{저장_문서관리_문서_사진구분}  ,   #{저장_문서관리_문서_순번}  ,  #{저장_문서관리_문서_사진명}  ,  #{저장_문서관리_문서_경로및파일명}  ,  #{저장_문서관리_문서_비고},  #{저장_문서관리_문서_전송된파일명}  )
+    </insert>
+
+    <!-- 저장_배당금_배당금 -->
+    <delete id="delete121">
+        DELETE FROM ES2404
+        WHERE YYYY= #{년도}  AND SEQ= #{감정순번} AND "SHA_GU"='1' AND "LN_SEQ"= 0
+    </delete>
+    <insert id="insert121">
+        INSERT INTO es2404 ("YYYY","SEQ","SHA_GU","LN_SEQ","RANK","DISP_RANK","RIGHT_DATE","RIGHT_PERSON","RIGHT_CODE","ERA_YN","CRED_SELF_AMT","CRED_COMB_AMT", PRO_RATE_CODE , HITE_YN )
+        VALUES( #{저장_배당표_배당금_년도}  ,  #{저장_배당표_배당금_일련번호}  , '1' , 0, (SELECT NVL (MAX (rank), 0) + 1
+  FROM es2404
+ WHERE yyyy =  #{저장_배당표_배당금_년도}  AND seq =  #{저장_배당표_배당금_일련번호} ) ,  #{저장_배당표_배당금_표시순위},  #{저장_배당표_배당금_발생일자}  ,  #{저장_배당표_배당금_권리자}  ,  #{저장_배당표_배당금_권리의내용}  ,  #{저장_배당표_배당금_말소여부}  ,  #{저장_배당표_배당금_단독담보}  ,  #{저장_배당표_배당금_공동담보} , #{저장_배당표_배당금_배당순위} , #{저장_배당표_배당금_당사설정} )
+    </insert>
+
+    <!-- 저장_배당금_배당표M -->
+    <update id="save122">
+        <![CDATA[
+        MERGE INTO es2401 a
+        USING (SELECT  #{YYYY} AS yyyy,  #{SEQ} AS seq
+               FROM DUAL) b
+        ON (a.yyyy = b.yyyy AND a.seq = b.seq)
+        WHEN MATCHED THEN
+            UPDATE
+            SET "AUCTION_CODE"=#{AUCTION_CODE},"AUCTION_AMT"=#{AUCTION_AMT},"CRED_MAX_AMT"=#{CRED_MAX_AMT},"H_PL_BID_AMT"=#{H_PL_BID_AMT},"H_POSS_AMT"=#{H_POSS_AMT},"H_POSS_A_AREA"=#{H_POSS_A_AREA},"H_POSS_A_AMT"=#{H_POSS_A_AMT},"B_PL_BID_AMT"=#{B_PL_BID_AMT},"B_POSS_AMT"=#{B_POSS_AMT},"B_LEASE_AREA"=#{B_LEASE_AREA},"B_LEASE_AMT"=#{B_LEASE_AMT},"B_POSS_A_AREA"=#{B_POSS_A_AREA},"B_POSS_A_AMT"=#{B_POSS_A_AMT}
+        WHEN NOT MATCHED THEN
+            INSERT("YYYY","SEQ","AUCTION_CODE","AUCTION_AMT","CRED_MAX_AMT","H_PL_BID_AMT","H_POSS_AMT","H_POSS_A_AREA","H_POSS_A_AMT","B_PL_BID_AMT","B_POSS_AMT","B_LEASE_AREA","B_LEASE_AMT","B_POSS_A_AREA","B_POSS_A_AMT")
+            VALUES(#{YYYY},#{SEQ},#{AUCTION_CODE},#{AUCTION_AMT},#{CRED_MAX_AMT},#{H_PL_BID_AMT},#{H_POSS_AMT},#{H_POSS_A_AREA},#{H_POSS_A_AMT},#{B_PL_BID_AMT},#{B_POSS_AMT},#{B_LEASE_AREA},#{B_LEASE_AMT},#{B_POSS_A_AREA},#{B_POSS_A_AMT})
+        ]]>
+    </update>
+
+    <!-- 저장_배당금_주택임차보증금 -->
+    <delete id="delete123">
+        DELETE FROM "ES2402"
+        WHERE "YYYY"= #{년도}  AND "SEQ"= #{감정순번}
+    </delete>
+    <insert id="insert123">
+        INSERT INTO "ES2402"("YYYY","SEQ","RNO","RESI_NAME","RESI_RM_CNT","FXDATE_YN","POSS_A_RM_CNT","LEASE_AMT","REP_BE_SEC_AMT","REP_AF_SEC_AMT","FXLEA_AMT","FXLEA_NO_AMT")
+        VALUES( #{저장_배당표_년도} , #{저장_배당표_일련번호} , #{저장_배당표_각구의일련번호} , #{저장_배당표_각구의위치} , #{저장_배당표_주거용방의총수} , #{저장_배당표_확정일자보유여부} , #{저장_배당표_적용한방의총수} , #{저장_배당표_실제임대차보증금} , #{저장_배당표_최종적용임대차보증금} , NULL , #{저장_배당표_확정_임대차보증금} , #{저장_배당표_확정없는_임대차보증금} )
+    </insert>
+
+    <!-- 저장_상가임차보증금 -->
+    <delete id="delete124">
+        DELETE FROM "ES2403"
+        WHERE "YYYY"= #{년도}  AND "SEQ"= #{감정순번}
+    </delete>
+    <insert id="insert124">
+        INSERT INTO "ES2403"("YYYY","SEQ","RNO","C_DESC","POSS_YN","HIR_NAME","STO_LSEC_AMT","FXDATE_YN","MRENT_AMT","LEASE_AMT","REP_BE_SEC_AMT","FXLEA_AMT","FXLEA_NO_AMT")
+        VALUES( #{저장_배당표_상가_년도} , #{저장_배당표_상가_일련번호} , #{저장_배당표_상가_순번} , #{저장_배당표_상가_위치면적} , #{저장_배당표_상가_가임대적용여부} , #{저장_배당표_상가_상호성명} , #{저장_배당표_상가_임대차보증금} , #{저장_배당표_상가_확정일자} , #{저장_배당표_상가_월세} , #{저장_배당표_상가_실제임대차보증금} , #{저장_배당표_상가_최우선변제보증금} , #{저장_배당표_상가_상가임대차_확정} , #{저장_배당표_상가_상가임대차_확정없는} )
+    </insert>
+
+    <!-- 저장_탁상감정 -->
+    <update id="save125">
+                    <![CDATA[
+        MERGE INTO es01 a
+        USING (SELECT  #{YYYY} AS yyyy,  #{SEQ} AS seq
+               FROM DUAL) b
+        ON (a.yyyy = b.yyyy AND a.seq = b.seq)
+        WHEN MATCHED THEN
+            UPDATE
+            SET "REQ_DATE"=#{REQ_DATE},"RES_DATE"=#{RES_DATE},"RES_PL_BID_AMT"=#{RES_PL_BID_AMT},"ESTI_OPI"=#{ESTI_OPI}
+        WHEN NOT MATCHED THEN
+            INSERT("YYYY","SEQ","REQ_DATE","RES_DATE","ESTI_OPI","RES_PL_BID_AMT")
+            VALUES(#{YYYY},#{SEQ},#{REQ_DATE},#{RES_DATE},#{ESTI_OPI},#{RES_PL_BID_AMT})
+        ]]>
+                </update>
+
+    <!-- 저장_탁상감정_담보감정M변경 -->
+    <update id="save126">
+                    <![CDATA[
+        UPDATE "ES10"
+        SET "RES_PL_BID_AMT"=#{RES_PL_BID_AMT}
+        WHERE "YYYY"=#{YYYY} AND "SEQ"=#{SEQ}
+        ]]>
+    </update>
+</mapper>

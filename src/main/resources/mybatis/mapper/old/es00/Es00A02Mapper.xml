@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.old.es00.repository.Es00A02Mapper">
+
+	<select id="selectGroupList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+			 ' ' AS USER_R_ID,
+			'전체' AS USER_R	
+		FROM 
+		  	DUAL
+		UNION ALL
+		SELECT 
+			USER_R AS USER_R_ID,
+			USER_R AS USER_R
+		FROM 
+			ES90 
+		GROUP BY USER_R
+	</select>
+
+
+	<select id="selectPartList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT ' '                             AS PART_ID
+		     , '전체'                        AS PART_NM
+		     , 0                                AS SORT_NO
+		FROM DUAL
+		UNION ALL
+		SELECT DISTINCT
+		       CD_CODE                           AS PART_ID
+		     , LPad(CD_CODE,2,' ')||':'||CD_DESC AS PART_NM
+		     , TO_NUMBER(CD_CODE)                AS SORT_NO
+		  FROM ES00
+		 WHERE CD_DIV = '402'
+		 ORDER BY SORT_NO
+	</select>
+	
+	<select id="selectUserGroupList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT ROWNUM AS ROW_CNT
+			 , S.PART_ID
+		     , S.PART_NM
+		     , S.USER_ID
+		     , NVL(S.USER_NM,'미등록') AS USER_NM 
+		     , U.USER_R
+		     , U.USE_YN
+		  FROM (SELECT SUBSTR(ATTR_01, 1, INSTR(ATTR_01,':')-1) AS USER_ID
+		             , SUBSTR(ATTR_01,    INSTR(ATTR_01,':')+1) AS USER_NM
+		             , CD_CODE                                  AS PART_ID
+		             , CD_DESC                                  AS PART_NM
+		          FROM ES00
+		         WHERE CD_DIV = '402'
+		         	AND ATTR_01 Is Not NULL
+		          	AND (CD_CODE = #{part_id} OR #{part_id} Is NULL)
+		        UNION ALL
+		        SELECT SUBSTR(ATTR_02, 1, INSTR(ATTR_02,':')-1) AS USER_ID
+		             , SUBSTR(ATTR_02,    INSTR(ATTR_02,':')+1) AS USER_NM
+		             , CD_CODE                                  AS PART_ID
+		             , CD_DESC                                  AS PART_NM
+		          FROM ES00
+		         WHERE CD_DIV = '402'
+		           AND ATTR_02 Is Not NULL
+		           AND (CD_CODE = #{part_id} OR #{part_id} Is NULL)
+		        UNION ALL
+		        SELECT SUBSTR(ATTR_03, 1, INSTR(ATTR_03,':')-1) AS USER_ID
+		             , SUBSTR(ATTR_03,    INSTR(ATTR_03,':')+1) AS USER_NM
+		             , CD_CODE                                  AS PART_ID
+		             , CD_DESC                                  AS PART_NM
+		          FROM ES00
+		         WHERE CD_DIV = '402'
+		           AND ATTR_03 Is Not NULL
+		           AND (CD_CODE = #{part_id} OR #{part_id} Is NULL)
+		        UNION ALL
+		        SELECT SUBSTR(ATTR_04, 1, INSTR(ATTR_04,':')-1) AS USER_ID
+		             , SUBSTR(ATTR_04,    INSTR(ATTR_04,':')+1) AS USER_NM
+		             , CD_CODE                                  AS PART_ID
+		             , CD_DESC                                  AS PART_NM
+		          FROM ES00
+		         WHERE CD_DIV = '402'
+		           AND ATTR_04 Is Not NULL
+		           AND (CD_CODE = #{part_id} OR #{part_id} Is NULL)
+		        UNION ALL
+		        SELECT SUBSTR(ATTR_05, 1, INSTR(ATTR_05,':')-1) AS USER_ID
+		             , SUBSTR(ATTR_05,    INSTR(ATTR_05,':')+1) AS USER_NM
+		             , CD_CODE                                  AS PART_ID
+		             , CD_DESC                                  AS PART_NM
+		          FROM ES00
+		         WHERE CD_DIV = '402'
+		           AND ATTR_05 Is Not NULL
+		           AND (CD_CODE = #{part_id} OR #{part_id} Is NULL)
+		        UNION ALL
+		        SELECT SUBSTR(ATTR_06, 1, INSTR(ATTR_06,':')-1) AS USER_ID
+		             , SUBSTR(ATTR_06,    INSTR(ATTR_06,':')+1) AS USER_NM
+		             , CD_CODE                                  AS PART_ID
+		             , CD_DESC                                  AS PART_NM
+		          FROM ES00
+		         WHERE CD_DIV = '402'
+		           AND ATTR_06 Is Not NULL
+		           AND (CD_CODE = #{part_id} OR #{part_id} Is NULL)
+		        UNION ALL
+		        SELECT SUBSTR(ATTR_07, 1, INSTR(ATTR_07,':')-1) AS USER_ID
+		             , SUBSTR(ATTR_07,    INSTR(ATTR_07,':')+1) AS USER_NM
+		             , CD_CODE                                  AS PART_ID
+		             , CD_DESC                                  AS PART_NM
+		          FROM ES00
+		         WHERE CD_DIV = '402'
+		           AND ATTR_07 Is Not NULL
+		           AND (CD_CODE = #{part_id} OR #{part_id} Is NULL)
+		        UNION ALL
+		        SELECT SUBSTR(ATTR_08, 1, INSTR(ATTR_08,':')-1) AS USER_ID
+		             , SUBSTR(ATTR_08,    INSTR(ATTR_08,':')+1) AS USER_NM
+		             , CD_CODE                                  AS PART_ID
+		             , CD_DESC                                  AS PART_NM
+		          FROM ES00
+		         WHERE CD_DIV = '402'
+		           AND ATTR_08 Is Not NULL
+		           AND (CD_CODE = #{part_id} OR #{part_id} Is NULL)
+		       ) S
+		  FULL OUTER JOIN ES91 U
+		    ON S.USER_ID = U.USER_ID(+)
+		 WHERE (S.PART_ID = #{part_id}    Or #{part_id}    Is NULL)
+		   AND (U.USER_R  = #{user_r}  Or #{user_r}  Is NULL)
+		   AND (S.USER_ID = #{user_id} Or #{user_id} Is NULL)
+		   AND (S.USER_NM LIKE '%'||#{user_name}||'%' Or #{user_name} Is NULL)
+		 ORDER BY S.PART_ID, S.USER_NM
+	</select>
+	
+	<update id="margeMenuGroup">
+		MERGE INTO ES91 A
+		USING ( SELECT #{user_r}             USER_R
+		             , #{user_id}            USER_ID
+		             , #{use_yn}             USE_YN
+		             , #{ent_user}             ENT_USER 
+		             , SYSDATE               ENT_DATE 
+		          FROM DUAL
+		       ) B
+		   ON (A.USER_ID = B.USER_ID)
+		
+		WHEN MATCHED THEN 
+		UPDATE SET A.USER_R   = B.USER_R
+		         , A.USE_YN   = B.USE_YN
+		         , A.ENT_USER = B.ENT_USER
+		         , A.ENT_DATE = B.ENT_DATE
+		
+		WHEN NOT MATCHED THEN 
+		INSERT (A.USER_R,A.USER_ID,A.USE_YN,A.ENT_USER,A.ENT_DATE)
+		VALUES (B.USER_R,B.USER_ID,B.USE_YN,B.ENT_USER,B.ENT_DATE)
+	</update>
+	
+</mapper>

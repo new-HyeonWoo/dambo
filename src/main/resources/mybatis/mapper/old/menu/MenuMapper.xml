@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.old.menu.repository.MenuMapper">
+
+	<select id="selectHeaderMenuList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+			G.CD_CODE AS grp_id, 
+			G.CD_DESC AS grp_name
+		FROM 
+			ES00 G 
+		WHERE 
+			G.USE_YN  = 'Y' 
+		AND 
+			G.CD_DIV  = '900' 
+		ORDER BY 
+			G.ORDER_SEQ
+	</select>
+
+
+	<select id="selectMenuList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT
+		M.CD_CODE AS menu_id,
+		T.CD_CODE AS grp_id,
+		T.CD_DESC AS grp_name,
+		M.CD_CODE AS menu_id,
+		M.CD_DESC AS menu_name,
+		G.USE_YN AS use_yn,
+		G.INIT_YN AS init_yn,
+		REGEXP_SUBSTR(M.ATTR_01,'[^/]+', 1, 2) AS src_type,
+		SUBSTR(REGEXP_SUBSTR(M.ATTR_01,'[^/]+', 2, 3), 1, INSTR(REGEXP_SUBSTR(M.ATTR_01,'[^/]+', 2, 3), '.') - 1) AS src_value
+		FROM
+		ES00 T,
+		ES00 M,
+		(SELECT USER_R, MENU_ID , USE_YN , INIT_YN FROM ES90 WHERE USER_R = (SELECT user_r FROM ES91 WHERE user_id = #{user_id})) G
+		WHERE
+		M.CD_CODE = G.MENU_ID(+)
+		AND
+		M.CD_DIV  = T.CD_CODE
+		AND
+		T.CD_DIV  = '900'
+		AND
+		T.USE_YN  = 'Y'
+		AND
+		M.USE_YN  = 'Y'
+		AND
+		G.USE_YN  = 'Y'
+		ORDER BY
+		T.ORDER_SEQ, M.ORDER_SEQ
+	</select>
+	
+</mapper>

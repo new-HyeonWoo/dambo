@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.mapper.Es03W02Mapper">
+    <!-- Q_DUAL_해당월일자_까지 -->
+    <select id="selectList1" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC
+        FROM ES00
+        WHERE ATTR_00 = 'DIV999'
+          AND TO_NUMBER(CD_CODE) <=
+              (SELECT TO_CHAR(LAST_DAY(TO_DATE(SUBSTRB(#{해당년월}, 1, 6), 'YYYYMM')), 'DD') FROM DUAL)
+        ]]>
+                </select>
+
+    <!-- Q_DUAL_해당월일자_부터 -->
+    <select id="selectList2" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC
+        FROM ES00
+        WHERE ATTR_00 = 'DIV999'
+          AND TO_NUMBER(CD_CODE) <=
+              (SELECT TO_CHAR(LAST_DAY(TO_DATE(SUBSTRB(#{해당년월}, 1, 6), 'YYYYMM')), 'DD') FROM DUAL)
+        ]]>
+                </select>
+
+    <!-- Q_DUAL_해당일자_부터 -->
+    <select id="selectList3" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT TO_CHAR(ADD_MONTHS(SYSDATE, -6), 'YYYY') AS start_year,
+               TO_CHAR(ADD_MONTHS(SYSDATE, -6), 'MM')   AS start_month,
+               TO_CHAR(ADD_MONTHS(SYSDATE, -6), 'DD')   AS start_day
+        FROM DUAL
+        ]]>
+                </select>
+
+    <!-- Q_거래처목록 -->
+    <select id="selectList4" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT geo_code, yakho AS sangho, saup_no, daepyo_name, uptae, jongmok
+        FROM V_CO01
+        WHERE yakho LIKE '%' || #{거래처명} || '%'
+
+        ORDER BY yakho
+        ]]>
+                </select>
+
+    <!-- Q_담보목록 -->
+    <select id="selectList5WithCondition" resultType="java.util.HashMap">
+                    <![CDATA[
+SELECT DECODE(LENGTH(ESTI_DATE), 4, SUBSTRB(ESTI_DATE,1,4),
+                                 6, SUBSTRB(ESTI_DATE,1,4)||'-'||SUBSTRB(ESTI_DATE,5,2), '전체') AS 감정일자,
+       NVL((SELECT REPLACE(SMALLNAME, '지점') FROM V_IA03 WHERE BUSEO = AA.JUM_CODE ), '전체') AS 지점명,
+       NVL((SELECT CD_DESC FROM ES00 WHERE ATTR_00 = 'DIV100' AND CD_CODE = AA.SEC_CODE), '전체') AS 담보종류명,
+       DECODE(MARKET_DIV, '0', '자체', '1', '업소', '전체') AS 업소구분명,
+       INCREASE_AMT  AS 평가가격    ,
+       PLMIN_BID_AMT AS 최종평가가격,
+       PL_BID_AMT    AS 예상낙찰가  ,
+       PRE_BOND_AMT  AS 선순위채권액,
+       CNT           AS 건수        ,
+       A_INCREASE_AMT  AS 평균_평가가격    ,
+       A_PLMIN_BID_AMT AS 평균_최종평가가격,
+       A_APPL_RATE     AS 평균_낙찰가율    ,
+       A_PL_BID_AMT    AS 평균_예상낙찰가  ,
+       A_PRE_BOND_AMT  AS 평균_선순위채권액
+  FROM (
+        SELECT MAX(DECODE(#{16_합산_감정일자} , 1, SUBSTRB(ESTI_DATE,1,4), 2, SUBSTRB(ESTI_DATE,1,6))) AS ESTI_DATE,
+               MAX(DECODE(#{17_합산_지점}     , 1, JUM_CODE  )) AS JUM_CODE,
+               MAX(DECODE(#{18_합산_담보종류} , 1, SEC_CODE  )) AS SEC_CODE,
+               MAX(DECODE(#{19_합산_업소구분} , 1, MARKET_DIV)) AS MARKET_DIV,
+               SUM(NVL(INCREASE_AMT ,0)) AS INCREASE_AMT ,
+               SUM(NVL(PLMIN_BID_AMT,0)) AS PLMIN_BID_AMT,
+               SUM(NVL(PL_BID_AMT   ,0)) AS PL_BID_AMT   ,
+               SUM(NVL(PRE_BOND_AMT ,0)) AS PRE_BOND_AMT ,
+               COUNT(SEQ)                AS CNT          ,
+               ROUND(AVG(NVL(INCREASE_AMT ,0)),0) AS A_INCREASE_AMT ,
+               ROUND(AVG(NVL(PLMIN_BID_AMT,0)),0) AS A_PLMIN_BID_AMT,
+               ROUND(AVG(NVL(APPL_RATE    ,0)),0) AS A_APPL_RATE    ,
+               ROUND(AVG(NVL(PL_BID_AMT   ,0)),0) AS A_PL_BID_AMT   ,
+               ROUND(AVG(NVL(PRE_BOND_AMT ,0)),0) AS A_PRE_BOND_AMT
+          FROM ES10 A
+         WHERE ESTI_DATE            BETWEEN #{00_감정일자_부터}  AND #{01_감정일자_까지}
+           AND NVL(JUSO1,'%')          LIKE #{02_주소}  || '%'
+           AND JUM_CODE                  IN (${condition1})
+           AND NVL(PLMIN_BID_AMT,0) BETWEEN #{07_최종평가가격_최저} AND #{08_최종평가가격_최고}
+           AND NVL(APPL_RATE,0)     BETWEEN #{03_낙찰가율_최저}     AND #{03_낙찰가율_최고}
+           AND NVL(PL_BID_AMT,0)    BETWEEN #{03_예상낙찰가_최저}   AND #{04_예상낙찰가_최고}
+           AND SEC_CODE                  IN (${condition2})
+           AND NVL(L_SIZE,0)        BETWEEN #{09_면적_토지_최저}    AND #{10_면적_토지_최고}
+           AND NVL(B_SIZE,0)        BETWEEN #{11_면적_건물_최저}    AND #{12_면적_건물_최고}
+           AND DECODE(SEC_CODE , '501', 1, 2) = NVL((SELECT 1
+                                                       FROM DUAL
+                                                      WHERE EXISTS (SELECT 501
+                                                                      FROM ES2013 B, ES10 C
+                                                                     WHERE B.YYYY = A.YYYY
+                                                                       AND B.SEQ  = A.SEQ
+                                                                       AND B.YYYY = C.YYYY
+                                                                       AND B.SEQ  = C.SEQ
+                                                                       AND C.SEC_CODE = '501'
+                                                                       AND LCATEGORY IN (${condition3} ))), 2)
+           AND DECODE(#{14_1차거래처}, NULL, 1, GEO_CODE) IN NVL(#{14_1차거래처},1)
+           AND MARKET_DIV             LIKE #{15_자체및업소} || '%'
+         GROUP BY DECODE(#{16_합산_감정일자} , 1, SUBSTRB(ESTI_DATE,1,4), 2, SUBSTRB(ESTI_DATE,1,6)),
+                  DECODE(#{17_합산_지점}     , 1, JUM_CODE  ),
+                  DECODE(#{18_합산_담보종류} , 1, SEC_CODE  ),
+                  DECODE(#{19_합산_업소구분} , 1, MARKET_DIV)
+         ORDER BY 1,2,3,4
+       ) AA
+
+        ]]>
+                </select>
+
+    <!-- Q_담보목록_그래프용 -->
+    <select id="selectList6WithCondition" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT DECODE(LENGTH(ESTI_DATE), 4, SUBSTRB(ESTI_DATE,1,4),
+                                 6, SUBSTRB(ESTI_DATE,1,4)||'-'||SUBSTRB(ESTI_DATE,5,2), '전체') AS 감정일자,
+       NVL((SELECT REPLACE(SMALLNAME, '지점') FROM V_IA03 WHERE BUSEO = AA.JUM_CODE ), '전체') AS 지점명,
+       NVL((SELECT CD_DESC FROM ES00 WHERE ATTR_00 = 'DIV100' AND CD_CODE = AA.SEC_CODE), '전체') AS 담보종류명,
+       DECODE(MARKET_DIV, '0', '자체', '1', '업소', '전체') AS 업소구분명,
+       INCREASE_AMT  AS 평가가격    ,
+       PLMIN_BID_AMT AS 최종평가가격,
+       PL_BID_AMT    AS 예상낙찰가  ,
+       PRE_BOND_AMT  AS 선순위채권액,
+       CNT           AS 건수        ,
+       A_INCREASE_AMT  AS 평균_평가가격    ,
+       A_PLMIN_BID_AMT AS 평균_최종평가가격,
+       A_APPL_RATE     AS 평균_낙찰가율    ,
+       A_PL_BID_AMT    AS 평균_예상낙찰가  ,
+       A_PRE_BOND_AMT  AS 평균_선순위채권액
+  FROM (
+        SELECT MAX(DECODE(#{16_합산_감정일자} , 1, SUBSTRB(ESTI_DATE,1,4), 2, SUBSTRB(ESTI_DATE,1,6))) AS ESTI_DATE,
+               MAX(DECODE(#{17_합산_지점}     , 1, JUM_CODE  )) AS JUM_CODE,
+               MAX(DECODE(#{18_합산_담보종류} , 1, SEC_CODE  )) AS SEC_CODE,
+               MAX(DECODE(#{19_합산_업소구분} , 1, MARKET_DIV)) AS MARKET_DIV,
+               SUM(NVL(INCREASE_AMT ,0)) AS INCREASE_AMT ,
+               SUM(NVL(PLMIN_BID_AMT,0)) AS PLMIN_BID_AMT,
+               SUM(NVL(PL_BID_AMT   ,0)) AS PL_BID_AMT   ,
+               SUM(NVL(PRE_BOND_AMT ,0)) AS PRE_BOND_AMT ,
+               COUNT(SEQ)                AS CNT          ,
+               ROUND(AVG(NVL(INCREASE_AMT ,0)),0) AS A_INCREASE_AMT ,
+               ROUND(AVG(NVL(PLMIN_BID_AMT,0)),0) AS A_PLMIN_BID_AMT,
+               ROUND(AVG(NVL(APPL_RATE    ,0)),0) AS A_APPL_RATE    ,
+               ROUND(AVG(NVL(PL_BID_AMT   ,0)),0) AS A_PL_BID_AMT   ,
+               ROUND(AVG(NVL(PRE_BOND_AMT ,0)),0) AS A_PRE_BOND_AMT
+          FROM ES10 A
+         WHERE ESTI_DATE            BETWEEN #{00_감정일자_부터}  AND #{01_감정일자_까지}
+           AND NVL(JUSO1,'%')          LIKE #{02_주소}  || '%'
+           AND JUM_CODE                  IN (${condition1})
+           AND NVL(PLMIN_BID_AMT,0) BETWEEN #{07_최종평가가격_최저} AND #{08_최종평가가격_최고}
+           AND NVL(APPL_RATE,0)     BETWEEN #{03_낙찰가율_최저}     AND #{03_낙찰가율_최고}
+           AND NVL(PL_BID_AMT,0)    BETWEEN #{03_예상낙찰가_최저}   AND #{04_예상낙찰가_최고}
+           AND SEC_CODE                  IN (${condition2})
+           AND NVL(L_SIZE,0)        BETWEEN #{09_면적_토지_최저}    AND #{10_면적_토지_최고}
+           AND NVL(B_SIZE,0)        BETWEEN #{11_면적_건물_최저}    AND #{12_면적_건물_최고}
+           AND DECODE(SEC_CODE , '501', 1, 2) = NVL((SELECT 1
+                                                       FROM DUAL
+                                                      WHERE EXISTS (SELECT 501
+                                                                      FROM ES2013 B, ES10 C
+                                                                     WHERE B.YYYY = A.YYYY
+                                                                       AND B.SEQ  = A.SEQ
+                                                                       AND B.YYYY = C.YYYY
+                                                                       AND B.SEQ  = C.SEQ
+                                                                       AND C.SEC_CODE = '501'
+                                                                       AND LCATEGORY IN (${condition3} ))), 2)
+           AND DECODE(#{14_1차거래처}, NULL, 1, GEO_CODE) IN NVL(#{14_1차거래처},1)
+           AND MARKET_DIV             LIKE #{15_자체및업소} || '%'
+         GROUP BY DECODE(#{16_합산_감정일자} , 1, SUBSTRB(ESTI_DATE,1,4), 2, SUBSTRB(ESTI_DATE,1,6)),
+                  DECODE(#{17_합산_지점}     , 1, JUM_CODE  ),
+                  DECODE(#{18_합산_담보종류} , 1, SEC_CODE  ),
+                  DECODE(#{19_합산_업소구분} , 1, MARKET_DIV)
+         ORDER BY 1,2,3,4
+       ) AA
+        ]]>
+                </select>
+
+    <!-- Q_담보종류 -->
+    <select id="selectList7" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc
+        FROM es00
+        WHERE attr_00 = 'DIV100'
+          AND use_yn = 'Y'
+        ]]>
+                </select>
+
+    <!-- Q_부서목록 -->
+    <select id="selectList8" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT buseo, smallname buseo_name
+        FROM V_IA03
+        WHERE uses = '0'
+          AND SEARCH_COMBO_USE = 'Y'
+        ORDER BY 1
+        ]]>
+                </select>
+
+    <!-- Q_우편번호_구군 -->
+    <select id="selectList9" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '%' AS 구군, '전체' AS 구군명
+        FROM DUAL
+        UNION ALL
+        SELECT GUGUN AS 구군,
+               GUGUN AS 구군명
+        FROM (SELECT DISTINCT GUGUN
+              FROM V_TCO26
+              WHERE SIDO = #{00_우편번호_시도}
+              ORDER BY 1)
+        ]]>
+                </select>
+
+    <!-- Q_우편번호_동 -->
+    <select id="selectList10" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '%' AS 동, '전체' AS 동명칭
+        FROM DUAL
+        UNION ALL
+        SELECT DONG AS 동,
+               DONG AS 동명칭
+        FROM (SELECT DISTINCT DONG
+              FROM V_TCO26
+              WHERE SIDO = #{00_우편번호_시도}
+                AND GUGUN LIKE #{00_우편번호_구군} || '%'
+              ORDER BY 1)
+        WHERE TRIM(DONG) IS NOT NULL
+        ]]>
+                </select>
+
+    <!-- Q_우편번호_시도 -->
+    <select id="selectList11" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '%' AS 시도, '전체' AS 시도명칭
+        FROM DUAL
+        UNION ALL
+        SELECT DISTINCT SIDO AS 시도, SIDO AS 시도
+        FROM V_TCO26
+        ]]>
+                </select>
+
+    <!-- Q_지목 -->
+    <select id="selectList12" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc
+        FROM es00
+        WHERE cd_div = '112'
+          AND use_yn = 'Y'
+        ]]>
+                </select>
+</mapper>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.old.es00.repository.Es00W01Mapper">
+
+	<select id="selectLclasList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+			CD_CODE AS cdCode, 
+			CD_CODE||': '||CD_DESC AS cdDesc,
+		    ATTR_00 AS attr00, 
+		    ATTR_01 AS attr01, 
+		    ATTR_02 AS attr02,
+		    ATTR_03 AS attr03, 
+		    ATTR_04 AS attr04, 
+		    ATTR_05 AS attr05,
+			ATTR_06 AS attr06, 
+			ATTR_07 AS attr07, 
+			ATTR_08 AS attr08, 
+			ATTR_09 AS attr09, 
+			ATTR_10 AS attr10
+		FROM 
+			ES00
+		WHERE
+			ATTR_00 = 'DIV000'
+		ORDER BY 
+			CD_CODE
+	</select>
+	
+	<select id="selectHeaderList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+		    ATTR_00 AS attr00, 
+		    ATTR_01 AS attr01, 
+		    ATTR_02 AS attr02,
+		    ATTR_03 AS attr03, 
+		    ATTR_04 AS attr04, 
+		    ATTR_05 AS attr05,
+			ATTR_06 AS attr06, 
+			ATTR_07 AS attr07, 
+			ATTR_08 AS attr08, 
+			ATTR_09 AS attr09, 
+			ATTR_10 AS attr10
+		FROM 
+			ES00
+		WHERE
+			ATTR_00 = 'DIV000'
+		AND
+			ATTR_09 = #{attr09} 
+		ORDER BY 
+			CD_CODE
+	</select>
+	
+	<select id="selectAllcodeList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+			CD_DIV AS cdDiv, 
+			CD_CODE AS cdCode, 
+			CD_DESC AS cdDesc,
+			ORDER_SEQ AS orderSeq, 
+			USE_YN AS useYn, 
+		    ATTR_00 AS attr00, 
+		    ATTR_01 AS attr01, 
+		    ATTR_02 AS attr02,
+		    ATTR_03 AS attr03, 
+		    ATTR_04 AS attr04, 
+		    ATTR_05 AS attr05,
+			ATTR_06 AS attr06, 
+			ATTR_07 AS attr07, 
+			ATTR_08 AS attr08, 
+			ATTR_09 AS attr09, 
+			ATTR_10 AS attr10
+		FROM 
+			ES00
+		WHERE 
+			1 = 1
+			<if test="attr00 != null and attr00 != '' ">
+				AND ATTR_00 = #{attr00}          
+			</if>
+		ORDER BY 
+			CD_DIV, ORDER_SEQ, CD_CODE
+	</select>
+	
+	<insert id="es00_w01_insert_save">
+		INSERT INTO 
+			ES00(
+					CD_DIV,
+					CD_CODE,
+					CD_DESC,
+					ORDER_SEQ,
+					USE_YN,
+					ATTR_00,
+					ATTR_01,
+					ATTR_02,
+					ATTR_03,
+					ATTR_04,
+					ATTR_05,
+					ATTR_06,
+					ATTR_07,
+					ATTR_08,
+					ATTR_09,
+					ATTR_10
+				)
+			VALUES
+				(
+					 #{cddiv}, 
+					 #{cdcode}, 
+					 #{cddesc}, 
+					 #{orderseq}, 
+					 #{useyn}, 
+					 #{attr00}, 
+					 #{attr01}, 
+					 #{attr02}, 
+					 #{attr03}, 
+					 #{attr04}, 
+					 #{attr05}, 
+					 #{attr06}, 
+					 #{attr07}, 
+					 #{attr08}, 
+					 #{attr09}, 
+					 #{attr10} 
+				)	
+	</insert>
+	
+	<update id="es00_w01_update_save" >
+		<![CDATA[
+			UPDATE 
+				ES00
+			SET 
+				CD_DESC= #{cddesc},
+				ORDER_SEQ = #{orderseq},
+				USE_YN = #{useyn},
+			    ATTR_00 = #{attr00},
+			    ATTR_01 = #{attr01},
+			    ATTR_02 = #{attr02},
+			    ATTR_03 = #{attr03},
+			    ATTR_04 = #{attr04},
+			    ATTR_05 = #{attr05},
+			    ATTR_06 = #{attr06},
+			    ATTR_07 = #{attr07},
+			    ATTR_08 = #{attr08},
+			    ATTR_09 = #{attr09},
+			    ATTR_10 = #{attr10}
+			WHERE 
+				CD_DIV= #{cddiv}
+			AND
+				CD_CODE = #{cdcode}
+		]]>
+	</update>
+</mapper>

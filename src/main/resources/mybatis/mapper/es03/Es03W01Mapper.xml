@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.mapper.Es03W01Mapper">
+    <select id="selectList1" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC
+        FROM ES00
+        WHERE ATTR_00 = 'DIV999'
+          AND TO_NUMBER(CD_CODE) <= (SELECT TO_CHAR(LAST_DAY(TO_DATE(SUBSTRB(#{해당년월},1,6), 'YYYYMM')), 'DD') FROM DUAL)
+        ]]>
+    </select>
+
+    
+    <select id="selectList2" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT CD_CODE,
+               CD_DESC
+        FROM ES00
+        WHERE ATTR_00 = 'DIV999'
+          AND TO_NUMBER(CD_CODE) <= (SELECT TO_CHAR(LAST_DAY(TO_DATE(SUBSTRB(#{해당년월},1,6), 'YYYYMM')), 'DD') FROM DUAL)
+]]>
+                </select>
+
+    
+    <select id="selectList3" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT TO_CHAR (ADD_MONTHS (SYSDATE, -6), 'YYYY') AS start_year,
+               TO_CHAR (ADD_MONTHS (SYSDATE, -6), 'MM') AS start_month,
+               TO_CHAR (ADD_MONTHS (SYSDATE, -6), 'DD') AS start_day
+        FROM DUAL
+        ]]>
+                </select>
+
+    
+    <select id="selectList4" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT geo_code, yakho AS sangho, saup_no, daepyo_name, uptae, jongmok
+        FROM V_CO01
+        WHERE yakho LIKE '%'||#{거래처명} ||'%'
+
+        ORDER BY yakho
+        ]]>
+                </select>
+    
+    <select id="selectList5ByCondition" resultType="java.util.HashMap">
+SELECT   smallname, yyyy, seq, sec_code, juso1, jum_code, esti_date, geo_code,
+         sangho, market_div, market_name, l_size, l_size_py, b_size,
+         b_size_py, increase_amt, plmin_bid_amt, pl_bid_amt, sec_name,
+         proc_div, proc_name, es_div
+       LIQUOR_TYPE,
+       LIQUOR_TYPE_NM
+    FROM (SELECT juso1,REPLACE (b.smallname, '지점', '') smallname, yyyy, seq,
+                 sec_code, jum_code, esti_date, geo_code, sangho, market_div,
+                 market_name, l_size, l_size_py, b_size, b_size_py,
+                 increase_amt, plmin_bid_amt, pl_bid_amt,
+                 (SELECT cd_desc
+                    FROM es00
+                   WHERE cd_div = '100' AND cd_code = a.sec_code) sec_name,
+                 proc_div,
+                 (SELECT cd_desc
+                    FROM es00
+                   WHERE cd_div = '172' AND cd_code = a.proc_div) proc_name,
+                 DECODE (SUBSTR (seq, 5, 2), '00', '初', '再') es_div,
+		       A.LIQUOR_TYPE,
+		       (SELECT CD_DESC FROM ES00 WHERE CD_DIV = '600' AND CD_CODE = A.LIQUOR_TYPE) AS LIQUOR_TYPE_NM
+            FROM es10 a, v_ia03 b
+           WHERE a.jum_code = b.buseo
+             AND esti_date BETWEEN #{00_감정일자_부터}  AND #{01_감정일자_까지}
+             AND nvl(juso1,0) LIKE #{02_주소} || '%'
+             AND jum_code IN (${condition13})
+
+        <if test="condition1 > 0 or condition2 > 0">
+            #{09_면적_토지_최저}
+            AND plmin_bid_amt BETWEEN #{07_최종평가가격_최저}  AND #{08_최종평가가격_최고}
+        </if>
+        <if test="condition3 > 0 or condition4 > 0">
+            AND pl_bid_amt BETWEEN #{03_예상낙찰가_최저}  AND #{04_예상낙찰가_최고}
+        </if>
+        AND sec_code IN (${condition9})
+        <if test="condition5 > 0 or condition6 > 0">
+            AND l_size BETWEEN #{09_면적_토지_최저}  AND #{10_면적_토지_최고}
+        </if>
+        <if test="condition7 > 0 or condition8 > 0">
+            AND b_size BETWEEN #{11_면적_건물_최저}  AND #{12_면적_건물_최고}
+        </if>
+
+        <if test='condition9 == "501"'>
+            AND EXISTS (
+            SELECT 1
+            FROM es2013
+            WHERE yyyy = a.yyyy
+            AND seq = a.seq
+            AND lcategory IN
+            (${condition12} ))
+        </if>
+        <if test='condition10 != ""'>
+            AND geo_code IN (${condition10} )
+        </if>
+        <if test='condition11 != "A"'>
+            AND market_div = #{condition11}
+        </if>
+     )
+ORDER BY jum_code, esti_date, sec_code, geo_code, market_name
+                </select>
+
+    
+    <select id="selectList6" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc
+        FROM es00
+        WHERE attr_00 = 'DIV100'
+          AND use_yn = 'Y'
+          ]]>
+                </select>
+
+    
+    <select id="selectList7" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT buseo, smallname buseo_name
+        FROM V_IA03
+        WHERE uses = '0' AND SEARCH_COMBO_USE = 'Y'
+        ORDER BY BUSUN
+        ]]>
+                </select>
+
+    
+    <select id="selectList8" resultType="java.util.HashMap">
+                    <![CDATA[
+
+        SELECT '%'   AS 구군, '전체' AS 구군명
+          FROM DUAL
+        UNION ALL
+        SELECT GUGUN AS 구군,
+               GUGUN AS 구군명
+          FROM (
+                SELECT DISTINCT GUGUN
+                  FROM V_TCO26
+                 WHERE SIDO  = #{00_우편번호_시도}
+                 ORDER BY 1
+               )
+        ]]>
+                </select>
+
+    
+    <select id="selectList9" resultType="java.util.HashMap">
+        SELECT '%'   AS 동, '전체' AS 동명칭
+        FROM DUAL
+        UNION ALL
+        SELECT DONG AS 동,
+               DONG AS 동명칭
+        FROM (
+                 SELECT DISTINCT DONG
+                 FROM V_TCO26
+                 WHERE SIDO     = #{00_우편번호_시도}
+                   AND GUGUN LIKE #{00_우편번호_구군} || '%'
+                 ORDER BY 1
+             )
+        WHERE TRIM(DONG) IS NOT NULL
+    </select>
+
+    <select id="selectList10" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '%'   AS 시도, '전체' AS 시도명칭
+        FROM DUAL
+        UNION ALL
+        SELECT DISTINCT SIDO AS 시도, SIDO AS 시도
+        FROM V_TCO26
+        ]]>
+    </select>
+
+    
+    <select id="selectList11" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT cd_code, cd_desc
+        FROM es00
+        WHERE cd_div = '112' AND use_yn = 'Y'
+        ]]>
+    </select>
+
+</mapper>

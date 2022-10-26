@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.mapper.Es03W03Mapper">
+    <!-- Q_01_감정현황_건수 -->
+    <select id="selectList1" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '건수'                                          AS 구분,
+               DECODE(NO, 1, YYYY || '년', 2, '총건수', 3, '평균') AS 년도,
+               DECODE(NO, 3, TRUNC(AVG(CNT)), SUM(CNT))      AS 건수
+        FROM (SELECT SUBSTRB(ESTI_DATE, 1, 4) AS YYYY,
+                     COUNT(*)                 AS CNT,
+                     SUM(MANA_PL_BID_AMT)     AS BID_AMT
+              FROM ES10
+              WHERE ESTI_DATE >= #{감정년도} || '0101'
+                AND PROC_DIV = '29'
+              GROUP BY SUBSTRB(ESTI_DATE, 1, 4)) A,
+             (SELECT LEVEL AS NO FROM DUAL CONNECT BY LEVEL <= 3) B
+        GROUP BY NO, DECODE(NO, 1, YYYY || '년', 2, '총건수', 3, '평균')
+        ORDER BY 년도
+        ]]>
+                </select>
+
+    <!-- Q_01_감정현황_건수_차트 -->
+    <select id="selectList2" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '건수'                                     AS 구분,
+               DECODE(NO, 1, YYYY || '년', 2, '평균')      AS 년도,
+               DECODE(NO, 2, TRUNC(AVG(CNT)), SUM(CNT)) AS 건수
+        FROM (SELECT SUBSTRB(ESTI_DATE, 1, 4) AS YYYY,
+                     COUNT(*)                 AS CNT
+              FROM ES10
+              WHERE ESTI_DATE >= #{감정년도} || '0101'
+                AND PROC_DIV = '29'
+              GROUP BY SUBSTRB(ESTI_DATE, 1, 4)) A,
+             (SELECT LEVEL AS NO FROM DUAL CONNECT BY LEVEL <= 2) B
+        GROUP BY NO, DECODE(NO, 1, YYYY || '년', 2, '평균')
+        ORDER BY 년도
+        ]]>
+                </select>
+
+    <!-- Q_01_감정현황_평가금액 -->
+    <select id="selectList3" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '평가금액'                                           AS 구분,
+               DECODE(NO, 1, YYYY || '년', 2, '총금액', 3, '평균')    AS 년도,
+               DECODE(NO, 3, TRUNC(AVG(BID_AMT)), SUM(BID_AMT)) AS 건수
+        FROM (SELECT SUBSTRB(ESTI_DATE, 1, 4) AS YYYY,
+                     SUM(PL_BID_AMT)          AS BID_AMT
+              FROM ES10
+              WHERE ESTI_DATE >= #{감정년도} || '0101'
+                AND PROC_DIV = '29'
+              GROUP BY SUBSTRB(ESTI_DATE, 1, 4)) A,
+             (SELECT LEVEL AS NO FROM DUAL CONNECT BY LEVEL <= 3) B
+        GROUP BY NO, DECODE(NO, 1, YYYY || '년', 2, '총금액', 3, '평균')
+        ORDER BY 년도
+        ]]>
+                </select>
+
+    <!-- Q_01_감정현황_평가금액_차트 -->
+    <select id="selectList4" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT 구분,
+               년도,
+               ROUND(건수, -6) / 1000000 AS 건수
+        FROM (SELECT '평가금액'                                           AS 구분,
+                     DECODE(NO, 1, YYYY || '년', 2, '평균')              AS 년도,
+                     DECODE(NO, 2, TRUNC(AVG(BID_AMT)), SUM(BID_AMT)) AS 건수
+              FROM (SELECT SUBSTRB(ESTI_DATE, 1, 4) AS YYYY,
+                           SUM(PL_BID_AMT)          AS BID_AMT
+                    FROM ES10
+                    WHERE ESTI_DATE >= #{감정년도} || '0101'
+                      AND PROC_DIV = '29'
+                    GROUP BY SUBSTRB(ESTI_DATE, 1, 4)) A,
+                   (SELECT LEVEL AS NO FROM DUAL CONNECT BY LEVEL <= 2) B
+              GROUP BY NO, DECODE(NO, 1, YYYY || '년', 2, '평균'))
+        ORDER BY 년도
+        ]]>
+                </select>
+
+    <!-- Q_담보목록 -->
+    <select id="selectList5" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT smallname,
+               yyyy,
+               seq,
+               sec_code,
+               jum_code,
+               esti_date,
+               geo_code,
+               sangho,
+               market_div,
+               market_name,
+               l_size,
+               l_size_py,
+               b_size,
+               b_size_py,
+               curr_amt,
+               plmin_bid_amt,
+               pl_bid_amt,
+               c_cl_amt,
+               l_cl_amt,
+               b_cl_amt,
+               cln_tot_amt,
+               c_pl_amt,
+               l_pl_amt,
+               pl_tot_amt,
+               sec_name,
+               proc_div,
+               proc_name,
+               es_div,
+               smallname
+                   || '_'
+                   || sangho
+                   || '_'
+                   || NVL(market_name, '자체')
+                   || '_'
+                   || sec_name
+                   || '_'
+                   || esti_date AS file_name
+        FROM (SELECT REPLACE(b.smallname, '지점', '')            smallname,
+                     yyyy,
+                     seq,
+                     sec_code,
+                     jum_code,
+                     esti_date,
+                     geo_code,
+                     sangho,
+                     market_div,
+                     market_name,
+                     l_size,
+                     l_size_py,
+                     b_size,
+                     b_size_py,
+                     curr_amt,
+                     plmin_bid_amt,
+                     pl_bid_amt,
+                     c_cl_amt,
+                     l_cl_amt,
+                     b_cl_amt,
+                     c_cl_amt + l_cl_amt + b_cl_amt            cln_tot_amt,
+                     c_pl_amt,
+                     l_pl_amt,
+                     b_pl_amt,
+                     c_pl_amt + l_pl_amt + b_pl_amt            pl_tot_amt,
+                     (SELECT cd_desc
+                      FROM es00
+                      WHERE cd_div = '100'
+                        AND cd_code = a.sec_code)              sec_name,
+                     proc_div,
+                     (SELECT cd_desc
+                      FROM es00
+                      WHERE cd_div = '172'
+                        AND cd_code = a.proc_div)              proc_name,
+                     DECODE(SUBSTR(seq, 5, 2), '00', '初', '再') es_div
+              FROM es10 a,
+                   V_ia03 b
+              WHERE a.jum_code = b.buseo
+                AND jum_code LIKE #{부서}
+                AND sec_code LIKE #{담보종류}
+                AND esti_date BETWEEN #{담보감정일자_부터} AND #{담보감정일자_까지}
+                AND proc_div LIKE #{결재진행현황})
+        ORDER BY jum_code, esti_date, sec_code, geo_code, market_name
+        ]]>
+    </select>
+
+    <!-- Q_담보종류 -->
+    <select id="selectList6" resultType="java.util.HashMap">
+                    <![CDATA[
+        SELECT '%' cd_code, '전체' cd_desc
+        FROM DUAL
+        UNION ALL
+        SELECT cd_code, cd_desc
+        FROM es00
+        WHERE attr_00 = 'DIV100'
+          AND use_yn = 'Y'
+        ]]>
+    </select>
+</mapper>

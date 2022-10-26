@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.old.es00.repository.Es00W02Mapper">
+
+	<select id="selectDsrtctList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT   
+			b.buseo, 
+			b.fullname,
+			a.sabun AS sabun_num,
+		    CASE WHEN sabun IN (SELECT sabun FROM V_IA01 WHERE inteojik = '0' AND MANAGE_FLAG = '0') THEN sabun ELSE NAME END sabun,
+		    CASE WHEN sabun IN (SELECT sabun FROM V_IA01 WHERE inteojik = '0' AND MANAGE_FLAG = '0') THEN 1 WHEN sabun IS NULL THEN 9 ELSE 2 END checkcolor
+		FROM 
+			(SELECT jum_code, a.sabun, NAME FROM es02 a, V_IA01 b WHERE a.sabun = b.sabun ) a,
+		    (SELECT buseo, fullname, middlename, smallname, busun, uses FROM V_IA03 WHERE uses = '0' AND SEARCH_COMBO_USE = 'Y' ) b
+		WHERE 
+			a.jum_code(+) = b.buseo
+		ORDER BY 
+			buseo
+	</select>
+	
+	<select id="selectManagerList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+			sabun,
+			name
+		FROM 
+			V_IA01
+		WHERE 
+			inteojik = '0' 
+		AND 
+			MANAGE_FLAG = '0'
+		UNION
+		SELECT 
+			'' AS sabun, 
+			'담당자 없음' as name
+		FROM 
+			dual
+	</select>
+	
+	<update id="es00_w02_update_save">
+		MERGE INTO es02 a
+		   USING (SELECT #{jum_code} AS jum_code FROM DUAL) b
+		   ON (a.jum_code = b.jum_code)
+		   WHEN MATCHED THEN
+		      UPDATE SET sabun = #{sabun}
+		   WHEN NOT MATCHED THEN
+		      INSERT (jum_code, sabun) VALUES ( #{jum_code}, #{sabun} )
+	</update>
+	
+</mapper>

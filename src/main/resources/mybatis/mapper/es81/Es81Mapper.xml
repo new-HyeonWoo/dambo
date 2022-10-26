@@ -1,0 +1,1316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.mapper.Es81Mapper">
+	<select id="selectEs81Prt00WithCollection" resultType="java.util.HashMap">
+		<![CDATA[
+		SELECT YYYY                AS 년도                      ,
+			   SEQ                 AS 일련번호                  ,
+			   SEC_CODE            AS 담보종류                  , (SELECT '집합건물 감정서 ('|| ATTR_01 || ')'
+															   FROM ES00
+															   WHERE ATTR_00 = 'DIV100' AND CD_CODE = SEC_CODE)||
+															  (SELECT ' ('|| CD_DESC||')'
+															   FROM ES00
+															   WHERE CD_DIV = '600' AND CD_CODE = LIQUOR_TYPE) AS 담보종류명,
+			   JUM_CODE            AS 지점코드                  ,
+			   (SELECT SMALLNAME FROM V_IA03 WHERE BUSEO = JUM_CODE) ||'  '|| (SELECT JIKGUB_NAME||LPAD(NAME, 8, ' ')
+																			   FROM V_IA01_LEADER
+																			   WHERE SABUN = JUM_SABUN) AS 지점명,
+			   REQ_JUM             AS 의뢰한지점코드            , (SELECT SMALLNAME
+															FROM V_IA03
+															WHERE BUSEO = REQ_JUM) AS 의뢰지점명,
+			   ESTI_DATE           AS 담보감정일자              ,
+			   GEO_CODE            AS 거래처코드                ,
+			   SANGHO              AS 거래처명                  ,
+			   DAEPYO_NAME         AS 거래처대표자              ,
+			   MARKET_DIV          AS 업소구분                  ,
+			   MARKET_NAME         AS 업소명                    ,
+			   MARKET_CEO          AS 업소대표자                ,
+			   DEBTOR              AS 채무자                    ,
+			   POSS_OWNER          AS 소유자                    ,
+			   GUARANTOR           AS 담보제공자                ,
+			   DEBTOR_RELATION     AS 채무자와담보제공자와의관계,
+			   B_USE_CODE          AS 건축물의용도              ,
+			   B_USE_DESC          AS 건축물의용도비고          ,
+			   B_NAME              AS 건물의명칭및호수          ,
+			   JUSO1               AS 부동산표시_주소1          ,
+			   JUSO2               AS 부동산표시_주소2          ,
+			   L_SIZE              AS 지점_토지면적             ,
+			   L_SIZE_PY           AS 지점_토지면적_평          ,
+			   B_SIZE              AS 지점_건물면적             ,
+			   B_SIZE_PY           AS 지점_건물면적_평          ,
+			   CURR_AMT            AS 지점_시가                 ,
+			   PLMIN_BID_AMT       AS 지점_예상1차최저입찰가    ,
+			   PL_BID_AMT          AS 지점_예상낙찰가           ,
+			   C_CL_AMT            AS 지점_동시설정한도액       ,
+			   L_CL_AMT            AS 지점_토지설정한도액       ,
+			   B_CL_AMT            AS 지점_건물설정한도액       ,
+			   C_PL_RANK           AS 지점_동시설정예정액_순위  ,
+			   C_PL_AMT            AS 지점_동시설정예정액_금액  ,
+			   L_PL_RANK           AS 지점_토지설정예정액_순위  ,
+			   L_PL_AMT            AS 지점_토지설정예정액_금액  ,
+			   B_PL_RANK           AS 지점_건물설정예정액_순위  ,
+			   B_PL_AMT            AS 지점_건물설정예정액_금액  ,
+			   MANA_L_SIZE         AS 관재_토지면적             ,
+			   MANA_L_SIZE_PY      AS 관재_토지면적_평          ,
+			   MANA_B_SIZE         AS 관재_건물면적             ,
+			   MANA_B_SIZE_PY      AS 관재_건물면적_평          ,
+			   MANA_CURR_AMT       AS 관재_시가                 ,
+			   MANA_PL_MIN_BID_AMT AS 관재_예상1차최저입찰가    ,
+			   MANA_PL_BID_AMT     AS 관재_예상낙찰가           ,
+			   MANA_C_CL_AMT       AS 관재_동시설정한도액       ,
+			   MANA_L_CL_AMT       AS 관재_토지설정한도액       ,
+			   MANA_B_CL_AMT       AS 관재_건물설정한도액       ,
+			   MANA_C_PL_RANK      AS 관재_동시설정예정액_순위  ,
+			   MANA_C_PL_AMT       AS 관재_동시설정예정액_금액  ,
+			   MANA_L_PL_RANK      AS 관재_토지설정예정액_순위  ,
+			   MANA_L_PL_AMT       AS 관재_토지설정예정액_금액  ,
+			   MANA_B_PL_RANK      AS 관재_건물설정예정액_순위  ,
+			   MANA_B_PL_AMT       AS 관재_건물설정예정액_금액  ,
+			   JUM_SABUN           AS 최초감정자사번            ,
+			   JUM_COMP_DATE       AS 지점_결재완료일자         ,
+			   JUM_TRAN_DATE       AS 지점_전송일자             ,
+			   MANA_RECE_DATE      AS 관재_접수일자             ,
+			   MANA_RECE_SABUN     AS 관재_접수자사번           ,
+			   MANA_COMP_DATE      AS 관재_결재완료일자         ,
+			   PROC_DIV            AS 작업진행상태              ,
+			   DECODE(SUBSTRB(SEQ,5,2), '00', '최초감정', '재감정 ('||TO_NUMBER(SUBSTRB(SEQ,5,2))||'번째)') AS 임시_재감정여부,
+			   CASE WHEN PROC_DIV BETWEEN '21' AND '28' THEN  (SELECT  '<< '||DECODE(APPRAISE_GU,'0','',CD_DESC||'_' )
+															   FROM  ES00
+															   WHERE ATTR_00 = 'DIV194'
+																 AND USE_YN  = 'Y'
+																 AND CD_CODE = APPRAISE_GU)||'관재진행중 >>'
+					ELSE                                    (SELECT  '<< '||CD_DESC ||' >>'
+															 FROM  ES00
+															 WHERE ATTR_00 = 'DIV194'
+															   AND USE_YN  = 'Y'
+															   AND CD_CODE = APPRAISE_GU)
+				   END AS 감정상태,
+			   BID_USE_YN AS 응찰여부,
+			   PRE_YYYY AS 이전년도,
+			   PRE_SEQ AS 이전담보순번
+		FROM ES10
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+		]]>
+	</select>
+
+	<select id="selectEs81Prt00WithLandConstruction" resultType="java.util.HashMap">
+		<![CDATA[
+		SELECT YYYY                AS 년도                      ,
+			   SEQ                 AS 일련번호                  ,
+			   SEC_CODE            AS 담보종류                  , (SELECT '토지,건물 감정서 ('|| ATTR_01 || ')'
+															   FROM ES00
+															   WHERE ATTR_00 = 'DIV100' AND CD_CODE = SEC_CODE)||
+															  (SELECT ' ('|| CD_DESC||')'
+															   FROM ES00
+															   WHERE CD_DIV = '600' AND CD_CODE = LIQUOR_TYPE) AS 담보종류명,
+			   JUM_CODE            AS 지점코드                  , (SELECT SMALLNAME
+															   FROM V_IA03
+															   WHERE BUSEO = JUM_CODE
+															  ) ||'  '|| (SELECT JIKGUB_NAME||LPAD(NAME, 8, ' ')
+																		  FROM V_IA01_LEADER
+																		  WHERE SABUN = JUM_SABUN) AS 지점명,
+			   REQ_JUM             AS 의뢰한지점코드            , (SELECT SMALLNAME
+															FROM V_IA03
+															WHERE BUSEO = REQ_JUM) AS 의뢰지점명,
+			   ESTI_DATE           AS 담보감정일자              ,
+			   GEO_CODE            AS 거래처코드                ,
+			   SANGHO              AS 거래처명                  ,
+			   DAEPYO_NAME         AS 거래처대표자              ,
+			   MARKET_DIV          AS 업소구분                  ,
+			   MARKET_NAME         AS 업소명                    ,
+			   MARKET_CEO          AS 업소대표자                ,
+			   DEBTOR              AS 채무자                    ,
+			   POSS_OWNER          AS 소유자                    ,
+			   GUARANTOR           AS 담보제공자                ,
+			   DEBTOR_RELATION     AS 채무자와담보제공자와의관계,
+			   B_USE_CODE          AS 건축물의용도              ,
+			   B_USE_DESC          AS 건축물의용도비고          ,
+			   B_NAME              AS 건물의명칭및호수          ,
+			   JUSO1               AS 부동산표시_주소1          ,
+			   JUSO2               AS 부동산표시_주소2          ,
+			   L_SIZE              AS 지점_토지면적             ,
+			   L_SIZE_PY           AS 지점_토지면적_평          ,
+			   B_SIZE              AS 지점_건물면적             ,
+			   B_SIZE_PY           AS 지점_건물면적_평          ,
+			   CURR_AMT            AS 지점_시가                 ,
+			   PLMIN_BID_AMT       AS 지점_예상1차최저입찰가    ,
+			   PL_BID_AMT          AS 지점_예상낙찰가           ,
+			   C_CL_AMT            AS 지점_동시설정한도액       ,
+			   L_CL_AMT            AS 지점_토지설정한도액       ,
+			   B_CL_AMT            AS 지점_건물설정한도액       ,
+			   C_PL_RANK           AS 지점_동시설정예정액_순위  ,
+			   C_PL_AMT            AS 지점_동시설정예정액_금액  ,
+			   L_PL_RANK           AS 지점_토지설정예정액_순위  ,
+			   L_PL_AMT            AS 지점_토지설정예정액_금액  ,
+			   B_PL_RANK           AS 지점_건물설정예정액_순위  ,
+			   B_PL_AMT            AS 지점_건물설정예정액_금액  ,
+			   MANA_L_SIZE         AS 관재_토지면적             ,
+			   MANA_L_SIZE_PY      AS 관재_토지면적_평          ,
+			   MANA_B_SIZE         AS 관재_건물면적             ,
+			   MANA_B_SIZE_PY      AS 관재_건물면적_평          ,
+			   MANA_CURR_AMT       AS 관재_시가                 ,
+			   MANA_PL_MIN_BID_AMT AS 관재_예상1차최저입찰가    ,
+			   MANA_PL_BID_AMT     AS 관재_예상낙찰가           ,
+			   MANA_C_CL_AMT       AS 관재_동시설정한도액       ,
+			   MANA_L_CL_AMT       AS 관재_토지설정한도액       ,
+			   MANA_B_CL_AMT       AS 관재_건물설정한도액       ,
+			   MANA_C_PL_RANK      AS 관재_동시설정예정액_순위  ,
+			   MANA_C_PL_AMT       AS 관재_동시설정예정액_금액  ,
+			   MANA_L_PL_RANK      AS 관재_토지설정예정액_순위  ,
+			   MANA_L_PL_AMT       AS 관재_토지설정예정액_금액  ,
+			   MANA_B_PL_RANK      AS 관재_건물설정예정액_순위  ,
+			   MANA_B_PL_AMT       AS 관재_건물설정예정액_금액  ,
+			   JUM_SABUN           AS 최초감정자사번            ,
+			   JUM_COMP_DATE       AS 지점_결재완료일자         ,
+			   JUM_TRAN_DATE       AS 지점_전송일자             ,
+			   MANA_RECE_DATE      AS 관재_접수일자             ,
+			   MANA_RECE_SABUN     AS 관재_접수자사번           ,
+			   MANA_COMP_DATE      AS 관재_결재완료일자         ,
+			   PROC_DIV            AS 작업진행상태              ,
+			   DECODE(SUBSTRB(SEQ,5,2), '00', '최초감정', '재감정 ('||TO_NUMBER(SUBSTRB(SEQ,5,2))||'번째)') AS 임시_재감정여부,
+			   CASE WHEN PROC_DIV BETWEEN '21' AND '28' THEN  (SELECT  '<< '||DECODE(APPRAISE_GU,'0','',CD_DESC||'_' )
+															   FROM  ES00
+															   WHERE ATTR_00 = 'DIV194'
+																 AND USE_YN  = 'Y'
+																 AND CD_CODE = APPRAISE_GU)||'관재진행중 >>'
+					ELSE                                    (SELECT  '<< '||CD_DESC ||' >>'
+															 FROM  ES00
+															 WHERE ATTR_00 = 'DIV194'
+															   AND USE_YN  = 'Y'
+															   AND CD_CODE = APPRAISE_GU)
+				   END AS 감정상태,
+			   BID_USE_YN AS 응찰여부,
+			   PRE_YYYY AS 이전년도,
+			   PRE_SEQ AS 이전담보순번
+		FROM ES10
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+		]]>
+	</select>
+
+	<select id="selectEs81Prt01" resultType="java.util.HashMap">
+		SELECT YYYY             AS 년도                        ,
+			   SEQ              AS 일련번호                    ,
+			   JUSO1            AS 부동산표시_주소1            ,
+			   JUSO2            AS 부동산표시_주소2            ,
+			   LOT_NUM          AS 지번                        ,
+			   CB_NAME          AS 집합건물의명칭              ,
+			   DONG             AS 동수                        ,
+			   HO               AS 호수                        ,
+			   LCATEGORY        AS 지목_코드                   , (SELECT CD_DESC
+															  FROM ES00
+															  WHERE ATTR_00 = 'DIV112'
+																AND CD_CODE = LCATEGORY) AS 지목,
+			   LG_OWNER_YN      AS 대지권소유권보유여부        , (CASE WHEN LG_OWNER > 0 THEN '대지권 소유권' ELSE '' END)  AS 대지권소유권보유여부명,
+			   LG_OWNER         AS 대지권소유권                , ROUND(LG_OWNER*0.3025, 2) AS 대지권소유권_평,
+			   LG_SIZE          AS 대지권의목적인일단의토지전체, ROUND(LG_SIZE*0.3025, 2) AS 대지권의목적인일단의토지_평,
+			   POSS_A_AREA      AS 가임대보증금적용지역_코드   , (SELECT CD_DESC
+													  FROM ES00
+													  WHERE ATTR_00 = 'DIV106'
+														AND CD_CODE = POSS_A_AREA) AS 가임대보증금적용지역,
+			   CB_STRUC         AS 집합건물_구조               ,
+			   CB_ROOF          AS 집합건물_지붕               ,
+			   CB_UPFLOOR       AS 집합건물_지상               ,
+			   CB_DNFLOOR       AS 집합건물_지하               ,
+			   CB_FLOOR         AS 집합건물_해당층             ,
+			   CB_YYYY          AS 집합건물_건축년도           ,
+			   ELAP_YEAR        AS 집합건물_경과년도           ,
+			   NUM_HOUSEHOLD    AS 집합건물_세대수             ,
+			   NUM_YEAR         AS 집합건물_내용년수           ,
+			   CB_EXM_SIZE      AS 집합건물_전유면적           ,
+			   CB_EXM_SIZE_PY   AS 집합건물_전유면적_평        ,
+			   CB_PUB_SIZE      AS 집합건물_공유면적           ,
+			   CB_PUB_SIZE_PY   AS 집합건물_공유면적_평        ,
+			   CB_TOT_SIZE      AS 집합건물_면적합계           ,
+			   CB_TOT_SIZE_PY   AS 집합건물_면적합계_평        ,
+			   OF_GU            AS 오피스텔_용도               ,
+			   OF_HEATER_YN     AS 오피스텔_바닥난방           ,
+			   OF_FLOOR         AS 오피스텔_상가_층수          ,
+			   OF_FLOOR_IDX     AS 오피스텔_상가_층별지수      ,
+			   OF_PLACE         AS 오피스텔_상가_위치          ,
+			   OF_PLACE_IDX     AS 오피스텔_상가_위치지수      ,
+			   OF_JANGA_RATE    AS 오피스텔_상가_잔가율        ,
+			   OF_ROAD_CODE     AS 오피스텔_상가_도로조건      ,
+--     OF_ROAD_IDX      AS 오피스텔_상가_도로조건지수  ,
+			   OF_ACCESS_CODE   AS 오피스텔_상가_접근조건      ,
+--     OF_ACCESS_IDX    AS 오피스텔_상가_접근조건지수  ,
+			   OF_ETC           AS 오피스텔_상가_기타조건      ,
+			   OF_ETC_IDX       AS 오피스텔_상가_기타조건지수  ,
+			   REGI_AMT         AS 실거래가격_총액             ,
+			   REGI_DAN         AS 실거래가격_단가             ,
+			   REGI_DAN_PY      AS 실거래가격_단가_평          ,
+			   BASE_AMT         AS 기준시가_총액               ,
+			   BASE_DAN         AS 기준시가_단가               ,
+			   BASE_DAN_PY      AS 기준시가_단가_평            ,
+			   SEC_REGI_SIZE    AS 담보제공비율_전용면적       ,
+			   SEC_NUME         AS 담보제공비율_분자           ,
+			   SEC_DENO         AS 담보제공비율_분모           ,
+			   SEC_RATE         AS 담보제공비율_비율           ,
+			   SEC_OFFER_SIZE   AS 담보제공비율_담보제공면적   ,
+			   SEC_DESC         AS 담보제공비율_사유           ,
+--       INC_AMT          AS 담보제공비율_평가가액       ,
+--       FNL_INC_AMT      AS 담보제공비율_최종평가가격   ,
+			   0          AS 담보제공비율_평가가액       ,
+			   0      AS 담보제공비율_최종평가가격   ,
+			   DECODE(CB_NAME||DONG||HO, NULL, '', CB_NAME||' '||DONG||'동 '||HO||'호') AS 임시_단지명칭및동호수,
+			   '감정대상 물건은 '||SUBSTRB(CB_YYYY,1,4)||'년도에 사용승인되어 '|| ELAP_YEAR||'년 경과되었으며, 지하 '||CB_DNFLOOR||'층, 지상 '||CB_UPFLOOR||'층중의 '||CB_FLOOR||'층에 專有部分이 위치함' AS 임시_전유부분위치
+		FROM ES2011
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+	</select>
+
+	<select id="selectEs81Prt02WithLandConstruction" resultType="java.util.HashMap">
+		SELECT YYYY             AS 년도                          ,
+			   SEQ              AS 일련번호                      ,
+			   P_BID_RATE       AS 당해지역낙찰가율              ,
+			   K_BID_RATE       AS 유사부동산낙찰가율            ,
+			   B_BID_RATE       AS 기준낙찰가율                  ,
+			   RIGHTS_CODE      AS 점유자의권리형태              ,
+			   RIGHTS_RATE      AS 점유자의권리형태_적용률       ,
+			   DOMAIN_DESC      AS 법정지상권_성립사유           ,
+			   DOMAIN_CODE      AS 법정지상권_적용코드           ,
+			   DOMAIN_RATE      AS 법정지상권_적용율             ,
+			   DOMAIN_DAYS      AS 법정지상권_존속예정기간       ,
+			   APPL_RATE        AS 적용할낙찰가율                ,
+			   PL_BID_AMT       AS 예상낙찰가                    ,
+			   CURR_USE_CODE    AS 현재의주된현황                ,
+			   CURR_USE_RATE    AS 현재의주된현황_적용율         ,
+			   FUTU_USE_CODE    AS 장래의이용가능성              ,
+			   FUTU_USE_RATE    AS 장래의이용가능성_적용율       ,
+			   DET_ADJ_ROAD     AS 단독다가구_접한도로의폭       ,
+			   DET_ADJ_RATE     AS 단독다가구_접한도로의폭       ,
+			   DET_PLOT_CODE    AS 단독다가구_대지의면적         ,
+			   DET_PLOT_RATE    AS 단독다가구_대지의면적         ,
+			   DET_ELAP_CODE    AS 단독다가구_건축물의경과년도   ,
+			   DET_ELAP_RATE    AS 단독다가구_건축물의경과년도   ,
+			   BUS_ADJ_ROAD     AS 상업_접한도로의폭             ,
+			   BUS_ADJ_RATE     AS 상업_접한도로의폭             ,
+			   BUS_SHAPE_CODE   AS 상업_토지의형상               ,
+			   BUS_SHAPE_RATE   AS 상업_토지의형상               ,
+			   BUS_COMM_DEV     AS 상업_주변상권의발달정도       ,
+			   BUS_COMM_RATE    AS 상업_주변상권의발달정도_적용율,
+			   BUS_ELAP_CODE    AS 상업_건축물의경과년도         ,
+			   BUS_ELAP_RATE    AS 상업_건축물의경과년도_적용율  ,
+			   GEN_ADJ_ROAD     AS 일반_접한도로의폭             ,
+			   GEN_ADJ_RATE     AS 일반_접한도로의폭_적용율      ,
+			   GEN_LAND_CODE    AS 일반_토지의면적               ,
+			   GEN_LAND_RATE    AS 일반_토지의면적_적용율        ,
+			   GEN_CONV_LOCATED AS 일반_담보물의입지조건         ,
+			   GEN_CONV_RATE    AS 일반_담보물의입지조건_적용율  ,
+			   GEN_ELAP_CODE    AS 일반_건축물의경과년도         ,
+			   GEN_ELAP_RATE    AS 일반_건축물의경과년도_적용율  ,
+			   GEN_PUBL_CODE    AS 일반_공유지분해당여부         ,
+			   GEN_PUBL_RATE    AS 일반_공유지분해당여부_적용율
+		FROM ES2302
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+	</select>
+
+	<select id="selectEs81Prt02WithCollection" resultType="java.util.HashMap">
+		SELECT INCREASE_AMT                        AS 평가가격                   ,
+			   ROUND(INCREASE_AMT/CB_SIZE     , 0) AS 평가가격_단가              ,
+			   ROUND(INCREASE_AMT/CB_SIZE_PY  , 0) AS 평가가격_단가_평           ,
+			   PL_MIN_BID_AMT                      AS 제1차예상최저입찰가        ,
+			   ROUND(PL_MIN_BID_AMT/CB_SIZE   , 0) AS 제1차예상최저입찰가_단가   ,
+			   ROUND(PL_MIN_BID_AMT/CB_SIZE_PY, 0) AS 제1차예상최저입찰가_단가_평,
+			   PL_BID_AMT                          AS 예상낙찰가                 ,
+			   ROUND(PL_BID_AMT/CB_SIZE       , 0) AS 예상낙찰가_단가            ,
+			   ROUND(PL_BID_AMT/CB_SIZE_PY    , 0) AS 예상낙찰가_단가_평    ,
+			   APPL_RATE||'%'                           AS 적용할낙찰가율
+		FROM (
+				 SELECT DECODE(SEC_CODE, '101', CB_TOT_SIZE   , CB_EXM_SIZE   ) AS CB_SIZE    ,
+						DECODE(SEC_CODE, '101', CB_TOT_SIZE_PY, CB_EXM_SIZE_PY) AS CB_SIZE_PY ,
+						C.APPL_RATE        ,
+						C.INCREASE_AMT     ,
+						C.PL_MIN_BID_AMT ,
+						C.PL_BID_AMT
+				 FROM ES10 A, ES2011 B, ES2301 C
+				 WHERE A.YYYY = #{YYYY}
+				   AND A.SEQ  = #{SEQ}
+				   AND A.YYYY = B.YYYY
+				   AND A.SEQ  = B.SEQ
+				   AND A.YYYY = C.YYYY
+				   AND A.SEQ  = C.SEQ
+			 )
+	</select>
+	<select id="selectEs81Prt03WithCollection" resultType="java.util.HashMap">
+		SELECT YYYY           AS 년도        ,
+			   SEQ            AS 일련번호    ,
+			   REST_PL_USE    AS 국토계획    ,
+			   REST_OT_LAW    AS 다른법률    ,
+			   REST_EN_RULE   AS 시행령부칙  ,
+			   REST_FU_LAW    AS 토지이용규제,
+			   REST_MAIN_USE  AS 주변부동산
+		FROM ES2017
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+	</select>
+
+	<select id="selectEs81Prt11WithLandConstruction" resultType="java.util.HashMap">
+		SELECT MIN_DAN, ROUND(MIN_DAN*3.3058, 0) AS MIN_DAN_PY,
+			   MAX_DAN, ROUND(MAX_DAN*3.3058, 0) AS MAX_DAN_PY,
+			   ROUND(MIN_DAN * L_SIZE, 0)+INC_AMT AS MIN_AMT,
+			   ROUND(MAX_DAN * L_SIZE, 0)+INC_AMT AS MAX_AMT
+		FROM (SELECT MIN_DAN,
+					 MAX_DAN,
+					 (SELECT SUM(L_SIZE)
+					  FROM ES2013
+					  WHERE YYYY = AA.YYYY
+						AND SEQ  = AA.SEQ ) AS L_SIZE,
+					 (SELECT SUM(INC_AMT)
+					  FROM ES2015
+					  WHERE YYYY = AA.YYYY
+						AND SEQ  = AA.SEQ ) AS INC_AMT
+			  FROM (
+					   SELECT YYYY, SEQ,
+							  MIN(APPL_DAN) AS MIN_DAN,
+							  MAX(APPL_DAN) AS MAX_DAN
+					   FROM ES2126 A
+					   WHERE YYYY = #{YYYY}
+						 AND SEQ  = #{SEQ}
+--                   AND EXISTS (SELECT 1
+--                                 FROM ES2125
+--                                WHERE YYYY   = A.YYYY
+--                                  AND SEQ    = A.SEQ
+--                                  AND EX_NO  = A.EX_NO
+--                                  AND EX_DIV = '1')
+					   GROUP BY YYYY, SEQ
+				   ) AA
+			 )
+	</select>
+
+	<select id="selectEs81Prt11WithCollection" resultType="java.util.HashMap">
+		SELECT MIN_AMT,
+			   --// 아파트일경우만 면적합계로 나머지는 전유면적으로 계산함
+			   ROUND(MIN_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE   , CB_EXM_SIZE   ), 0) AS MIN_DAN,
+			   ROUND(MIN_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE_PY, CB_EXM_SIZE_PY), 0) AS MIN_DAN_PY,
+			   MAX_AMT,
+			   ROUND(MAX_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE   , CB_EXM_SIZE   ), 0) AS MAN_DAN,
+			   ROUND(MAX_AMT / DECODE(SEC_CODE, '101', CB_TOT_SIZE_PY, CB_EXM_SIZE_PY), 0) AS MAN_DAN_PY
+		FROM ES10 A,
+			 ES2011 B,
+			 (--// 감정평가_아파트
+				 SELECT YYYY, SEQ,
+						LEAST(DECODE(MA_MIN_AMT,0,9999999999999,MA_MIN_AMT), DECODE(PR_MIN_AMT,0,9999999999999,PR_MIN_AMT), DECODE(AU_MIN_AMT,0,9999999999999,AU_MIN_AMT)) AS MIN_AMT,
+						GREATEST(MA_MAX_AMT, PR_MAX_AMT, AU_MAX_AMT) AS MAX_AMT
+				 FROM ES2101
+				 WHERE YYYY = #{YYYY}
+				   AND SEQ  = #{SEQ}
+				 UNION ALL
+				 --// 감정평가_연립,다세대
+				 SELECT YYYY, SEQ,
+						LEAST(DECODE(MA_MIN_AMT,0,9999999999999,MA_MIN_AMT), DECODE(PR_MIN_AMT,0,9999999999999,PR_MIN_AMT), DECODE(AU_MIN_AMT,0,9999999999999,AU_MIN_AMT)) AS MIN_AMT,
+						GREATEST(MA_MAX_AMT, PR_MAX_AMT, AU_MAX_AMT) AS MAX_AMT
+				 FROM ES2102
+				 WHERE YYYY = #{YYYY}
+				   AND SEQ  = #{SEQ}
+				 UNION ALL
+				 --// 감정평가 상업용
+				 SELECT A.YYYY, A.SEQ,
+						LEAST(DECODE(CO_MIN_AMT,0,9999999999999,CO_MIN_AMT), DECODE(CURR_MIN_AMT,0,9999999999999,CURR_MIN_AMT)) AS MIN_AMT,
+						GREATEST(CO_MAX_AMT, CURR_MAX_AMT) AS MAX_AMT
+				 FROM ES2103 A, ES2153 B
+				 WHERE A.YYYY = #{YYYY}
+				   AND A.SEQ  = #{SEQ}
+				   AND A.YYYY = B.YYYY
+				   AND A.SEQ  = B.SEQ
+				   AND B.CHECK_YN = 'Y'
+				 UNION ALL
+				 --// 감정평가_오피스텔
+				 SELECT YYYY, SEQ,
+						LEAST(DECODE(MA_MIN_AMT,0,9999999999999,MA_MIN_AMT), DECODE(PR_MIN_AMT,0,9999999999999,PR_MIN_AMT), DECODE(AU_MIN_AMT,0,9999999999999,AU_MIN_AMT)) AS MIN_AMT,
+						GREATEST(MA_MAX_AMT, PR_MAX_AMT, AU_MAX_AMT) AS MAX_AMT
+				 FROM ES2104
+				 WHERE YYYY = #{YYYY}
+				   AND SEQ  = #{SEQ}
+			 ) C
+		WHERE A.YYYY = #{YYYY}
+		  AND A.SEQ  = #{SEQ}
+		  AND A.YYYY = B.YYYY
+		  AND A.SEQ  = B.SEQ
+		  AND A.YYYY = C.YYYY
+		  AND A.SEQ  = C.SEQ
+	</select>
+	<select id="selectEs81Prt31WithCollection" resultType="java.util.HashMap">
+		SELECT 예상낙찰가        ,
+			   채권금액          ,
+			   FN_HITE_RANKING(YYYY,SEQ,'0') AS 당사순위,
+			   당사설정금액      ,
+			   담보여력_설정전   ,
+			   담보여력_설정후   ,
+			   초과_부족설정액_문자
+		FROM V_ES10_01
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+	</select>
+	<select id="selectEs81Prt3101WithCollection" resultType="java.util.HashMap">
+		SELECT MAX(RANK_LAST) AS 최종순위,
+			   MAX(AMT) AS 채권금액
+		FROM (
+				 SELECT DISTINCT RANK,
+								 (SELECT CNT
+								  FROM (SELECT COUNT(*) CNT
+										FROM ES2404
+										WHERE YYYY   = #{YYYY}
+										  AND SEQ    = #{SEQ}
+										  AND RANK   > 6
+										  AND NVL(ERA_YN,'N') = 'N'
+										GROUP BY SHA_GU,LN_SEQ
+										ORDER BY 1 DESC
+									   )
+								  WHERE ROWNUM = 1) AS RANK_LAST,
+								 DISP_RANK         , (SELECT CD_DESC
+													  FROM ES00
+													  WHERE ATTR_00 = 'DIV511'
+														AND CD_CODE = DISP_RANK) AS DISP_RANK_NAME,
+								 NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0)   AS AMT
+				 FROM ES2404 A
+				 WHERE YYYY   = #{YYYY}
+				   AND SEQ    = #{SEQ}
+				   AND NVL(HITE_YN,'N') = 'Y'
+			 )
+	</select>
+	<select id="selectEs81Prt3102WithCollection" resultType="java.util.HashMap">
+		SELECT DISTINCT
+			(SELECT CD_DESC
+			 FROM ES00
+			 WHERE ATTR_00 = 'DIV511'
+			   AND CD_CODE = DISP_RANK) AS 표시순위명,
+			RIGHT_DATE      AS 권리발생일자     ,
+			RIGHT_PERSON    AS 권리자           ,
+			RIGHT_CODE      AS 권리의내용코드   , (SELECT CD_DESC
+											FROM ES00
+											WHERE ATTR_00 = 'DIV509'
+											  AND CD_CODE = RIGHT_CODE) AS 권리의내용코드명,
+			ERA_YN          AS 말소여부         ,
+			CRED_SELF_AMT   AS 채권금액_단독담보,
+			CRED_COMB_AMT   AS 채권금액_공동담보,
+			RANK
+		FROM (
+				 SELECT A.RIGHT_DATE,A.LN_SEQ, A.CRED_SELF_AMT, A.CRED_COMB_AMT, A.PRO_RATE_CODE, A.RIGHT_PERSON, B.RIGHT_CODE, B.ERA_YN,
+						MAX(A.RANK) AS RANK, MAX(DISP_RANK) AS DISP_RANK
+				 FROM (
+						  SELECT DISTINCT YYYY,SEQ, RIGHT_DATE, SHA_GU,LN_SEQ, RANK,CRED_SELF_AMT, CRED_COMB_AMT, PRO_RATE_CODE, RIGHT_PERSON FROM ES3402 WHERE NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0) > 0
+						  UNION ALL
+						  SELECT DISTINCT YYYY,SEQ, RIGHT_DATE, SHA_GU,LN_SEQ, RANK,CRED_SELF_AMT, CRED_COMB_AMT, PRO_RATE_CODE, RIGHT_PERSON FROM ES3404 WHERE NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0) > 0
+					  ) A, ES2404 B
+				 WHERE A.YYYY   = #{YYYY}
+				   AND A.SEQ    = #{SEQ}
+				   AND A.YYYY = B.YYYY
+				   AND A.SEQ  = B.SEQ
+				   AND A.SHA_GU = B.SHA_GU
+				   AND A.LN_SEQ = B.LN_SEQ
+				   AND A.RANK   = B.RANK
+				   AND NVL(HITE_YN,'N') = 'N'
+				 GROUP BY A.RIGHT_DATE,A.LN_SEQ, A.CRED_SELF_AMT, A.CRED_COMB_AMT, A.PRO_RATE_CODE, A.RIGHT_PERSON, B.RIGHT_CODE, B.ERA_YN
+			 ) AA
+		ORDER BY LPAD(RANK,3,'0')
+	</select>
+	<select id="selectEs81Prt3103WithCollection" resultType="java.util.HashMap">
+		SELECT (SELECT CD_DESC
+				FROM ES00
+				WHERE ATTR_00 = 'DIV511'
+				  AND CD_CODE = DISP_RANK) AS 표시순위명,
+			   RIGHT_DATE      AS 권리발생일자     ,
+			   RIGHT_PERSON    AS 권리자           ,
+			   RIGHT_CODE      AS 권리의내용코드   , (SELECT CD_DESC
+											   FROM ES00
+											   WHERE ATTR_00 = 'DIV509'
+												 AND CD_CODE = RIGHT_CODE) AS 권리의내용코드명,
+			   ERA_YN          AS 말소여부         ,
+			   CRED_SELF_AMT   AS 채권금액_단독담보,
+			   CRED_COMB_AMT   AS 채권금액_공동담보
+		FROM ES2404
+		WHERE YYYY   = #{YYYY}
+		  AND SEQ    = #{SEQ}
+		  AND ERA_YN = 'Y'
+		UNION ALL
+		SELECT NULL AS 표시순위명,
+			   NULL AS 권리발생일자     ,
+			   NULL AS 권리자           ,
+			   NULL AS 권리의내용코드   , NULL AS 권리의내용코드명,
+			   NULL AS 말소여부         ,
+			   0    AS 채권금액_단독담보,
+			   0    AS 채권금액_공동담보
+		FROM DUAL
+	</select>
+	<select id="selectEs81Prt1101WithLandConstruction" resultType="java.util.HashMap">
+		SELECT YYYY               AS 년도                          ,
+			   SEQ                AS 일련번호                      ,
+			   JUSO1              AS 소재지_주소1                  ,
+			   JUSO2              AS 소재지_주소2                  ,
+			   TOT_L_SIZE         AS 합계_토지_면적                ,
+			   TOT_L_SIZE_PY      AS 합계_토지_면적_평             ,
+			   TOT_ANNO_DAN       AS 합계_토지_개별공시지가_단가   ,
+			   TOT_ANNO_DAN_PY    AS 합계_토지_개별공시지가_단가_평,
+			   TOT_ANNO_AMT       AS 합계_토지_개별공시지가_총액   ,
+			   REGI_AMT           AS 실거래가_총액                 ,
+			   REGI_DAN           AS 실거래가_단가                 ,
+			   REGI_DAN_PY        AS 실거래가_단가_평              ,
+			   TOT_SEC_REGI_SIZE  AS 담보제공비율_전용면적         ,
+			   TOT_SEC_NUME       AS 담보제공비율_분자             ,
+			   TOT_SEC_DENO       AS 담보제공비율_분모             ,
+			   TOT_SEC_RATE       AS 담보제공비율_비율             ,
+			   TOT_SEC_OFFER_SIZE AS 담보제공비율_담보제공면적
+		FROM ES2012
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+	</select>
+	<select id="selectEs81Prt1101DWithLandConstruction" resultType="java.util.HashMap">
+		SELECT POT_GU         AS 일단지구분               ,
+			   MIN_BOUND      AS 최소행정구역             ,
+			   LOT_NUM        AS 지번                     ,
+			   LCATEGORY      AS 지목                     ,(SELECT CD_DESC
+														  FROM ES00
+														  WHERE ATTR_00 = 'DIV112'
+															AND CD_CODE = LCATEGORY) AS 지목명,
+			   L_SIZE         AS 토지_면적                ,
+			   L_SIZE_PY      AS 토지_면적_평             ,
+			   ANNO_DAN       AS 토지_개별공시지가_단가   ,
+			   ANNO_DAN_PY    AS 토지_개별공시지가_단가_평,
+			   ANNO_AMT       AS 토지_개별공시지가        ,
+			   LCOM_CODE_YN   AS 법정지상권성립여부       ,
+			   USE_AREA       AS 용도지역                 ,
+			   L_USE_CODE     AS 이용현황                 ,
+			   OF_ROAD_CODE   AS 도로조건                 ,
+			   L_SHAPE_CODE   AS 형상                     ,
+			   L_UNDUR_CODE   AS 지형지세                 ,
+			   STD_APPL_DAN   AS 표준지공시지가_적용단가  ,
+			   APPL_RATE      AS 적용보정률               ,
+			   APAS_AMT       AS 산정가격                 ,
+			   APPL_AMT       AS 적용가격                 ,
+			   SEC_REGI_SIZE  AS 담보제공비율_전체면적    ,
+			   SEC_NUME       AS 담보제공비율_분자        ,
+			   SEC_DENO       AS 담보제공비율_분모        ,
+			   SEC_RATE       AS 담보제공비율_비율        ,
+			   SEC_OFFER_SIZE AS 담보제공비율_담보제공면적,
+			   SEC_DESC       AS 담보제공비율_사유        ,
+			   INC_AMT        AS 평가가액                 ,
+			   FNL_INC_AMT    AS 최종평가가격
+		FROM ES2013
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+	</select>
+	<select id="selectEs81W03Prt12" resultType="java.util.HashMap">
+		SELECT YYYY             AS 년도                     ,
+			   SEQ              AS 일련번호                 ,
+			   JUSO             AS 소재지                   ,
+			   TOT_L_SIZE       AS 합계_토지_면적           ,
+			   TOT_L_SIZE_PY    AS 합계_토지_면적_평        ,
+			   TOT_ANNO_AMT     AS 합계_토지_개별공시지가   ,
+			   TOT_ANNO_AMT_PY  AS 합계_토지_개별공시지가_평,
+			   B_USE_CODE       AS 주거용_건축물의주된용도  ,
+			   H_POSS_A_AREA    AS 주택_가임대보증금적용지역,  (SELECT CD_DESC
+													FROM ES00
+													WHERE ATTR_00 = 'DIV106'
+													  AND CD_CODE = H_POSS_A_AREA) AS 주택_가임대보증금적용지역명,
+			   M_POSS_A_AREA    AS 상가_가임대보증금적용지역,  (SELECT CD_DESC
+													FROM ES00
+													WHERE ATTR_00 = 'DIV106'
+													  AND CD_CODE = M_POSS_A_AREA) AS 상가_가임대보증금적용지역명,
+			   CURR_MIN_AMT     AS 시가_최저_총액           ,
+			   CURR_MIN_DAN     AS 시가_최저_단가           ,
+			   CURR_MIN_DAN_PY  AS 시가_최저_단가_평        ,
+			   CURR_MAX_AMT     AS 시가_최고_총액           ,
+			   CURR_MAX_DAN     AS 시가_최고_단가           ,
+			   CURR_MAX_DAN_PY  AS 시가_최고_단가_평        ,
+			   REGI_AMT         AS 등기부등본상의시세_총액  ,
+			   REGI_DAN         AS 등기부등본상의시세       ,
+			   REGI_DAN_PY      AS 등기부등본상의시세_단가  ,
+			   HOUS_AMT         AS 개별주택가격_총액        ,
+			   HOUS_DAN         AS 개별주택가격_단가        ,
+			   HOUS_DAN_PY      AS 개별주택가격_단가_평
+		FROM ES2014
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+	</select>
+	<select id="selectEs81W03Prt12D" resultType="java.util.HashMap">
+		SELECT REGI_GU          AS 등기구분코드             , (SELECT CD_DESC
+														 FROM ES00
+														 WHERE ATTR_00 = 'DIV193'
+														   AND CD_CODE = REGI_GU) AS 등기구분,
+			   LOT_NUM          AS 지번                     ,
+			   CB_DATE          AS 건축년도                 ,
+			   CB_STRUC         AS 구조                     , (SELECT CD_DESC
+															 FROM ES00
+															 WHERE ATTR_00 = 'DIV156'
+															   AND CD_CODE = CB_STRUC) AS 구조명,
+			   CB_ROOF          AS 지붕                     , (SELECT CD_DESC
+															 FROM ES00
+															 WHERE ATTR_00 = 'DIV157'
+															   AND CD_CODE = CB_ROOF) AS 지붕명,
+			   CB_FLOOR         AS 층별                     ,
+			   CB_USE_MAIN      AS 주용도                   ,
+			   CB_SIZE          AS 건물의면적               ,
+			   CB_SIZE_PY       AS 건물의면적_평            ,
+			   SEC_REGI_SIZE    AS 담보제공비율_전체면적    ,
+			   SEC_NUME         AS 담보제공비율_분자        ,
+			   SEC_DENO         AS 담보제공비율_분모        ,
+			   SEC_RATE         AS 담보제공비율_비율        ,
+			   SEC_OFFER_SIZE   AS 담보제공비율_담보제공면적,
+			   SEC_DESC         AS 담보제공비율_사유        ,
+			   INC_AMT          AS 평가가액                 ,
+			   FNL_INC_AMT      AS 최종평가가격
+		FROM ES2015
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+		ORDER BY REGI_GU,LOT_NUM, CB_FLOOR
+	</select>
+	<select id="selectEs81W03Prt13" resultType="java.util.HashMap">
+		SELECT DISTINCT
+			(SELECT CD_DESC
+			 FROM ES00
+			 WHERE ATTR_00 = 'DIV193'
+			   AND CD_CODE = REGI_GU) AS 등기구분,
+			LOT_NUM          AS 지번                     ,
+			SEC_REGI_SIZE    AS 담보제공비율_전체면적    ,
+			SEC_NUME         AS 담보제공비율_분자        ,
+			SEC_DENO         AS 담보제공비율_분모        ,
+			SEC_RATE         AS 담보제공비율_비율        ,
+			SEC_OFFER_SIZE   AS 담보제공비율_담보제공면적,
+			SEC_DESC         AS 담보제공비율_사유
+		FROM ES2015
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+		ORDER BY 1,2
+	</select>
+	<select id="selectEs81W03Prt21" resultType="java.util.HashMap">
+		SELECT APPL_RATE||'%'  AS 적용할낙찰가율,
+			   INC_AMT    AS 평가가격,
+			   INC_DAN    AS 평가가격_단가,
+			   INC_DAN_PY AS 평가가격_단가_평,
+			   FNL_AMT    AS 최종평가_금액,
+			   FNL_DAN    AS 최종평가_단가,
+			   FNL_DAN_PY AS 최종평가_단가_평,
+			   BID_AMT    AS 예상낙찰가_금액,
+			   DECODE(CB_SIZE, 0, 0, ROUND(BID_AMT/CB_SIZE, 0)) AS 예상낙찰가_단가,
+			   DECODE(CB_SIZE, 0, 0, ROUND(BID_AMT/CB_SIZE*3.3058, 0)) AS 예상낙찰가_단가_평
+		FROM (
+				 SELECT OF_SIZE, INC_AMT, CB_SIZE,
+						DECODE(CB_SIZE, 0, 0, ROUND(INC_AMT/CB_SIZE,0)) AS INC_DAN,
+						DECODE(CB_SIZE, 0, 0, ROUND(ROUND(INC_AMT/CB_SIZE,0)*3.3058,0)) AS INC_DAN_PY,
+						FNL_AMT,
+						DECODE(CB_SIZE, 0, 0, ROUND(FNL_AMT/CB_SIZE,0)) AS FNL_DAN,
+						DECODE(CB_SIZE, 0, 0, ROUND(ROUND(FNL_AMT/CB_SIZE,0)*3.3058,0)) AS FNL_DAN_PY,
+						APPL_RATE,
+						ROUND(FNL_AMT * (APPL_RATE/100), 0) AS BID_AMT
+				 FROM (
+						  SELECT YYYY, SEQ,
+								 SUM(SEC_OFFER_SIZE) AS OF_SIZE,
+								 SUM(INC_AMT    )    AS INC_AMT,
+								 SUM(FNL_INC_AMT)    AS FNL_AMT,
+								 SUM(CB_SIZE)        AS CB_SIZE
+						  FROM ES2015
+						  WHERE YYYY = #{YYYY}
+							AND SEQ  = #{SEQ}
+						  GROUP BY YYYY, SEQ
+					  ) A,
+					  (
+						  SELECT YYYY, SEQ,
+								 APPL_RATE AS APPL_RATE, PL_BID_AMT
+						  FROM ES2302
+						  WHERE YYYY = #{YYYY}
+							AND SEQ  = #{SEQ}
+					  ) B
+				 WHERE A.YYYY = B.YYYY
+				   AND A.SEQ  = B.SEQ
+			 ) C
+	</select>
+	<select id="selectEs81Prt22WithLandConstruction" resultType="java.util.HashMap">
+		SELECT APPL_RATE||'%'  AS 적용할낙찰가율,
+			   INC_AMT    AS 평가가격,
+			   INC_DAN    AS 평가가격_단가,
+			   INC_DAN_PY AS 평가가격_단가_평,
+			   FNL_AMT    AS 최종평가_금액,
+			   FNL_DAN    AS 최종평가_단가,
+			   FNL_DAN_PY AS 최종평가_단가_평,
+			   BID_AMT    AS 예상낙찰가_금액,
+			   DECODE(OF_SIZE, 0, 0, ROUND(BID_AMT/OF_SIZE, 0)) AS 예상낙찰가_단가,
+			   DECODE(OF_SIZE, 0, 0, ROUND(BID_AMT/OF_SIZE*3.3058, 0)) AS 예상낙찰가_단가_평,
+			   OF_SIZE     AS 토지담보제공면적
+		FROM (
+				 SELECT OF_SIZE, INC_AMT,
+						DECODE(L_SIZE, 0, 0, ROUND(INC_AMT/L_SIZE,0)) AS INC_DAN,
+						DECODE(L_SIZE, 0, 0, ROUND(ROUND(INC_AMT/L_SIZE,0)*3.3058,0)) AS INC_DAN_PY,
+						FNL_AMT,
+						DECODE(OF_SIZE, 0, 0, ROUND(FNL_AMT/OF_SIZE,0)) AS FNL_DAN,
+						DECODE(OF_SIZE, 0, 0, ROUND(ROUND(FNL_AMT/OF_SIZE,0)*3.3058,0)) AS FNL_DAN_PY,
+						APPL_RATE,
+						ROUND(FNL_AMT * (APPL_RATE/100), 0) AS BID_AMT
+				 FROM (
+						  SELECT YYYY, SEQ,
+								 SUM(SEC_OFFER_SIZE) AS OF_SIZE,
+								 SUM(INC_AMT    )    AS INC_AMT,
+								 SUM(FNL_INC_AMT)    AS FNL_AMT,
+								 SUM(L_SIZE     )    AS L_SIZE
+						  FROM ES2013
+						  WHERE YYYY = #{YYYY}
+							AND SEQ  = #{SEQ}
+						  GROUP BY YYYY, SEQ
+					  ) A,
+					  (
+						  SELECT YYYY, SEQ,
+								 APPL_RATE AS APPL_RATE, PL_BID_AMT
+						  FROM ES2302
+						  WHERE YYYY = #{YYYY}
+							AND SEQ  = #{SEQ}
+					  ) B
+				 WHERE A.YYYY = B.YYYY
+				   AND A.SEQ  = B.SEQ
+			 ) C
+	</select>
+	<select id="selectEs81Prt31WithLandConstruction" resultType="java.util.HashMap">
+		SELECT 담보여력_설정전         AS 담보여력,
+			   초과_부족설정액_문자 AS 초과_부족설정액
+		FROM V_ES10_01
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+	</select>
+	<select id="selectEs81Prt3101WithLandConstruction" resultType="java.util.HashMap">
+		SELECT MAX(RANK_LAST) AS 최종순위,
+			   --MAX(REPLACE(DISP_RANK_NAME,'순위','')) AS 최종순위,
+			   MAX(AMT) AS 채권금액
+		FROM (
+				 SELECT DISTINCT RANK,
+								 (SELECT CNT
+								  FROM (SELECT COUNT(*) CNT
+										FROM ES2404
+										WHERE YYYY   = #{YYYY}
+										  AND SEQ    = #{SEQ}
+										  AND RANK   > 6
+										  AND NVL(ERA_YN,'N') = 'N'
+										GROUP BY SHA_GU,LN_SEQ
+										ORDER BY 1 DESC
+									   )
+								  WHERE ROWNUM = 1) AS RANK_LAST,
+								 DISP_RANK         , (SELECT CD_DESC
+													  FROM ES00
+													  WHERE ATTR_00 = 'DIV511'
+														AND CD_CODE = DISP_RANK) AS DISP_RANK_NAME,
+								 NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0)   AS AMT
+				 FROM ES2404 A
+				 WHERE YYYY   = #{YYYY}
+				   AND SEQ    = #{SEQ}
+				   AND NVL(HITE_YN,'N') = 'Y'
+			 )
+	</select>
+	<select id="selectEs81Prt3102WithLandConstruction" resultType="java.util.HashMap">
+		SELECT DISTINCT
+			(SELECT CD_DESC
+			 FROM ES00
+			 WHERE ATTR_00 = 'DIV511'
+			   AND CD_CODE = DISP_RANK) AS 표시순위명,
+			RIGHT_DATE      AS 권리발생일자     ,
+			RIGHT_PERSON    AS 권리자           ,
+			RIGHT_CODE      AS 권리의내용코드   , (SELECT CD_DESC
+											FROM ES00
+											WHERE ATTR_00 = 'DIV509'
+											  AND CD_CODE = RIGHT_CODE) AS 권리의내용코드명,
+			ERA_YN          AS 말소여부         ,
+			CRED_SELF_AMT   AS 채권금액_단독담보,
+			CRED_COMB_AMT   AS 채권금액_공동담보,
+			RANK
+		FROM (
+				 SELECT A.RIGHT_DATE,A.LN_SEQ, A.CRED_SELF_AMT, A.CRED_COMB_AMT, A.PRO_RATE_CODE, A.RIGHT_PERSON, B.RIGHT_CODE, B.ERA_YN,
+						MAX(A.RANK) AS RANK, MAX(DISP_RANK) AS DISP_RANK
+				 FROM (
+						  SELECT DISTINCT YYYY,SEQ, RIGHT_DATE, SHA_GU,LN_SEQ, RANK,CRED_SELF_AMT, CRED_COMB_AMT, PRO_RATE_CODE, RIGHT_PERSON FROM ES3402
+						  UNION ALL
+						  SELECT DISTINCT YYYY,SEQ, RIGHT_DATE, SHA_GU,LN_SEQ, RANK,CRED_SELF_AMT, CRED_COMB_AMT, PRO_RATE_CODE, RIGHT_PERSON FROM ES3404
+					  ) A, ES2404 B
+				 WHERE A.YYYY   = #{YYYY}
+				   AND A.SEQ    = #{SEQ}
+				   AND A.YYYY = B.YYYY
+				   AND A.SEQ  = B.SEQ
+				   AND A.SHA_GU = B.SHA_GU
+				   AND A.LN_SEQ = B.LN_SEQ
+				   AND A.RANK   = B.RANK
+				   AND B.LN_SEQ =
+					   (SELECT MIN(X.LN_SEQ) LN_SEQ FROM ( SELECT LN_SEQ, SHA_GU, DISP_RANK FROM ES2404 WHERE YYYY = #{YYYY}  AND SEQ = #{SEQ} ) X,
+														 ( SElect MAX(DISP_RANK) DISP_RANK FROM ES2404 WHERE YYYY = #{YYYY}  AND SEQ = #{SEQ} ) Y
+						WHERE X.DISP_RANK = Y.DISP_RANK)
+				   AND B.SHA_GU =
+					   (SELECT MIN(X.SHA_GU) SHA_GU FROM ( SELECT LN_SEQ, SHA_GU, DISP_RANK FROM ES2404 WHERE YYYY = #{YYYY}  AND SEQ = #{SEQ} ) X,
+														 ( SElect MAX(DISP_RANK) DISP_RANK FROM ES2404 WHERE YYYY = #{YYYY}  AND SEQ = #{SEQ} ) Y
+						WHERE X.DISP_RANK = Y.DISP_RANK)
+				   AND NVL(HITE_YN,'N') = 'N'
+				 GROUP BY A.RIGHT_DATE,A.LN_SEQ, A.CRED_SELF_AMT, A.CRED_COMB_AMT, A.PRO_RATE_CODE, A.RIGHT_PERSON, B.RIGHT_CODE, B.ERA_YN
+			 ) AA
+		ORDER BY  RANK-0, RIGHT_DATE
+	</select>
+	<select id="selectEs81W03Prt31With04" resultType="java.util.HashMap">
+		SELECT DISTINCT   --BACKUP 2009.09.01
+						  (SELECT CD_DESC
+						   FROM ES00
+						   WHERE ATTR_00 = 'DIV511'
+							 AND CD_CODE = DISP_RANK) AS 표시순위명,
+						  RIGHT_DATE      AS 권리발생일자     ,
+						  RIGHT_PERSON    AS 권리자           ,
+						  RIGHT_CODE      AS 권리의내용코드   , (SELECT CD_DESC
+														  FROM ES00
+														  WHERE ATTR_00 = 'DIV509'
+															AND CD_CODE = RIGHT_CODE) AS 권리의내용코드명,
+						  ERA_YN          AS 말소여부         ,
+						  CRED_SELF_AMT   AS 채권금액_단독담보,
+						  CRED_COMB_AMT   AS 채권금액_공동담보,
+						  RANK
+		FROM (
+				 SELECT A.RIGHT_DATE,A.LN_SEQ, A.CRED_SELF_AMT, A.CRED_COMB_AMT, A.PRO_RATE_CODE, A.RIGHT_PERSON, B.RIGHT_CODE, B.ERA_YN,
+						MAX(A.RANK) AS RANK, MAX(DISP_RANK) AS DISP_RANK
+				 FROM (
+						  SELECT DISTINCT YYYY,SEQ, RIGHT_DATE, SHA_GU,LN_SEQ, RANK,CRED_SELF_AMT, CRED_COMB_AMT, PRO_RATE_CODE, RIGHT_PERSON FROM ES3402
+						  UNION ALL
+						  SELECT DISTINCT YYYY,SEQ, RIGHT_DATE, SHA_GU,LN_SEQ, RANK,CRED_SELF_AMT, CRED_COMB_AMT, PRO_RATE_CODE, RIGHT_PERSON FROM ES3404
+					  ) A, ES2404 B
+				 WHERE A.YYYY   = #{YYYY}
+				   AND A.SEQ    = #{SEQ}
+				   AND A.YYYY = B.YYYY
+				   AND A.SEQ  = B.SEQ
+				   AND A.SHA_GU = B.SHA_GU
+				   AND A.LN_SEQ = B.LN_SEQ
+				   AND A.RANK   = B.RANK
+				   AND NVL(HITE_YN,'N') = 'N'
+				 GROUP BY A.RIGHT_DATE,A.LN_SEQ, A.CRED_SELF_AMT, A.CRED_COMB_AMT, A.PRO_RATE_CODE, A.RIGHT_PERSON, B.RIGHT_CODE, B.ERA_YN
+			 ) AA
+		ORDER BY  RANK-0, RIGHT_DATE
+	</select>
+	<select id="selectEs81W03Prt3103WithLandConstruction" resultType="java.util.HashMap">
+		SELECT MAX((SELECT CD_DESC
+					FROM ES00
+					WHERE ATTR_00 = 'DIV511'
+					  AND CD_CODE = DISP_RANK)) AS 표시순위명,
+			   RIGHT_DATE      AS 권리발생일자     ,
+			   MAX(RIGHT_PERSON)    AS 권리자           ,
+			   MAX(RIGHT_CODE)      AS 권리의내용코드   , MAX((SELECT CD_DESC
+														FROM ES00
+														WHERE ATTR_00 = 'DIV509'
+														  AND CD_CODE = RIGHT_CODE)) AS 권리의내용코드명,
+			   MAX(ERA_YN)          AS 말소여부         ,
+			   MAX(CRED_SELF_AMT)   AS 채권금액_단독담보,
+			   MAX(CRED_COMB_AMT)   AS 채권금액_공동담보
+		FROM ES2404
+		WHERE YYYY   = #{YYYY}
+		  AND SEQ    = #{SEQ}
+		  AND ERA_YN = 'Y'
+		GROUP BY RIGHT_DATE
+		UNION
+		SELECT NULL AS 표시순위명,
+			   NULL AS 권리발생일자     ,
+			   NULL AS 권리자           ,
+			   NULL AS 권리의내용코드   , NULL AS 권리의내용코드명,
+			   NULL AS 말소여부         ,
+			   0    AS 채권금액_단독담보,
+			   0    AS 채권금액_공동담보
+		FROM DUAL
+		ORDER BY 2
+	</select>
+	<select id="selectEs81Prt00WithLand" resultType="java.util.HashMap">
+	<![CDATA[
+		SELECT YYYY                AS 년도                      ,
+		SEQ                 AS 일련번호                  ,
+		SEC_CODE            AS 담보종류                  , (SELECT '토지 감정서 ('|| ATTR_01 || ')'
+		FROM ES00
+		WHERE ATTR_00 = 'DIV100' AND CD_CODE = SEC_CODE)||
+		(SELECT ' ('|| CD_DESC||')'
+		FROM ES00
+		WHERE CD_DIV = '600' AND CD_CODE = LIQUOR_TYPE) AS 담보종류명,
+		JUM_CODE            AS 지점코드                  , (SELECT SMALLNAME
+		FROM V_IA03
+		WHERE BUSEO = JUM_CODE
+		) ||'  '|| (SELECT JIKGUB_NAME||LPAD(NAME, 8, ' ')
+		FROM V_IA01_LEADER
+		WHERE SABUN = JUM_SABUN) AS 지점명,
+		REQ_JUM             AS 의뢰한지점코드            , (SELECT SMALLNAME
+		FROM V_IA03
+		WHERE BUSEO = REQ_JUM) AS 의뢰지점명,
+		ESTI_DATE           AS 담보감정일자              ,
+		GEO_CODE            AS 거래처코드                ,
+		SANGHO              AS 거래처명                  ,
+		DAEPYO_NAME         AS 거래처대표자              ,
+		MARKET_DIV          AS 업소구분                  ,
+		MARKET_NAME         AS 업소명                    ,
+		MARKET_CEO          AS 업소대표자                ,
+		DEBTOR              AS 채무자                    ,
+		POSS_OWNER          AS 소유자                    ,
+		GUARANTOR           AS 담보제공자                ,
+		DEBTOR_RELATION     AS 채무자와담보제공자와의관계,
+		B_USE_CODE          AS 건축물의용도              ,
+		B_USE_DESC          AS 건축물의용도비고          ,
+		B_NAME              AS 건물의명칭및호수          ,
+		JUSO1               AS 부동산표시_주소1          ,
+		JUSO2               AS 부동산표시_주소2          ,
+		L_SIZE              AS 지점_토지면적             ,
+		L_SIZE_PY           AS 지점_토지면적_평          ,
+		B_SIZE              AS 지점_건물면적             ,
+		B_SIZE_PY           AS 지점_건물면적_평          ,
+		CURR_AMT            AS 지점_시가                 ,
+		PLMIN_BID_AMT       AS 지점_예상1차최저입찰가    ,
+		PL_BID_AMT          AS 지점_예상낙찰가           ,
+		C_CL_AMT            AS 지점_동시설정한도액       ,
+		L_CL_AMT            AS 지점_토지설정한도액       ,
+		B_CL_AMT            AS 지점_건물설정한도액       ,
+		C_PL_RANK           AS 지점_동시설정예정액_순위  ,
+		C_PL_AMT            AS 지점_동시설정예정액_금액  ,
+		L_PL_RANK           AS 지점_토지설정예정액_순위  ,
+		L_PL_AMT            AS 지점_토지설정예정액_금액  ,
+		B_PL_RANK           AS 지점_건물설정예정액_순위  ,
+		B_PL_AMT            AS 지점_건물설정예정액_금액  ,
+		MANA_L_SIZE         AS 관재_토지면적             ,
+		MANA_L_SIZE_PY      AS 관재_토지면적_평          ,
+		MANA_B_SIZE         AS 관재_건물면적             ,
+		MANA_B_SIZE_PY      AS 관재_건물면적_평          ,
+		MANA_CURR_AMT       AS 관재_시가                 ,
+		MANA_PL_MIN_BID_AMT AS 관재_예상1차최저입찰가    ,
+		MANA_PL_BID_AMT     AS 관재_예상낙찰가           ,
+		MANA_C_CL_AMT       AS 관재_동시설정한도액       ,
+		MANA_L_CL_AMT       AS 관재_토지설정한도액       ,
+		MANA_B_CL_AMT       AS 관재_건물설정한도액       ,
+		MANA_C_PL_RANK      AS 관재_동시설정예정액_순위  ,
+		MANA_C_PL_AMT       AS 관재_동시설정예정액_금액  ,
+		MANA_L_PL_RANK      AS 관재_토지설정예정액_순위  ,
+		MANA_L_PL_AMT       AS 관재_토지설정예정액_금액  ,
+		MANA_B_PL_RANK      AS 관재_건물설정예정액_순위  ,
+		MANA_B_PL_AMT       AS 관재_건물설정예정액_금액  ,
+		JUM_SABUN           AS 최초감정자사번            ,
+		JUM_COMP_DATE       AS 지점_결재완료일자         ,
+		JUM_TRAN_DATE       AS 지점_전송일자             ,
+		MANA_RECE_DATE      AS 관재_접수일자             ,
+		MANA_RECE_SABUN     AS 관재_접수자사번           ,
+		MANA_COMP_DATE      AS 관재_결재완료일자         ,
+		PROC_DIV            AS 작업진행상태              ,
+		DECODE(SUBSTRB(SEQ,5,2), '00', '최초감정', '재감정 ('||TO_NUMBER(SUBSTRB(SEQ,5,2))||'번째)') AS 임시_재감정여부,
+		CASE WHEN PROC_DIV BETWEEN '21' AND '28' THEN  (SELECT  '<< '||DECODE(APPRAISE_GU,'0','',CD_DESC||'_' )
+		FROM  ES00
+		WHERE ATTR_00 = 'DIV194'
+		AND USE_YN  = 'Y'
+		AND CD_CODE = APPRAISE_GU)||'관재진행중 >>'
+		ELSE                                    (SELECT  '<< '||CD_DESC ||' >>'
+		FROM  ES00
+		WHERE ATTR_00 = 'DIV194'
+		AND USE_YN  = 'Y'
+		AND CD_CODE = APPRAISE_GU)
+		END AS 감정상태,
+		BID_USE_YN AS 응찰여부,
+		PRE_YYYY AS 이전년도,
+		PRE_SEQ AS 이전담보순번
+		FROM ES10
+		WHERE YYYY = #{YYYY}
+		AND SEQ  = #{SEQ}
+	]]>
+	</select>
+	<select id="selectEs81W04Prt02" resultType="java.util.HashMap">
+		SELECT A.*,
+			   CASE WHEN 현재의주된현황_명칭 = 장래의이용가능성_명칭 THEN
+							'당해지 전부의 현재의 주된 이용현황이 '''||현재의주된현황_명칭|| '''이고, 향후 3년 이내에도 계속 '''||장래의이용가능성_명칭||'''(으)로 이용될 가능성이 매우 큼.'
+					ELSE
+							'당해지 전부의 현재의 주된 이용현황이 '''||현재의주된현황_명칭|| '''이나, 향후 3년 이내에는 '''||장래의이용가능성_명칭||'''(으)로 이용될 가능성이 매우 큼.'  END AS 임시_장래이용가능성
+		FROM (
+				 SELECT YYYY              AS 년도                        ,
+						SEQ               AS 일련번호                    ,
+						P_BID_RATE        AS 당해지역낙찰가율            ,
+						K_BID_RATE        AS 유사부동산낙찰가율          ,
+						B_BID_RATE        AS 기준낙찰가율                ,
+						RIGHTS_CODE       AS 점유자의권리형태            ,
+						DOMAIN_DESC       AS 법정지상권_성립사유         ,
+						DOMAIN_CODE       AS 법정지상권_적용코드         ,
+						DOMAIN_RATE       AS 법정지상권_적용율           ,
+						APPL_RATE||'%'         AS 적용할낙찰가율              ,
+						PL_BID_AMT        AS 예상낙찰가                  ,
+						CURR_USE_CODE     AS 현재의주된현황              , (SELECT CD_DESC
+																	 FROM ES00
+																	 WHERE ATTR_00 = 'DIV126' AND CD_CODE = CURR_USE_CODE) AS 현재의주된현황_명칭,
+						CURR_USE_RATE     AS 현재의주된현황_적용율       ,
+						FUTU_USE_CODE     AS 장래의이용가능성            , (SELECT CD_DESC
+																	FROM ES00
+																	WHERE ATTR_00 = 'DIV126' AND CD_CODE = FUTU_USE_CODE) AS 장래의이용가능성_명칭,
+						FUTU_USE_RATE     AS 장래의이용가능성_적용율     ,
+						BARE_ADJ_ROAD     AS 나지_접한도로의폭           ,
+						BARE_ADJ_RATE     AS 나지_접한도로의폭_적용율    ,
+						BARE_SHAPE_CODE   AS 나지_토지의형상             ,
+						BARE_SHAPE_RATE   AS 나지_토지의형상_적용율      ,
+						BARE_CONV_LOCATED AS 나지_담보물의입지조건       ,
+						BARE_CONV_RATE    AS 나지_담보물의입지조건_적용율,
+						BARE_UNDUR_CODE   AS 나지_토지의고저             ,
+						BARE_UNDUR_RATE   AS 나지_토지의고저_적용율      ,
+						FARM_CURR_CODE    AS 농지_농지의현황             ,
+						FARM_CURR_RATE    AS 농지_농지의현황_적용율      ,
+						FARM_UNDUR_CODE   AS 농지_토지의고저             ,
+						FARM_UNDUR_RATE   AS 농지_토지의고저_적용율      ,
+						WOOD_CURR_CODE    AS 임야_임야의현황             ,
+						WOOD_CURR_RATE    AS 임야_임야의현황_적용율      ,
+						WOOD_GRAD_CODE    AS 임야_경사도                 ,
+						WOOD_GRAD_RATE    AS 임야_경사도_적용율          ,
+						WOOD_LOC_CODE     AS 임야_위치                   ,
+						WOOD_LOC_RATE     AS 임야_위치_적용율            ,
+						PUBL_CODE         AS 공유지분소유자현황          ,
+						PUBL_RATE         AS 공유지분소유자현황_적용율
+				 FROM ES2303
+				 WHERE YYYY = #{YYYY}
+				   AND SEQ  = #{SEQ}
+			 ) A
+
+	</select>
+	<select id="selectEs81Prt03WithLand" resultType="java.util.HashMap">
+		SELECT YYYY           AS 년도        ,
+			   SEQ            AS 일련번호    ,
+			   REST_PL_USE    AS 국토계획    ,
+			   REST_OT_LAW    AS 다른법률    ,
+			   REST_EN_RULE   AS 시행령부칙  ,
+			   REST_FU_LAW    AS 토지이용규제,
+			   REST_MAIN_USE  AS 주변부동산
+		FROM ES2017
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+	</select>
+	<select id="selectEs81Prt11WithLand" resultType="java.util.HashMap">
+		SELECT MIN_DAN, ROUND(MIN_DAN*3.3058, 0) AS MIN_DAN_PY,
+			   MAX_DAN, ROUND(MAX_DAN*3.3058, 0) AS MAX_DAN_PY,
+			   ROUND(MIN_DAN * L_SIZE, 0) AS MIN_AMT,
+			   ROUND(MAX_DAN * L_SIZE, 0) AS MAX_AMT
+		FROM (SELECT MIN_DAN,
+					 MAX_DAN,
+					 (SELECT SUM(L_SIZE)
+					  FROM ES2013
+					  WHERE YYYY = AA.YYYY
+						AND SEQ  = AA.SEQ ) AS L_SIZE
+			  FROM (
+					   SELECT YYYY, SEQ,
+							  MIN(APPL_DAN) AS MIN_DAN,
+							  MAX(APPL_DAN) AS MAX_DAN
+					   FROM ES2126 A
+					   WHERE YYYY = #{YYYY}
+						 AND SEQ  = #{SEQ}
+--                   AND EXISTS (SELECT 1
+--                                 FROM ES2125
+--                                WHERE YYYY   = A.YYYY
+--                                  AND SEQ    = A.SEQ
+--                                  AND EX_NO  = A.EX_NO
+--                                  AND EX_DIV = '1')
+					   GROUP BY YYYY, SEQ
+				   ) AA
+			 )
+
+	</select>
+	<select id="selectEs81Prt1101WithLand" resultType="java.util.HashMap">
+		SELECT YYYY               AS 년도                          ,
+			   SEQ                AS 일련번호                      ,
+			   JUSO1              AS 소재지_주소1                  ,
+			   JUSO2              AS 소재지_주소2                  ,
+			   TOT_L_SIZE         AS 합계_토지_면적                ,
+			   TOT_L_SIZE_PY      AS 합계_토지_면적_평             ,
+			   TOT_ANNO_DAN       AS 합계_토지_개별공시지가_단가   ,
+			   TOT_ANNO_DAN_PY    AS 합계_토지_개별공시지가_단가_평,
+			   TOT_ANNO_AMT       AS 합계_토지_개별공시지가_총액   ,
+			   REGI_AMT           AS 실거래가_총액                 ,
+			   REGI_DAN           AS 실거래가_단가                 ,
+			   REGI_DAN_PY        AS 실거래가_단가_평              ,
+			   TOT_SEC_REGI_SIZE  AS 담보제공비율_전용면적         ,
+			   TOT_SEC_NUME       AS 담보제공비율_분자             ,
+			   TOT_SEC_DENO       AS 담보제공비율_분모             ,
+			   TOT_SEC_RATE       AS 담보제공비율_비율             ,
+			   TOT_SEC_OFFER_SIZE AS 담보제공비율_담보제공면적
+		FROM ES2012
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+
+	</select>
+	<select id="selectEs81Prt1101DWithLand" resultType="java.util.HashMap">
+		SELECT POT_GU         AS 일단지구분               ,
+			   MIN_BOUND      AS 최소행정구역             ,
+			   LN_SEQ,
+			   LOT_NUM        AS 지번                     ,
+			   LCATEGORY      AS 지목                     ,(SELECT CD_DESC
+														  FROM ES00
+														  WHERE ATTR_00 = 'DIV112'
+															AND CD_CODE = LCATEGORY) AS 지목명,
+			   L_SIZE         AS 토지_면적                ,
+			   L_SIZE_PY      AS 토지_면적_평             ,
+			   ANNO_DAN       AS 토지_개별공시지가_단가   ,
+			   ANNO_DAN_PY    AS 토지_개별공시지가_단가_평,
+			   ANNO_AMT       AS 토지_개별공시지가        ,
+			   LCOM_CODE_YN   AS 법정지상권성립여부       ,
+			   USE_AREA       AS 용도지역                 ,
+			   L_USE_CODE     AS 이용현황                 ,
+			   OF_ROAD_CODE   AS 도로조건                 ,
+			   L_SHAPE_CODE   AS 형상                     ,
+			   L_UNDUR_CODE   AS 지형지세                 ,
+			   STD_APPL_DAN   AS 표준지공시지가_적용단가  ,
+			   APPL_RATE      AS 적용보정률               ,
+			   APAS_AMT       AS 산정가격                 ,
+			   APPL_AMT       AS 적용가격                 ,
+			   SEC_REGI_SIZE  AS 담보제공비율_전체면적    ,
+			   SEC_NUME       AS 담보제공비율_분자        ,
+			   SEC_DENO       AS 담보제공비율_분모        ,
+			   SEC_RATE       AS 담보제공비율_비율        ,
+			   SEC_OFFER_SIZE AS 담보제공비율_담보제공면적,
+			   SEC_DESC       AS 담보제공비율_사유        ,
+			   INC_AMT        AS 평가가액                 ,
+			   FNL_INC_AMT    AS 최종평가가격
+		FROM ES2013
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+		ORDER BY POT_GU, MIN_BOUND, LN_SEQ, LOT_NUM
+
+	</select>
+	<select id="selectEs81Prt22WithLand" resultType="java.util.HashMap">
+		SELECT APPL_RATE  AS 적용할낙찰가율,
+			   INC_AMT    AS 평가가격,
+			   INC_DAN    AS 평가가격_단가,
+			   INC_DAN_PY AS 평가가격_단가_평,
+			   FNL_AMT    AS 최종평가_금액,
+			   FNL_DAN    AS 최종평가_단가,
+			   FNL_DAN_PY AS 최종평가_단가_평,
+			   BID_AMT    AS 예상낙찰가_금액,
+			   DECODE(OF_SIZE, 0, 0, ROUND(BID_AMT/OF_SIZE, 0)) AS 예상낙찰가_단가,
+			   DECODE(OF_SIZE, 0, 0, ROUND(BID_AMT/OF_SIZE*3.3058, 0)) AS 예상낙찰가_단가_평
+		FROM (
+				 SELECT OF_SIZE, INC_AMT,
+						DECODE(L_SIZE, 0, 0, ROUND(INC_AMT/L_SIZE,0)) AS INC_DAN,
+						DECODE(L_SIZE, 0, 0, ROUND(ROUND(INC_AMT/L_SIZE,0)*3.3058,0)) AS INC_DAN_PY,
+						FNL_AMT,
+						DECODE(OF_SIZE, 0, 0, ROUND(FNL_AMT/OF_SIZE,0)) AS FNL_DAN,
+						DECODE(OF_SIZE, 0, 0, ROUND(ROUND(FNL_AMT/OF_SIZE,0)*3.3058,0)) AS FNL_DAN_PY,
+						APPL_RATE,
+						ROUND(FNL_AMT * (APPL_RATE/100), 0) AS BID_AMT
+				 FROM (
+						  SELECT YYYY, SEQ,
+								 SUM(SEC_OFFER_SIZE) AS OF_SIZE,
+								 SUM(INC_AMT    )    AS INC_AMT,
+								 SUM(FNL_INC_AMT)    AS FNL_AMT,
+								 SUM(L_SIZE     )    AS L_SIZE
+						  FROM ES2013
+						  WHERE YYYY = #{YYYY}
+							AND SEQ  = #{SEQ}
+						  GROUP BY YYYY, SEQ
+					  ) A,
+					  (
+						  SELECT YYYY, SEQ,
+								 APPL_RATE AS APPL_RATE, PL_BID_AMT
+						  FROM ES2303
+						  WHERE YYYY = #{YYYY}
+							AND SEQ  = #{SEQ}
+					  ) B
+				 WHERE A.YYYY = B.YYYY
+				   AND A.SEQ  = B.SEQ
+			 ) C
+
+	</select>
+	<select id="selectEs81Prt31WithLand" resultType="java.util.HashMap">
+		SELECT 담보여력_설정전         AS 담보여력,
+			   초과_부족설정액_문자 AS 초과_부족설정액
+		FROM V_ES10_01
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+
+	</select>
+	<select id="selectEs81Prt3101WithLand" resultType="java.util.HashMap">
+		SELECT
+			MAX(FN_HITE_RANKING(A.YYYY, A.SEQ, '0')) AS 최종순위,
+			AVG(CRED_COMB_AMT + CRED_SELF_AMT) AS 채권금액
+		FROM ES2404 A
+		WHERE YYYY   = #{YYYY}
+		  AND SEQ    = #{SEQ}
+		  AND RANK   > 6
+		  AND HITE_YN = 'Y'
+
+	</select>
+	<select id="selectEs81W04Prt3102WithLand" resultType="java.util.HashMap">
+		SELECT DISTINCT
+			(SELECT CD_DESC
+			 FROM ES00
+			 WHERE ATTR_00 = 'DIV511'
+			   AND CD_CODE = DISP_RANK) AS 표시순위명,
+			RIGHT_DATE      AS 권리발생일자     ,
+			RIGHT_PERSON    AS 권리자           ,
+			RIGHT_CODE      AS 권리의내용코드   , (SELECT CD_DESC
+											FROM ES00
+											WHERE ATTR_00 = 'DIV509'
+											  AND CD_CODE = RIGHT_CODE) AS 권리의내용코드명,
+			ERA_YN          AS 말소여부         ,
+			CRED_SELF_AMT   AS 채권금액_단독담보,
+			CRED_COMB_AMT   AS 채권금액_공동담보, RANK
+		FROM (
+				 SELECT A.RIGHT_DATE,A.LN_SEQ, A.CRED_SELF_AMT, A.CRED_COMB_AMT, A.PRO_RATE_CODE, A.RIGHT_PERSON, B.RIGHT_CODE, B.ERA_YN,
+						MAX(A.RANK) AS RANK, MAX(DISP_RANK) AS DISP_RANK
+				 FROM (
+						  SELECT DISTINCT YYYY,SEQ, RIGHT_DATE, SHA_GU,LN_SEQ, RANK,CRED_SELF_AMT, CRED_COMB_AMT, PRO_RATE_CODE, RIGHT_PERSON FROM ES3402 WHERE NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0) > 0
+						  UNION ALL
+						  SELECT DISTINCT YYYY,SEQ, RIGHT_DATE, SHA_GU,LN_SEQ, RANK,CRED_SELF_AMT, CRED_COMB_AMT, PRO_RATE_CODE, RIGHT_PERSON FROM ES3404 WHERE NVL(CRED_SELF_AMT,0)+NVL(CRED_COMB_AMT,0) > 0
+					  ) A,
+					  (select * from (select row_number() over (partition by nvl(right_date,'00000000'),RIGHT_PERSON, RIGHT_CODE, CRED_SELF_AMT, CRED_COMB_AMT
+						  order by LN_SEQ) rowseq,
+											 YYYY,
+											 SEQ,
+											 SHA_GU,
+											 LN_SEQ,
+											 RANK,
+											 RIGHT_DATE,
+											 RIGHT_PERSON,
+											 RIGHT_CODE,
+											 CRED_SELF_AMT,
+											 CRED_COMB_AMT,
+											 era_yn,
+											 hite_yn,
+											 disp_rank
+									  from   es2404
+									  where  yyyy = #{YYYY}
+										and    seq = #{SEQ}
+										and    nvl(HITE_YN, 'N') = 'N'
+										and    nvl(CRED_SELF_AMT, 0) + nvl(CRED_COMB_AMT, 0) > 0) a
+					   where a.rowseq = 1) B
+				 WHERE A.YYYY   = #{YYYY}
+				   AND A.SEQ    = #{SEQ}
+				   AND A.YYYY = B.YYYY
+				   AND A.SEQ  = B.SEQ
+				   AND A.SHA_GU = B.SHA_GU
+				   AND A.LN_SEQ = B.LN_SEQ
+				   AND A.RANK   = B.RANK
+				   AND NVL(HITE_YN,'N') = 'N'
+				 GROUP BY A.RIGHT_DATE,A.LN_SEQ, A.CRED_SELF_AMT, A.CRED_COMB_AMT, A.PRO_RATE_CODE, A.RIGHT_PERSON, B.RIGHT_CODE, B.ERA_YN
+			 ) AA
+		ORDER BY  RANK-0, RIGHT_DATE
+
+	</select>
+	<select id="selectEs81W04Prt3103WithLand" resultType="java.util.HashMap">
+		SELECT (SELECT CD_DESC
+				FROM ES00
+				WHERE ATTR_00 = 'DIV511'
+				  AND CD_CODE = DISP_RANK) AS 표시순위명,
+			   RIGHT_DATE      AS 권리발생일자     ,
+			   RIGHT_PERSON    AS 권리자           ,
+			   RIGHT_CODE      AS 권리의내용코드   , (SELECT CD_DESC
+											   FROM ES00
+											   WHERE ATTR_00 = 'DIV509'
+												 AND CD_CODE = RIGHT_CODE) AS 권리의내용코드명,
+			   ERA_YN          AS 말소여부         ,
+			   CRED_SELF_AMT   AS 채권금액_단독담보,
+			   CRED_COMB_AMT   AS 채권금액_공동담보
+		FROM ES2404
+		WHERE YYYY   = #{YYYY}
+		  AND SEQ    = #{SEQ}
+		  AND ERA_YN = 'Y'
+		UNION
+		SELECT NULL AS 표시순위명,
+			   NULL AS 권리발생일자     ,
+			   NULL AS 권리자           ,
+			   NULL AS 권리의내용코드   , NULL AS 권리의내용코드명,
+			   NULL AS 말소여부         ,
+			   0    AS 채권금액_단독담보,
+			   0    AS 채권금액_공동담보
+		FROM DUAL
+	</select>
+    <select id="selectEs81Prt03WithLandConstruction" resultType="java.util.HashMap">
+		SELECT YYYY           AS 년도        ,
+			   SEQ            AS 일련번호    ,
+			   REST_PL_USE    AS 국토계획    ,
+			   REST_OT_LAW    AS 다른법률    ,
+			   REST_EN_RULE   AS 시행령부칙  ,
+			   REST_FU_LAW    AS 토지이용규제,
+			   REST_MAIN_USE  AS 주변부동산
+		FROM ES2017
+		WHERE YYYY = #{YYYY}
+		  AND SEQ  = #{SEQ}
+	</select>
+</mapper>

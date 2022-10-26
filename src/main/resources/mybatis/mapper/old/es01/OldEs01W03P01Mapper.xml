@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hitejinro.old.es01.repository.OldEs01W03P01Mapper">
+
+	<select id="selectEs01_w03_p01Es2186List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 2.2 AS CD_CODE, '2.2%' AS CD_DESC FROM DUAL
+		UNION ALL
+		SELECT 1.2 AS CD_CODE, '1.2%' AS CD_DESC FROM DUAL
+	</select>
+	
+	<select id="selectEs01_w03_p01Es2015List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT regi_gu, yyyy, seq, ln_seq, lot_num, cb_date, cb_struc, cb_roof,
+		       cb_floor, cb_use_main, cb_size, cb_size_py, sec_regi_size, sec_nume,
+		       sec_deno, sec_rate, sec_offer_size, sec_desc, inc_amt, fnl_inc_amt
+		  FROM ES2015
+		 WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+	</select>
+	
+	<select id="selectEs01_w03_p01V_Es2186List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, ln_seq, regi_gu, cb_floor, cb_build_code, cb_build_dan,
+		       dan_rebuil_yn, dan_rebuil_dan, dan_manage_yn, dan_manage_dan,
+		       dan_revise_idx, sub_aircon_yn, sub_aircon_dan, sub_elevat_yn,
+		       sub_elevat_dan, sub_sanita_yn, sub_sanita_dan, sub_hydran_yn,
+		       sub_hydran_dan, sub_etc_yn, sub_etc_dan, sub_revise_dan, cb_yyyy,
+		       elap_year, num_household, num_year, of_janga_rate, apas_dan, appl_dan,
+		       sec_offer_size, inc_amt
+		  FROM v_es2186
+		 WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+	</select>
+	
+	<select id="selectEs01_w03_p01Es2302List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT APPL_RATE ,<!-- AS 적용할낙찰가율, -->
+		       INC_AMT    ,<!-- AS 평가가격,-->
+		       INC_DAN    ,<!-- AS 평가가격_단가,-->
+		       INC_DAN_PY ,<!-- AS 평가가격_단가_평,-->
+		       FNL_AMT    ,<!--AS 최종평가_금액,-->
+		       FNL_DAN    ,<!--AS 최종평가_단가,-->
+		       FNL_DAN_PY ,<!--AS 최종평가_단가_평,-->
+		       BID_AMT    ,<!--AS 예상낙찰가_금액,-->
+		       DECODE(OF_SIZE, 0, 0, ROUND(BID_AMT/OF_SIZE, 0)) ,<!-- AS 예상낙찰가_단가,-->
+		       DECODE(OF_SIZE, 0, 0, ROUND(BID_AMT/OF_SIZE*3.3058, 0)) <!-- AS 예상낙찰가_단가_평-->
+		  FROM (
+		        SELECT OF_SIZE, INC_AMT,
+		               DECODE(OF_SIZE, 0, 0, ROUND(INC_AMT/OF_SIZE,0)) AS INC_DAN,
+		               DECODE(OF_SIZE, 0, 0, ROUND(ROUND(INC_AMT/OF_SIZE,0)*3.3058,0)) AS INC_DAN_PY,
+		               FNL_AMT,
+		               DECODE(OF_SIZE, 0, 0, ROUND(FNL_AMT/OF_SIZE,0)) AS FNL_DAN,
+		               DECODE(OF_SIZE, 0, 0, ROUND(ROUND(FNL_AMT/OF_SIZE,0)*3.3058,0)) AS FNL_DAN_PY,
+		               APPL_RATE,
+		               ROUND(FNL_AMT * (APPL_RATE/100), 0) AS BID_AMT
+		          FROM (
+		                SELECT YYYY, SEQ,
+		                       SUM(SEC_OFFER_SIZE) AS OF_SIZE,
+		                       SUM(INC_AMT    )    AS INC_AMT,
+		                       SUM(FNL_INC_AMT)    AS FNL_AMT
+		                  FROM ES2015
+		                 WHERE YYYY =  #{yyyy} 
+		                   AND SEQ  = #{seq} 
+		                 GROUP BY YYYY, SEQ
+		               ) A,
+		               (
+		                SELECT YYYY, SEQ,
+		                       APPL_RATE AS APPL_RATE, PL_BID_AMT
+		                  FROM ES2302
+		                 WHERE YYYY =  #{yyyy} 
+		                   AND SEQ  = #{seq} 
+		               ) B
+		         WHERE A.YYYY = B.YYYY
+		           AND A.SEQ  = B.SEQ
+		       ) C
+
+	</select>
+	<select id="selectEs01_w03_p01Es2302_AmtList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT YYYY             , <!-- AS 년도    -->                      
+		       SEQ      , <!--        AS 일련번호     -->                  
+		       P_BID_RATE , <!--      AS 당해지역낙찰가율      -->         
+		       K_BID_RATE , <!--      AS 유사부동산낙찰가율   -->          
+		       B_BID_RATE  , <!--     AS 기준낙찰가율        -->           
+		       RIGHTS_CODE , <!--      AS 점유자의권리형태     -->          
+		       RIGHTS_RATE , <!--     AS 점유자의권리형태_적용률  -->      
+		       DOMAIN_DESC , <!--     AS 법정지상권_성립사유     -->       
+		       DOMAIN_CODE , <!--     AS 법정지상권_적용코드     -->       
+		       DOMAIN_RATE , <!--     AS 법정지상권_적용율      -->        
+		       DOMAIN_DAYS, <!--      AS 법정지상권_존속예정기간    -->    
+		       APPL_RATE   , <!--     AS 적용할낙찰가율       -->          
+		       PL_BID_AMT   , <!--    AS 예상낙찰가         -->            
+		       CURR_USE_CODE  , <!--  AS 현재의주된현황      -->           
+		       CURR_USE_RATE  , <!--  AS 현재의주된현황_적용율   -->       
+		       FUTU_USE_CODE  , <!--  AS 장래의이용가능성       -->        
+		       FUTU_USE_RATE   , <!-- AS 장래의이용가능성_적용율   -->     
+		       DET_ADJ_ROAD   , <!--  AS 단독다가구_접한도로의폭  -->      
+		       DET_ADJ_RATE   , <!--  AS 단독다가구_접한도로의폭   -->     
+		       DET_PLOT_CODE , <!--   AS 단독다가구_대지의면적   -->       
+		       DET_PLOT_RATE  , <!--  AS 단독다가구_대지의면적    -->      
+		       DET_ELAP_CODE  , <!--  AS 단독다가구_건축물의경과년도   --> 
+		       DET_ELAP_RATE  , <!--  AS 단독다가구_건축물의경과년도    -->
+		       BUS_ADJ_ROAD    , <!-- AS 상업_접한도로의폭         -->     
+		       BUS_ADJ_RATE   , <!--  AS 상업_접한도로의폭       -->       
+		       BUS_SHAPE_CODE  , <!-- AS 상업_토지의형상      -->          
+		       BUS_SHAPE_RATE , <!--  AS 상업_토지의형상         -->       
+		       BUS_COMM_DEV    , <!-- AS 상업_주변상권의발달정도      -->  
+		       BUS_COMM_RATE   , <!-- AS 상업_주변상권의발달정도_적용율 -->
+		       BUS_ELAP_CODE   , <!-- AS 상업_건축물의경과년도          -->
+		       BUS_ELAP_RATE   , <!-- AS 상업_건축물의경과년도_적용율   -->
+		       GEN_ADJ_ROAD   , <!--  AS 일반_접한도로의폭          -->    
+		       GEN_ADJ_RATE   , <!--  AS 일반_접한도로의폭_적용율     -->  
+		       GEN_LAND_CODE  , <!--  AS 일반_토지의면적           -->     
+		       GEN_LAND_RATE  , <!--  AS 일반_토지의면적_적용율     -->    
+		       GEN_CONV_LOCATED , <!-- AS 일반_담보물의입지조건     -->     
+		       GEN_CONV_RATE   , <!-- AS 일반_담보물의입지조건_적용율  --> 
+		       GEN_ELAP_CODE   , <!-- AS 일반_건축물의경과년도         --> 
+		       GEN_ELAP_RATE   , <!-- AS 일반_건축물의경과년도_적용율   -->
+		       GEN_PUBL_CODE   , <!-- AS 일반_공유지분해당여부          -->
+		       GEN_PUBL_RATE    <!-- AS 일반_공유지분해당여부_적용율 -->
+		  FROM ES2302
+		 WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+	</select>
+	<select id="selectEs01_w03_p01HighMinList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT MIN_DAN, ROUND(MIN_DAN*3.3058, 0) AS MIN_DAN_PY,
+		       MAX_DAN, ROUND(MAX_DAN*3.3058, 0) AS MAX_DAN_PY,
+		       ROUND(MIN_DAN * L_SIZE, 0)+INC_AMT AS MIN_AMT,
+		       ROUND(MAX_DAN * L_SIZE, 0)+INC_AMT AS MAX_AMT
+		  FROM (SELECT MIN_DAN,
+		               MAX_DAN,
+		               (SELECT SUM(L_SIZE)
+		                  FROM ES2013
+		                 WHERE YYYY = AA.YYYY
+		                   AND SEQ  = AA.SEQ ) AS L_SIZE,
+		               (SELECT SUM(INC_AMT)
+		                  FROM ES2015
+		                 WHERE YYYY = AA.YYYY
+		                   AND SEQ  = AA.SEQ ) AS INC_AMT
+		          FROM (
+		                SELECT YYYY, SEQ,
+		                       MIN(APPL_DAN) AS MIN_DAN,
+		                       MAX(APPL_DAN) AS MAX_DAN
+		                  FROM ES2126 A
+		                 WHERE YYYY = #{yyyy} 
+		                   AND SEQ  = #{seq} 
+		                 GROUP BY YYYY, SEQ
+		               ) AA
+		       )
+	</select>
+	<select id="selectEs01_w03_p01ES2013List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT APPL_RATE  ,<!-- AS 적용할낙찰가율,  -->
+		       INC_AMT    ,<!-- AS 평가가격,-->
+		       INC_DAN    ,<!-- AS 평가가격_단가,-->
+		       INC_DAN_PY ,<!-- AS 평가가격_단가_평,-->
+		       FNL_AMT    ,<!-- AS 최종평가_금액,-->
+		       FNL_DAN    ,<!-- AS 최종평가_단가,-->
+		       FNL_DAN_PY ,<!-- AS 최종평가_단가_평,-->
+		       BID_AMT    ,<!-- AS 예상낙찰가_금액,-->
+		       DECODE(OF_SIZE, 0, 0, ROUND(BID_AMT/OF_SIZE, 0)) BID_AMT_DAN ,<!-- AS 예상낙찰가_단가,-->
+		       DECODE(OF_SIZE, 0, 0, ROUND(BID_AMT/OF_SIZE*3.3058, 0)) BID_AMT_PY <!-- AS 예상낙찰가_단가_평-->
+		  FROM (
+		        SELECT OF_SIZE, INC_AMT,
+		               DECODE(OF_SIZE, 0, 0, ROUND(INC_AMT/OF_SIZE,0)) AS INC_DAN,
+		               DECODE(OF_SIZE, 0, 0, ROUND(ROUND(INC_AMT/OF_SIZE,0)*3.3058,0)) AS INC_DAN_PY,
+		               FNL_AMT,
+		               DECODE(OF_SIZE, 0, 0, ROUND(FNL_AMT/OF_SIZE,0)) AS FNL_DAN,
+		               DECODE(OF_SIZE, 0, 0, ROUND(ROUND(FNL_AMT/OF_SIZE,0)*3.3058,0)) AS FNL_DAN_PY,
+		               APPL_RATE,
+		               ROUND(FNL_AMT * (APPL_RATE/100), 0) AS BID_AMT
+		          FROM (
+		                SELECT YYYY, SEQ,
+		                       SUM(SEC_OFFER_SIZE) AS OF_SIZE,
+		                       SUM(INC_AMT )    AS INC_AMT,
+		                       SUM(FNL_INC_AMT)    AS FNL_AMT
+		                  FROM ES2013
+		                 WHERE YYYY = #{yyyy} 
+		                   AND SEQ  = #{seq} 
+		                 GROUP BY YYYY, SEQ
+		               ) A,
+		               (
+		                SELECT YYYY, SEQ,
+		                       APPL_RATE AS APPL_RATE, PL_BID_AMT
+		                  FROM ES2302
+		                 WHERE YYYY = #{yyyy} 
+		                   AND SEQ  =  #{seq} 
+		               ) B
+		         WHERE A.YYYY = B.YYYY
+		           AND A.SEQ  = B.SEQ
+		       ) C
+
+	</select>
+	<select id="selectEs01_w03_p01ES2017List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, rest_pl_use, rest_ot_law, rest_en_rule, rest_fu_law,
+		       rest_main_use
+		  FROM ES2017
+		 WHERE yyyy = #{yyyy}   AND seq = #{seq} 
+	</select>
+	<select id="selectEs01_w03_p01ES2172List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, rno, pot_gu, std_gu, std_anno_amt, edit_m_date, edit_s_date, edit_m, edit_s,
+		       edit_c, juso_m, juso_s, juso_c, road_side_m, road_side_s, road_side_c,
+		       road_dist_m, road_dist_s, road_dist_c, gov_acss_m, gov_acss_s,
+		       gov_acss_c, cntr_acss_m, cntr_acss_s, cntr_acss_c, etc_acss_m,
+		       etc_acss_s, etc_acss_c, rail_acss_m, rail_acss_s, rail_acss_c,
+		       poll_acss_m, poll_acss_s, poll_acss_c, etc_envi_m, etc_envi_s,
+		       etc_envi_c, use_area_m, use_area_s, use_area_c, use_dsct_m, use_dsct_s,
+		       use_dsct_c, city_infr_m, city_infr_s, city_infr_c, limit_area_m,
+		       limit_area_s, limit_area_c, l_undur_code_m, l_undur_code_s,
+		       l_undur_code_c, l_shape_code_m, l_shape_code_s, l_shape_code_c,
+		       l_azim_code_m, l_azim_code_s, l_azim_code_c, l_size_code_m,
+		       l_size_code_s, l_size_code_c, l_of_gu_m, l_of_gu_s, l_of_gu_c, l_etc_m,
+		       l_etc_s, l_etc_c, e_trend_m, e_trend_s, e_trend_c, e_etc_m, e_etc_s,
+		       e_etc_c, depre_rate, appl_factor_tot, factor_tot, apas_dan, appl_dan
+		  FROM ES2172
+		  WHERE yyyy = #{yyyy}   AND seq = #{seq} 
+	</select>
+	<select id="selectEs01_w03_p01V_ES2172List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, rno, pot_gu, std_gu, std_anno_amt, edit_m, edit_s,
+		       edit_c, juso_m, juso_s, juso_c, road_c, appro_c, envi_c, offic_c,
+		       land_c, etc_c, depre_rate, factor_tot, apas_dan, appl_dan
+		  FROM v_es2172
+		 WHERE yyyy = #{yyyy}   AND seq = #{seq} 
+	</select>	
+	<select id="selectEs01_w03_p01V_ES2127List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, pot_gu, std_appl_dan, ma_nr_area_code, ma_nr_min_amt,
+		       ma_nr_max_amt, co_amt, apas_rate, assess_rate, appl_rate, assess_desc,
+		       case when apas_rate = assess_rate then '0'
+		            when apas_rate <![CDATA[ !=  ]]>  assess_rate then '1'
+		       end as assess_desc_enable
+		  FROM ES2127
+		 WHERE yyyy = #{yyyy}   AND seq = #{seq} 
+	</select>	
+	<select id="selectEs01_w03_p01ES2015List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, ln_seq, regi_gu, lot_num, cb_date, cb_struc, cb_roof,
+		       cb_floor, cb_use_main, cb_size, cb_size_py, sec_regi_size, sec_nume,
+		       sec_deno, sec_rate, sec_offer_size, sec_desc, inc_amt, fnl_inc_amt
+		  FROM ES2015
+		 WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+	</select>
+	<select id="selectEs01_w03_p01ES2015GroupList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT   regi_gu, MIN (sec_nume) AS sec_nume, MIN (sec_deno) AS sec_deno,
+		         (MIN (sec_nume) / MIN (sec_deno)) * 100 AS sec_rate,
+		         SUM (inc_amt) AS inc_amt,
+		         SUM (fnl_inc_amt) AS fnl_inc_amt
+		    FROM ES2015
+		   WHERE  yyyy = #{yyyy}  AND seq =  #{seq} 
+		GROUP BY yyyy, seq, regi_gu
+		ORDER BY regi_gu
+	</select>
+	<select id="selectEs01_w03_p01ES2013DamboList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, ln_seq, pot_gu, lot_num, sec_regi_size, sec_nume, sec_deno,
+		       sec_rate, sec_offer_size, sec_desc, DECODE(sec_rate, 100, 0, 1) AS sec_desc_enable
+		  FROM ES2013
+		 WHERE yyyy = #{yyyy}   AND seq = #{seq} 
+	</select>
+	<select id="selectEs01_w03_p01ES2013BuildingList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT   yyyy, seq, MAX (ln_seq) AS ln_seq, regi_gu, MAX (lot_num) AS lot_num,
+		         MIN (sec_regi_size) AS sec_regi_size, MIN (sec_nume) AS sec_nume,
+		         MIN (sec_deno) AS sec_deno, MIN (sec_rate) AS sec_rate,
+		         MIN (sec_offer_size) AS sec_offer_size, MAX (sec_desc) AS sec_desc,
+		         DECODE(MAX(sec_rate), 100, 0, 1) AS sec_desc_enable
+		    FROM ES2015
+		   WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+		 GROUP BY yyyy, seq, regi_gu
+		 ORDER BY regi_gu
+	</select>
+	<select id="selectEs01_w03_p01ES2404DList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, sha_gu, ln_seq, RANK, disp_rank, right_date, right_person, right_code,
+		       era_yn, cred_self_amt, cred_comb_amt,
+		       CASE
+		          WHEN TO_NUMBER (disp_rank) <![CDATA[ < ]]>   100
+		             THEN 0
+		          WHEN TO_NUMBER (disp_rank) <![CDATA[ >= ]]>   100
+		             THEN 1
+		       END AS is_enable,
+		       cred_self_amt AS cred_self_amt_org, cred_comb_amt AS cred_comb_amt_org,
+		       pro_rate_code, hite_yn, 
+		       pro_rate_gu, pro_rate_div, pro_rate_step, pro_rate_cycle, 'U' AS flag       
+		  FROM ES2404
+		 WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+		   AND sha_gu = '2'
+	</select>
+	<select id="selectEs01_w03_p01ES2404DTempList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, sha_gu, ln_seq, RANK, TO_CHAR(disp_rank) AS disp_rank, right_date, right_person, right_code,
+		       era_yn, cred_self_amt, cred_comb_amt, '0' AS is_enable, hite_yn, pro_rate_code,
+		       pro_rate_gu, pro_rate_div, pro_rate_step, pro_rate_cycle, 'I' AS flag,
+		       cred_self_amt AS cred_self_amt_org, cred_comb_amt AS cred_comb_amt_org
+		  FROM ES2404
+		 WHERE yyyy = '0000'
+		   AND seq = '000000'
+		   AND sha_gu = '0'
+	</select>
+	<select id="selectEs01_w03_p01ES2404MList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, ln_seq, pot_gu, lot_num, fnl_inc_amt AS fnl_inc_amt_A,
+		       fnl_inc_amt * appl_rate / 100 AS fnl_inc_amt, '토지' AS name
+		  FROM (SELECT a.yyyy, a.seq, a.ln_seq, pot_gu, min_bound, lot_num,
+		               fnl_inc_amt,
+		               (SELECT appl_rate
+		                  FROM ES2302
+		                 WHERE yyyy = a.yyyy AND seq = a.seq) AS appl_rate
+          FROM ES2013 a )
+           WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+	</select>
+	<select id="selectEs01_w03_p01ES2404CntList" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT COUNT (ln_seq) AS cnt
+			  FROM (SELECT   ln_seq, SUM (cred_self_amt) AS cred_self_amt,
+			                 SUM (cred_comb_amt) AS cred_comb_amt
+			            FROM ES2404
+			           WHERE sha_gu <![CDATA[ !=  ]]>  '1'
+			             AND yyyy = #{yyyy} 
+			             AND seq =  #{seq} 
+			             AND (cred_self_amt <![CDATA[ >  ]]>  0 OR cred_comb_amt <![CDATA[ >  ]]>  0)
+			        GROUP BY ln_seq, sha_gu)
+	</select>
+	<select id="selectEs01_w03_p01ES2165List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, bu_min_py_amt, bu_min_m2_amt, bu_max_py_amt, bu_max_m2_amt,
+		       ho_min_py_amt, ho_min_m2_amt, ho_max_py_amt, ho_max_m2_amt,
+		       ge_min_py_amt, ge_min_m2_amt, ge_max_py_amt, ge_max_m2_amt,
+		       fi_min_py_amt, fi_min_m2_amt, fi_max_py_amt, fi_max_m2_amt,
+		       fa_min_py_amt, fa_min_m2_amt, fa_max_py_amt, fa_max_m2_amt,
+		       wo_min_py_amt, wo_min_m2_amt, wo_max_py_amt, wo_max_m2_amt
+		  FROM ES2165
+		    WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+	</select>
+	<select id="selectEs01_w03_p01ES2126List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, rno, pot_gu, ex_no,
+		       (SELECT ex_div
+		          FROM ES2125
+		         WHERE yyyy = a.yyyy AND seq = a.seq AND ex_no = a.ex_no) AS ex_div,
+		       survey_time, std_anno_amt, edit_m_date, edit_s_date, edit_m, edit_s, edit_c, juso_m, juso_s,
+		       juso_c, road_side_m, road_side_s, road_side_c, road_dist_m,
+		       road_dist_s, road_dist_c, gov_acss_m, gov_acss_s, gov_acss_c,
+		       cntr_acss_m, cntr_acss_s, cntr_acss_c, etc_acss_m, etc_acss_s,
+		       etc_acss_c, rail_acss_m, rail_acss_s, rail_acss_c, poll_acss_m,
+		       poll_acss_s, poll_acss_c, etc_envi_m, etc_envi_s, etc_envi_c,
+		       use_area_m, use_area_s, use_area_c, use_dsct_m, use_dsct_s, use_dsct_c,
+		       city_infr_m, city_infr_s, city_infr_c, limit_area_m, limit_area_s,
+		       limit_area_c, l_undur_code_m, l_undur_code_s, l_undur_code_c,
+		       l_shape_code_m, l_shape_code_s, l_shape_code_c, l_azim_code_m,
+		       l_azim_code_s, l_azim_code_c, l_size_code_m, l_size_code_s,
+		       l_size_code_c, l_of_gu_m, l_of_gu_s, l_of_gu_c, l_etc_m, l_etc_s,
+		       l_etc_c, e_trend_m, e_trend_s, e_trend_c, e_etc_m, e_etc_s, e_etc_c,
+		       factor_tot, apas_dan, appl_dan
+		  FROM ES2126 a
+		 WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+	</select>
+	<select id="selectEs01_w03_p01ES2125List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, ex_no, ex_div, au_no, juso1, survey_amt, l_size, l_size_py, use_area,
+		       lcategory, l_use_code, of_road_code, l_shape_code, l_undur_code,
+		       example_price, '' AS btn
+		  FROM ES2125
+		 WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+	</select>
+	<select id="selectEs01_w03_p01V_ES2126List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT yyyy, seq, rno, pot_gu, ex_no, survey_time, std_anno_amt, edit_m,
+		       edit_s, edit_c, juso_m, juso_s, juso_c, road_c, appro_c, envi_c,
+		       offic_c, land_c, etc_c, factor_tot, apas_dan, appl_dan
+		  FROM v_es2126
+		 WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+	</select>
+	<select id="selectEs01_w03_p01V_ES00600List" resultType="com.hitejinro.common.entity.CamelMap">
+		SELECT 
+			CD_CODE AS 사업부문
+			,CD_DESC AS 사업부문명
+		FROM ES00
+		WHERE CD_DIV = '600'
+		AND USE_YN = 'Y'
+		ORDER BY CD_DIV
+ 
+	</select>
+	<select id="selectEs01_w03_p01V_ES2126RevenueList" resultType="com.hitejinro.common.entity.CamelMap">
+	SELECT yyyy, seq, edit_survey_time, edit_go_rate, pgi_rent_sec_amt,
+		       pgi_rent_mom_amt, 5 AS pgi_rent_appl_rate, pgi_rent_year_amt, pgi_etc_amt,
+		       pgi_earn_amt, egi_emty_rate, egi_earn_amt, oe_expn_rate, oe_expn_amt,
+		       noi_amt, 8 AS back_rate, earn_amt
+		  FROM ES2166
+		  WHERE yyyy = #{yyyy}  AND seq =  #{seq}  
+
+	</select>
+	<select id="selectEs01_w03_p01V_ES2176List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT yyyy, seq, loc_adj_road, loc_road_system, loc_busi_access,
+		       loc_pub_access, loc_hate_facility_yn, loc_develop, marketable_type,
+		       marketable_use, marketable_price, marketable_demand,
+		       marketable_demand_user, marketable_develop
+		  FROM ES2176
+		  WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+
+	</select>
+	<select id="selectEs01_w03_p01V_ES2106List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT yyyy, seq, pr_min_amt, pr_min_dan, pr_max_amt, pr_max_dan, pr_rate,
+			       earn_amt, appl_amt, appl_earn_rate, int_rep_size, int_rep_size_py,
+			       inc_rep_dan_code, int_rep_dan, int_rep_amt, increase_amt
+			  FROM ES2106
+		  WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+
+	</select>
+	<select id="selectEs01_w03_p01V_ES2012List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT yyyy, seq, juso1, juso2, regi_amt, regi_dan, regi_dan_py
+  				FROM ES2012
+		  WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+
+	</select>
+	<select id="selectEs01_w03_p01V_ES2014List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT yyyy, seq, b_use_code, h_poss_a_area, m_poss_a_area, regi_amt,
+		       regi_dan, regi_dan_py, hous_amt, hous_dan, hous_dan_py
+		  FROM ES2014
+		  WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+
+	</select>
+	<select id="selectEs01_w03_p01Div153List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV153'
+			   AND use_yn = 'Y'
+
+	</select>
+	<select id="selectEs01_w03_p01Div123List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV123'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div141List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+				  FROM ES00
+				 WHERE attr_00 = 'DIV141'
+				   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div187List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV187'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div184List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV184'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div156List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV156'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div189List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08 
+			  FROM ES00
+			 WHERE attr_00 = 'DIV189'
+			   AND use_yn = 'Y'
+	</select>
+	
+	<select id="selectEs01_w03_p01Div190List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV190'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div150List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV150'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div105List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV105'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div128List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV128'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div127List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV127'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div117List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV117'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div113List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV113'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div118List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV118' 
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div125List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV125'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div132List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV132'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div143List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV143'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div105StoreList" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV106'
+			   AND attr_01 = '10'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div116List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV116'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div114List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV114'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div126List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV126' 
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div183List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV183'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div192List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV192'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div115List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV115'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div101List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV101'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div176List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV176'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div139List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM ES00
+			 WHERE attr_00 = 'DIV139'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div142List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM ES00
+			 WHERE attr_00 = 'DIV142'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div106List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM XXESOLD.ES00
+			 WHERE attr_00 = 'DIV106'
+			  AND attr_01 = '00'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div188List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM XXESOLD.ES00
+			 WHERE attr_00 = 'DIV188'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div137List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM XXESOLD.ES00
+			 WHERE attr_00 = 'DIV137'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01ES00112List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM XXESOLD.ES00
+			 WHERE cd_div = '112' AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div157List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM XXESOLD.ES00
+			 WHERE attr_00 = 'DIV157'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div130List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM XXESOLD.ES00
+			 WHERE attr_00 = 'DIV130'
+			   AND attr_01= 'Y'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div175List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM XXESOLD.ES00
+			 WHERE attr_00 = 'DIV175'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01ES00100List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM XXESOLD.ES00
+			 WHERE cd_div = '100' AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div159List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc, attr_07, attr_08
+			  FROM XXESOLD.ES00
+			 WHERE attr_00 = 'DIV159'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01ES00Div130List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM XXESOLD.ES00
+			 WHERE attr_00 = 'DIV130'
+			   AND attr_02 = 'Y'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div193List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM XXESOLD.ES00
+			 WHERE attr_00 = 'DIV193'
+			   AND use_yn = 'Y'
+	</select>
+	<select id="selectEs01_w03_p01Div159Attr01List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT cd_code, cd_desc
+			  FROM XXESOLD.ES00
+			 WHERE attr_00 = 'DIV159'
+			   AND attr_01 = 'Y'
+			   AND use_yn = 'Y'
+	</select>
+	
+	<select id="selectEs01_w03_p01ES2013MarkList" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT  yyyy, seq, ln_seq, pot_gu, min_bound, lot_num, lcategory, l_size,
+      			 	l_size_py, anno_dan, anno_dan_py, anno_amt, lcom_code_yn, use_area,
+			       	l_use_code, of_road_code, l_shape_code, l_undur_code, std_appl_dan,
+			       	appl_rate, apas_amt, appl_amt, sec_regi_size, sec_nume, sec_deno,
+			       	sec_rate, sec_offer_size, sec_desc, inc_amt, fnl_inc_amt, '' AS btn
+			  FROM XXESOLD.ES2013
+		  WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+
+	</select>
+	<select id="selectEs01_w03_p01ES2171List" resultType="com.hitejinro.common.entity.CamelMap">
+			SELECT yyyy, seq, s_gu, juso1, lot_num, l_size, l_size_py, use_area,
+			       lcategory, l_use_code, of_road_code, l_shape_code, l_undur_code,
+			       std_anno_amt, '' AS btn, 0 AS combo_stat
+			  FROM XXESOLD.ES2171
+		  WHERE yyyy = #{yyyy}  AND seq =  #{seq} 
+
+	</select>
+	 
+</mapper>

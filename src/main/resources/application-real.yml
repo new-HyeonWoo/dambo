@@ -1,0 +1,64 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+    context-path: /
+
+spring:
+  application:
+    name: hitejinro-dambo
+
+  devtools:
+    livereload:
+      enabled: true
+  mvc.view:
+    prefix: /WEB-INF/jsp/
+    suffix: .jsp
+
+  datasource:
+    url: jdbc:oracle:thin:@192.168.101.71:1521:HITEDB01
+    username: 'esuser'
+    password: 'esu'
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    # Spring 2.x 이후로 기본 데이터소스는 hikari
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 5
+      connection-init-sql: select 1 from dual
+      connection-test-query: select 1 from dual
+  transaction:
+    rollback-on-commit-failure: false
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+mybatis:
+  configuration:
+    cache-enabled: false
+    aggressive-lazy-loading: false
+    default-executor-type: reuse
+    map-underscore-to-camel-case: true
+    use-generated-keys: true
+    return-instance-for-empty-row: true
+
+  mapper-locations: classpath:mybatis/mapper/**/*.xml
+  type-handlers-package: com.hitejinro.configuration.typehandler
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+        exclude: threaddump, heapdump
+
+external:
+  eap:
+    url: https://epdev.hitejinro.com
+
+logging.level:
+  org.springframework.web: debug
+  com.hitejinro.mapper: debug
+  com.hitejinro.configuration.filter: debug
